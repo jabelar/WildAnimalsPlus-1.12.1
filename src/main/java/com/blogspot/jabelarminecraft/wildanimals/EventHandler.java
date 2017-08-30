@@ -16,18 +16,13 @@
 
 package com.blogspot.jabelarminecraft.wildanimals;
 
-import net.minecraft.entity.EntityList;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent.NameFormat;
-
 import com.blogspot.jabelarminecraft.wildanimals.gui.WildAnimalsConfigGUI;
 
-import cpw.mods.fml.client.GuiIngameModOptions;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 
 public class EventHandler 
@@ -92,15 +87,15 @@ public class EventHandler
 //        // Register extended entity properties
 //    }
     
-    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-    public void onEvent(EntityJoinWorldEvent event)
-    {
-        // DEBUG
-        if (EntityList.getStringFromID(event.entity.getEntityId()) != null)
-        {
-            System.out.println("Entity joined world = "+EntityList.getStringFromID(event.entity.getEntityId()));
-        }
-    }
+//    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//    public void onEvent(EntityJoinWorldEvent event)
+//    {
+//        // DEBUG
+//        if (EntityList.getEntityString(event.getEntity()) != null)
+//        {
+//            System.out.println("Entity joined world = "+EntityList.getStringFromID(event.entity.getEntityId()));
+//        }
+//    }
     
 //    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //    public void onEvent(EntityStruckByLightningEvent event)
@@ -242,26 +237,26 @@ public class EventHandler
 //        
 //    }
     
-    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-    public void onEvent(NameFormat event)
-    {
-        if (event.username.equalsIgnoreCase("jnaejnae"))
-        {
-            event.displayname = event.username+" the Great and Powerful";
-        }        
-        else if (event.username.equalsIgnoreCase("MistMaestro"))
-        {
-            event.displayname = event.username+" the Wise";
-        }    
-        else if (event.username.equalsIgnoreCase("taliaailat"))
-        {
-            event.displayname = event.username+" the Beautiful";
-        }    
-        else
-        {
-            event.displayname = event.username+" the Ugly";            
-        }
-    }
+//    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//    public void onEvent(NameFormat event)
+//    {
+//        if (event.getUsername().equalsIgnoreCase("jnaejnae"))
+//        {
+//            event.setDisplayname(event.username+" the Great and Powerful");
+//        }        
+//        else if (event.getUsername().equalsIgnoreCase("MistMaestro"))
+//        {
+//            event.setDisplayname(event.getUsername()+" the Wise");
+//        }    
+//        else if (event.getUsername().equalsIgnoreCase("taliaailat"))
+//        {
+//            event.setDisplayname(event.getUsername()+" the Beautiful");
+//        }    
+//        else
+//        {
+//            event.setDisplayname(event.getUsername()+" the Ugly");            
+//        }
+//    }
     
 //    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //    public void onEvent(ArrowLooseEvent event)
@@ -555,10 +550,10 @@ public class EventHandler
     @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
     public void onEvent(GuiOpenEvent event)
     {
-        if (event.gui instanceof GuiIngameModOptions)
+        if (event.getGui() instanceof GuiIngameModOptions)
         {
             System.out.println("GuiOpenEvent for GuiIngameModOptions");
-            event.gui = new WildAnimalsConfigGUI(null);        
+            event.setGui(new WildAnimalsConfigGUI(null));        
         }
     }
  //

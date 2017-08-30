@@ -16,12 +16,6 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.proxy;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ResourceLocation;
-
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLion;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLynx;
@@ -43,11 +37,15 @@ import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderHerdAnimal;
 import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderSerpent;
 
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class ClientProxy extends CommonProxy 
 {
@@ -173,7 +171,7 @@ public class ClientProxy extends CommonProxy
     @Override
     public void sendMessageToPlayer(ChatComponentText msg) 
     {
-        Minecraft.getMinecraft().thePlayer.addChatMessage(msg);
+        Minecraft.getMinecraft().player.addChatMessage(msg);
     }
     
 	/*	 
@@ -190,7 +188,7 @@ public class ClientProxy extends CommonProxy
         // player even when you are on the server! Sounds absurd, but it's true.
 
         // Solution is to double-check side before returning the player:
-        return (ctx.side.isClient() ? Minecraft.getMinecraft().thePlayer : super.getPlayerEntityFromContext(ctx));
+        return (ctx.side.isClient() ? Minecraft.getMinecraft().player : super.getPlayerEntityFromContext(ctx));
     }
     
 

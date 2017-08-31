@@ -16,35 +16,35 @@
 
  package com.blogspot.jabelarminecraft.wildanimals.models;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.util.MathHelper;
-
 import org.lwjgl.opengl.GL11;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityElephant;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ModelElephant extends ModelWildAnimals
 {
-    public ModelRendererWildAnimals head;
-    public ModelRendererWildAnimals body;
-    public ModelRendererWildAnimals legRearRight;
-    public ModelRendererWildAnimals legRearLeft;
-    public ModelRendererWildAnimals legFrontRight;
-    public ModelRendererWildAnimals legFrontLeft;
-    public ModelRendererWildAnimals ear1;
-    public ModelRendererWildAnimals ear2;
-    public ModelRendererWildAnimals trunk1;
-    public ModelRendererWildAnimals trunk2;
-    public ModelRendererWildAnimals tusk1;
-    public ModelRendererWildAnimals tusk2;
-    public ModelRendererWildAnimals childHead; // allows customization of baby animal
-    public ModelRendererWildAnimals childEar1; 
-    public ModelRendererWildAnimals childEar2; 
-    public ModelRendererWildAnimals childTrunk1; 
+    public ModelRenderer head;
+    public ModelRenderer body;
+    public ModelRenderer legRearRight;
+    public ModelRenderer legRearLeft;
+    public ModelRenderer legFrontRight;
+    public ModelRenderer legFrontLeft;
+    public ModelRenderer ear1;
+    public ModelRenderer ear2;
+    public ModelRenderer trunk1;
+    public ModelRenderer trunk2;
+    public ModelRenderer tusk1;
+    public ModelRenderer tusk2;
+    public ModelRenderer childHead; // allows customization of baby animal
+    public ModelRenderer childEar1; 
+    public ModelRenderer childEar2; 
+    public ModelRenderer childTrunk1; 
     
     // need some variables to help revert positions after a rearing animation
     protected float headRotPointXDefault;
@@ -131,7 +131,7 @@ public class ModelElephant extends ModelWildAnimals
     	int textureHeight = 128;
     	
     	// head
-        head = new ModelRendererWildAnimals(this, 0, 0);
+        head = new ModelRenderer(this, 0, 0);
         head.setTextureSize(textureWidth, textureHeight);
         head.addBox(-4F, -4F, -6F, 10, 10, 7);
         // remember default rotation point to allow for return after rearing animation
@@ -140,63 +140,63 @@ public class ModelElephant extends ModelWildAnimals
         headRotPointZDefault = -10F;
         head.setRotationPoint(headRotPointXDefault, headRotPointYDefault, headRotPointZDefault);
         // add head's children models (ears, trunk, tusks)
-        ear1 = new ModelRendererWildAnimals(this, 34, 8);
+        ear1 = new ModelRenderer(this, 34, 8);
         ear1.setTextureSize(textureWidth, textureHeight);
         ear1.addBox(-7F, -4F, -0.5F, 7, 8, 1);
         ear1.setRotationPoint(-3F, -1F, -2F);
         head.addChild(ear1);
-        ear2 = new ModelRendererWildAnimals(this, 34, 8);
+        ear2 = new ModelRenderer(this, 34, 8);
         ear2.setTextureSize(textureWidth, textureHeight);
         ear2.addBox(0F, -4F, -0.5F, 7, 8, 1);
         ear2.setRotationPoint(4F, -1F, -2F);
         head.addChild(ear2);
-        trunk1 = new ModelRendererWildAnimals(this, 20, 50);
+        trunk1 = new ModelRenderer(this, 20, 50);
         trunk1.setTextureSize(textureWidth, textureHeight);
         trunk1.addBox(-2F, 0F, -1.5F, 4, 11, 3);
         trunk1.setRotationPoint(1F, 0F, -6F);
         head.addChild(trunk1);
         // trunk tip is child of trunk
-        trunk2 = new ModelRendererWildAnimals(this, 20, 50);
+        trunk2 = new ModelRenderer(this, 20, 50);
         trunk2.setTextureSize(textureWidth, textureHeight);
         trunk2.addBox(-2F, 0F, -1.5F, 4, 5, 3);
         trunk2.setRotationPoint(0F, 10F, 0F);
         trunk1.addChild(trunk2);
         // tusks
-        tusk1 = new ModelRendererWildAnimals(this, 34, 1);
+        tusk1 = new ModelRenderer(this, 34, 1);
         tusk1.setTextureSize(textureWidth, textureHeight);
         tusk1.addBox(-0.5F, -0.5F, 0F, 1, 1, 6);
         tusk1.setRotationPoint(-1.5F, 2F, -6F);
         tusk1.rotateAngleX = degToRad(-160);
         head.addChild(tusk1);
-        tusk2 = new ModelRendererWildAnimals(this, 34, 1);
+        tusk2 = new ModelRenderer(this, 34, 1);
         tusk2.setTextureSize(textureWidth, textureHeight);
         tusk2.addBox(4.5F, -0.5F, 0F, 1, 1, 6);
         tusk2.setRotationPoint(-1.5F, 2F, -6F);
         tusk2.rotateAngleX = degToRad(-160);
         head.addChild(tusk2);
-        body = new ModelRendererWildAnimals(this, 0, 17);
+        body = new ModelRenderer(this, 0, 17);
         body.setTextureSize(textureWidth, textureHeight);
         body.addBox(-8F, -10F, -7F, 16, 21, 12);
         bodyRotPointXDefault = 0F;
         bodyRotPointYDefault = 17 - par1;
         bodyRotPointZDefault = 1F;
         body.setRotationPoint(bodyRotPointXDefault, bodyRotPointYDefault, bodyRotPointZDefault);
-        legRearRight = new ModelRendererWildAnimals(this, 0, 50);
+        legRearRight = new ModelRenderer(this, 0, 50);
         legRearRight.setTextureSize(textureWidth, textureHeight);
         legRearRight.addBox(-3F, 0F, -2F, 5, 13, 5);
         legRearRight.setRotationPoint(-5F, 11F, 8F);
-        legRearLeft = new ModelRendererWildAnimals(this, 0, 50);
+        legRearLeft = new ModelRenderer(this, 0, 50);
         legRearLeft.setTextureSize(textureWidth, textureHeight);
         legRearLeft.addBox(-1F, 0F, -1F, 5, 13, 5);
         legRearLeft.setRotationPoint(4F, 11F, 7F);
-        legFrontRight = new ModelRendererWildAnimals(this, 0, 50);
+        legFrontRight = new ModelRenderer(this, 0, 50);
         legFrontRight.setTextureSize(textureWidth, textureHeight);
         legFrontRight.addBox(-3F, 0F, -3F, 5, 13, 5);
         legFrontRightRotPointXDefault = -5F;
         legFrontRightRotPointYDefault = 11F;
         legFrontRightRotPointZDefault = -6F;
         legFrontRight.setRotationPoint(legFrontRightRotPointXDefault, legFrontRightRotPointYDefault, legFrontRightRotPointZDefault);
-        legFrontLeft = new ModelRendererWildAnimals(this, 0, 50);
+        legFrontLeft = new ModelRenderer(this, 0, 50);
         legFrontLeft.setTextureSize(textureWidth, textureHeight);
         legFrontLeft.addBox(-1F, 0F, -3F, 5, 13, 5);
         legFrontLeftRotPointXDefault = 4F;
@@ -205,7 +205,7 @@ public class ModelElephant extends ModelWildAnimals
         legFrontLeft.setRotationPoint(legFrontLeftRotPointXDefault, legFrontLeftRotPointYDefault, legFrontLeftRotPointZDefault);
 
     	// head for baby entity
-        childHead = new ModelRendererWildAnimals(this, 0, 0);
+        childHead = new ModelRenderer(this, 0, 0);
         childHead.setTextureSize(textureWidth, textureHeight);
         childHead.addBox(-4F, -4F, -6F, 10, 10, 7);
         childHeadRotPointXDefault = 0F;
@@ -213,17 +213,17 @@ public class ModelElephant extends ModelWildAnimals
         childHeadRotPointZDefault = -9.0F;
         childHead.setRotationPoint(childHeadRotPointXDefault, childHeadRotPointYDefault, childHeadRotPointZDefault);
         // add head's children models (ears, trunk, tusks)
-        childEar1 = new ModelRendererWildAnimals(this, 34, 8);
+        childEar1 = new ModelRenderer(this, 34, 8);
         childEar1.setTextureSize(textureWidth, textureHeight);
         childEar1.addBox(-7F, -4F, -0.5F, 7, 8, 1);
         childEar1.setRotationPoint(-3F, -1F, -2F);
         childHead.addChild(childEar1);
-        childEar2 = new ModelRendererWildAnimals(this, 34, 8);
+        childEar2 = new ModelRenderer(this, 34, 8);
         childEar2.setTextureSize(textureWidth, textureHeight);
         childEar2.addBox(0F, -4F, -0.5F, 7, 8, 1);
         childEar2.setRotationPoint(4F, -1F, -2F);
         childHead.addChild(childEar2);
-        childTrunk1 = new ModelRendererWildAnimals(this, 20, 50);
+        childTrunk1 = new ModelRenderer(this, 20, 50);
         childTrunk1.setTextureSize(textureWidth, textureHeight);
         childTrunk1.addBox(-2F, 0F, -1.5F, 4, 8, 3);
         childTrunk1.setRotationPoint(1F, 0F, -6F);

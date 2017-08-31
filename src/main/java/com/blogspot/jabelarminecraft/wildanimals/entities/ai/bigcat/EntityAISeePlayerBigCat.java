@@ -16,11 +16,11 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat;
 
+import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
+
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
 
 public class EntityAISeePlayerBigCat extends EntityAIBase
 {
@@ -34,7 +34,7 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
     public EntityAISeePlayerBigCat(EntityBigCat par1EntityBigCat, double d)
     {
         this.theBigCat = par1EntityBigCat;
-        this.worldObject = par1EntityBigCat.worldObj;
+        this.worldObject = par1EntityBigCat.world;
         this.minPlayerDistance = d;
         // this.setMutexBits(2);
     }
@@ -53,7 +53,7 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     @Override
-	public boolean continueExecuting()
+	public boolean shouldContinueExecuting()
     {
         return !this.thePlayer.isEntityAlive() ? false : (this.theBigCat.getDistanceSqToEntity(this.thePlayer) <= this.minPlayerDistance * this.minPlayerDistance);
     }

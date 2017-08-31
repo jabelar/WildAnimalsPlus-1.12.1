@@ -16,16 +16,15 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.models;
 
-import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.entity.Entity;
-
 import org.lwjgl.opengl.GL11;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.AIStates;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ModelBirdOfPrey extends ModelWildAnimals

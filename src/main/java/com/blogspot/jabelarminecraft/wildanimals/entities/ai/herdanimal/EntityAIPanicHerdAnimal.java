@@ -16,9 +16,9 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal;
 
-import net.minecraft.entity.ai.EntityAIBase;
-
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
+
+import net.minecraft.entity.ai.EntityAIBase;
 
 public class EntityAIPanicHerdAnimal extends EntityAIBase
 {
@@ -39,7 +39,7 @@ public class EntityAIPanicHerdAnimal extends EntityAIBase
     @Override
     public boolean shouldExecute()
     {
-        if (theEntity.getAITarget() == null && theEntity.isBurning())
+        if (theEntity.getRevengeTarget() == null && theEntity.isBurning())
         {
             return false;
         }
@@ -70,14 +70,14 @@ public class EntityAIPanicHerdAnimal extends EntityAIBase
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
         theEntity.decrementRearingCounter();;
         Boolean continueExecuting = theEntity.getRearingCounter()>0; 
         if (!continueExecuting)
         {
             theEntity.setRearing(false);
-            theEntity.setAttackTarget(theEntity.getLastAttacker()); // now attack back
+            theEntity.setAttackTarget(theEntity.getAttackingEntity()); // now attack back
         }
 //        // DEBUG
 //        if (theEntity.getAITarget() != null)

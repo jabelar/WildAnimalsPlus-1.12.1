@@ -24,7 +24,6 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityTiger;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityEagle;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityHawk;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityOwl;
-import com.blogspot.jabelarminecraft.wildanimals.entities.eggs.EntityItemWildAnimalsEgg;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityElephant;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
 import com.blogspot.jabelarminecraft.wildanimals.models.ModelBigCat;
@@ -38,9 +37,9 @@ import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderHerdAnimal;
 import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderSerpent;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -86,12 +85,10 @@ public class ClientProxy extends CommonProxy
 		// do client-specific stuff
 	}
 
+	@SuppressWarnings({ "deprecation", "unchecked" })
 	public void registerRenderers() 
     {
         // the float parameter passed to the Render class is the shadow size for the entity
-      
-		// generic spawn egg
-	    RenderingRegistry.registerEntityRenderingHandler(EntityItemWildAnimalsEgg.class, new RenderItem());
 
         // Big cats
 	    RenderingRegistry.registerEntityRenderingHandler(
@@ -169,9 +166,9 @@ public class ClientProxy extends CommonProxy
     }
 	
     @Override
-    public void sendMessageToPlayer(ChatComponentText msg) 
+    public void sendMessageToPlayer(TextComponentString msg) 
     {
-        Minecraft.getMinecraft().player.addChatMessage(msg);
+        Minecraft.getMinecraft().player.sendMessage(msg);
     }
     
 	/*	 

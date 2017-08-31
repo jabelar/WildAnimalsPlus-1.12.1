@@ -18,13 +18,18 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat;
 
 import java.util.UUID;
 
+import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
+
+import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.util.MathHelper;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
 
 /**
  * @author jabelar
@@ -41,12 +46,12 @@ public class EntityAIFollowBigCat extends EntityAIBase
     public int decisionPeriod;
     public float maxDist;
     public float minDist;
-    public boolean avoidsWaterWhenNotFollowing;
+    public float avoidsWaterWhenNotFollowing;
 
     public EntityAIFollowBigCat(EntityBigCat parPet, double parFollowSpeedFactor, float parMinDist, float parMaxDist)
     {
         thePet = parPet;
-        theWorld = parPet.worldObj;
+        theWorld = parPet.world;
         followSpeedFactor = parFollowSpeedFactor;
         petPathfinder = parPet.getNavigator();
         minDist = parMinDist;
@@ -97,7 +102,7 @@ public class EntityAIFollowBigCat extends EntityAIBase
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     @Override
-    public boolean continueExecuting()
+    public boolean shouldContinueExecuting()
     {
         boolean continueExecuting = 
                 !petPathfinder.noPath() 
@@ -115,8 +120,8 @@ public class EntityAIFollowBigCat extends EntityAIBase
     public void startExecuting()
     {
         decisionPeriod = 0;
-        avoidsWaterWhenNotFollowing = thePet.getNavigator().getAvoidsWater();
-        thePet.getNavigator().setAvoidsWater(false);
+        avoidsWaterWhenNotFollowing = thePet.getPathPriority(PathNodeType.WATER);
+        thePet.setPathPriority(PathNodeType.WATER, 0.0F);
     }
 
     /**
@@ -127,7 +132,7 @@ public class EntityAIFollowBigCat extends EntityAIBase
     {
         theOwner = null;
         petPathfinder.clearPathEntity();
-        thePet.getNavigator().setAvoidsWater(avoidsWaterWhenNotFollowing);
+        thePet.setPathPriority(PathNodeType.WATER, avoidsWaterWhenNotFollowing);
     }
 
     /**
@@ -150,15 +155,15 @@ public class EntityAIFollowBigCat extends EntityAIBase
                     {
                         if (thePet.getDistanceSqToEntity(theOwner) >= 144.0D)
                         {
-                            int i = MathHelper.floor_double(theOwner.posX) - 2;
-                            int j = MathHelper.floor_double(theOwner.posZ) - 2;
-                            int k = MathHelper.floor_double(theOwner.boundingBox.minY);
+                            int i = MathHelper.floor(theOwner.posX) - 2;
+                            int j = MathHelper.floor(theOwner.posZ) - 2;
+                            int k = MathHelper.floor(theOwner.getEntityBoundingBox().minY);
 
                             for (int l = 0; l <= 4; ++l)
                             {
                                 for (int i1 = 0; i1 <= 4; ++i1)
                                 {
-                                    if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && World.doesBlockHaveSolidTopSurface(theWorld, i + l, k - 1, j + i1) && !theWorld.getBlock(i + l, k, j + i1).isNormalCube() && !theWorld.getBlock(i + l, k + 1, j + i1).isNormalCube())
+                                    if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && isTeleportFriendlyBlock(i, j, k, l, i1))
                                     {
                                         thePet.setLocationAndAngles(i + l + 0.5F, k, j + i1 + 0.5F, thePet.rotationYaw, thePet.rotationPitch);
                                         petPathfinder.clearPathEntity();
@@ -171,5 +176,12 @@ public class EntityAIFollowBigCat extends EntityAIBase
                 }
             }
         }
+    }
+    
+    protected boolean isTeleportFriendlyBlock(int x, int p_192381_2_, int y, int p_192381_4_, int p_192381_5_)
+    {
+        BlockPos blockpos = new BlockPos(x + p_192381_4_, y - 1, p_192381_2_ + p_192381_5_);
+        IBlockState iblockstate = this.world.getBlockState(blockpos);
+        return iblockstate.getBlockFaceShape(this.world, blockpos, EnumFacing.DOWN) == BlockFaceShape.SOLID && iblockstate.canEntitySpawn(this.tameable) && this.world.isAirBlock(blockpos.up()) && this.world.isAirBlock(blockpos.up(2));
     }
 }

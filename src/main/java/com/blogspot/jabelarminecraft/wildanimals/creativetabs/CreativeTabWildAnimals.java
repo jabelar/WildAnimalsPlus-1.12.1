@@ -17,9 +17,9 @@
 package com.blogspot.jabelarminecraft.wildanimals.creativetabs;
 
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.Item;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class CreativeTabWildAnimals extends CreativeTabs 
 {
@@ -30,7 +30,7 @@ public class CreativeTabWildAnimals extends CreativeTabs
 	
 	@Override
 	@SideOnly(Side.CLIENT)
-	public Item getTabIconItem()
+	public ItemStack getTabIconItem()
 	{
 		return null; // TODO return proper icon
 	}

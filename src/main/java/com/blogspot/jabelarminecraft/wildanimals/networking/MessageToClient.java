@@ -16,14 +16,13 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.networking;
 
-import io.netty.buffer.ByteBuf;
-
 import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import io.netty.buffer.ByteBuf;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * @author jabelar
@@ -64,12 +63,12 @@ public class MessageToClient implements IMessage
 
     public static class Handler implements IMessageHandler<MessageToClient, IMessage> 
     {
-        
-        @Override
-        public IMessage onMessage(MessageToClient message, MessageContext ctx) 
-        {
+ 		@Override
+		public IMessage onMessage(MessageToClient message, MessageContext ctx) 
+		{
             System.out.println(String.format("Received %s from %s", message.text, WildAnimals.proxy.getPlayerEntityFromContext(ctx).getDisplayName()));
-            return null; // no response in this case
-        }
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }

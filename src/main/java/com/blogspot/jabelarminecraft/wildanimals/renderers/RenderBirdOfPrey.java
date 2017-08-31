@@ -16,16 +16,15 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.renderers;
 
+import org.lwjgl.opengl.GL11;
+
+import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;
 
 public class RenderBirdOfPrey extends RenderLiving
 {
@@ -82,8 +81,8 @@ public class RenderBirdOfPrey extends RenderLiving
         if (parRenderPass == 1 && parEntityBirdOfPrey.isTamed())
         {
             bindTexture(legBandTexture);
-            int legBandColor = parEntityBirdOfPrey.getLegBandColor();
-            GL11.glColor3f(EntitySheep.fleeceColorTable[legBandColor][0], EntitySheep.fleeceColorTable[legBandColor][1], EntitySheep.fleeceColorTable[legBandColor][2]);
+            float[] rgb = parEntityBirdOfPrey.getLegBandColor().getColorComponentValues();
+            GL11.glColor3f(rgb[0], rgb[1], rgb[2]);
             return 1;
         }
         else

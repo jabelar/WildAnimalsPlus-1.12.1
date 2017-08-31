@@ -16,11 +16,11 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey;
 
-import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.util.Vec3;
-
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * @author jabelar
@@ -101,7 +101,7 @@ public class ProcessStateBirdOfPrey
         updatePitch(0.0F);
         if (theBird.getAttackTarget() != null)
         {
-            updateYaw(Utilities.getYawFromVec(Vec3.createVectorHelper(
+            updateYaw(Utilities.getYawFromVec(new Vec3d(
                     theBird.getAttackTarget().posX - theBird.posX, 
                     theBird.getAttackTarget().posY - theBird.posY, 
                     theBird.getAttackTarget().posZ - theBird.posZ)));
@@ -178,7 +178,7 @@ public class ProcessStateBirdOfPrey
         {
             // turn towards owner
             // got the dot product idea from https://github.com/chraft/c-raft/wiki/Vectors,-Location,-Yaw-and-Pitch-in-C%23raft
-            Vec3 vecToOwner = Vec3.createVectorHelper(
+            Vec3d vecToOwner = new Vec3d(
                     theBird.getOwner().posX - theBird.posX, 
                     0, 
                     theBird.getOwner().posZ - theBird.posZ).normalize();
@@ -225,7 +225,7 @@ public class ProcessStateBirdOfPrey
             double ticksToHitTarget = (theBird.posY - theBird.getAttackTarget().posY) / Math.abs(theBird.motionY);
             theBird.motionX = (theBird.getAttackTarget().posX - theBird.posX) / ticksToHitTarget;
             theBird.motionZ = (theBird.getAttackTarget().posZ - theBird.posZ) / ticksToHitTarget;
-            updatePitch(Utilities.getPitchFromVec(Vec3.createVectorHelper(
+            updatePitch(Utilities.getPitchFromVec(new Vec3d(
                     theBird.motionX, 
                     theBird.motionY,
                     theBird.motionZ)));
@@ -235,8 +235,8 @@ public class ProcessStateBirdOfPrey
     
     public void moveForward(double parSpeedFactor)
     {
-        theBird.motionX = theBird.getLookVec().xCoord * parSpeedFactor * theBird.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
-        theBird.motionZ = theBird.getLookVec().zCoord * parSpeedFactor * theBird.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue();
+        theBird.motionX = theBird.getLookVec().x * parSpeedFactor * theBird.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
+        theBird.motionZ = theBird.getLookVec().z * parSpeedFactor * theBird.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
     }
     
     protected void stopMoving()

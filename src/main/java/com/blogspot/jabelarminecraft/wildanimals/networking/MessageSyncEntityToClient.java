@@ -16,17 +16,16 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.networking;
 
-import io.netty.buffer.ByteBuf;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-
 import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import io.netty.buffer.ByteBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * @author jabelar
@@ -70,12 +69,11 @@ public class MessageSyncEntityToClient implements IMessage
 
     public static class Handler implements IMessageHandler<MessageSyncEntityToClient, IMessage> 
     {
-        
-        @Override
-        public IMessage onMessage(MessageSyncEntityToClient message, MessageContext ctx) 
-        {
+		@Override
+		public IMessage onMessage(MessageSyncEntityToClient message, MessageContext ctx)
+		{
         	EntityPlayer thePlayer = WildAnimals.proxy.getPlayerEntityFromContext(ctx);
-        	IModEntity theEntity = (IModEntity)thePlayer.worldObj.getEntityByID(message.entityId);
+        	IModEntity theEntity = (IModEntity)thePlayer.world.getEntityByID(message.entityId);
         	if (theEntity != null)
         	{
         		theEntity.setSyncDataCompound(message.entitySyncDataCompound);
@@ -87,7 +85,7 @@ public class MessageSyncEntityToClient implements IMessage
 //        		// DEBUG
 //        		System.out.println("Can't find entity with ID = "+message.entityId+" on client");
         	}
-        	return null; // no response in this case
-        }
+			return null;
+		}
     }
 }

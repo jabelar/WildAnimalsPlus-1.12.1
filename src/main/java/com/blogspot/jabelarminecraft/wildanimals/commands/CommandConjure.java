@@ -19,55 +19,51 @@ package com.blogspot.jabelarminecraft.wildanimals.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.command.ICommand;
+import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
+
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.util.ChatComponentText;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
-
-public class CommandConjure implements ICommand
+public class CommandConjure extends CommandBase
 {
-	private final List aliases;
+	private final List<String> aliases;
 	
-	protected String fullEntityName;
+	protected ResourceLocation fullEntityName;
 	protected Entity conjuredEntity;
 	
 	public CommandConjure()
 	{
-		    aliases = new ArrayList();
+		    aliases = new ArrayList<String>();
 		    aliases.add("conjure");
 		    aliases.add("conj");
 	}
-	
-	@Override
-	public int compareTo(Object o) 
-	{
-		return 0;
-	}
 
 	@Override
-	public String getCommandName() 
+	public String getName() 
 	{
 		return "conjure";
 	}
 
 	@Override
-	public String getCommandUsage(ICommandSender var1) 
+	public String getUsage(ICommandSender var1) 
 	{
 		return "conjure <text>";
 	}
 
 	@Override
-	public List getCommandAliases() 
+	public List getAliases() 
 	{
 		return this.aliases;
 	}
 
 	@Override
-	public void processCommand(ICommandSender sender, String[] argString) 
+	public void execute(MinecraftServer server, ICommandSender sender, String[] argString) 
 	{
 		World world = sender.getEntityWorld();
 		
@@ -81,42 +77,24 @@ public class CommandConjure implements ICommand
 
 			if(argString.length == 0)
 		    {
-		    	sender.addChatMessage(new ChatComponentText("Invalid argument"));
+		    	sender.sendMessage(new TextComponentString("Invalid argument"));
 		    	return;
 		    }
 			
-		    sender.addChatMessage(new ChatComponentText("Conjuring: [" + argString[0] + "]"));
+		    sender.sendMessage(new TextComponentString("Conjuring: [" + argString[0] + "]"));
 		    
-		    fullEntityName = WildAnimals.MODID+"."+argString[0];
-		    if (EntityList.stringToClassMapping.containsKey(fullEntityName))
+		    fullEntityName = new ResourceLocation(WildAnimals.MODID+"."+argString[0]);
+		    if (EntityList.getClass(fullEntityName) != null)
 		    {
-	            conjuredEntity = EntityList.createEntityByName(fullEntityName, world);
-	    		conjuredEntity.setPosition(sender.getCommandSenderPosition().posX, sender.getCommandSenderPosition().posY, 
-	    				sender.getCommandSenderPosition().posZ);
-	    		world.spawnEntityInWorld(conjuredEntity);
+	            conjuredEntity = EntityList.createEntityByIDFromName(fullEntityName, world);
+	    		conjuredEntity.setPosition(sender.getCommandSenderEntity().posX, sender.getCommandSenderEntity().posY, 
+	    				sender.getCommandSenderEntity().posZ);
+	    		world.spawnEntity(conjuredEntity);
 		    }
 		    else
 		    {
-		    	sender.addChatMessage(new ChatComponentText("Entity not found"));
+		    	sender.sendMessage(new TextComponentString("Entity not found"));
 		    }  
 		}
 	}
-
-	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender var1) {
-		return true;
-	}
-
-	@Override
-	public List addTabCompletionOptions(ICommandSender var1, String[] var2) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isUsernameIndex(String[] var1, int var2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
 }

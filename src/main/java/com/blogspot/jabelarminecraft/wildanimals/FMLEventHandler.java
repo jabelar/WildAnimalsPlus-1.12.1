@@ -18,10 +18,10 @@ package com.blogspot.jabelarminecraft.wildanimals;
 
 import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
 
-import cpw.mods.fml.client.event.ConfigChangedEvent;
-import cpw.mods.fml.common.eventhandler.EventPriority;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import cpw.mods.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 public class FMLEventHandler 
 {
@@ -60,7 +60,7 @@ public class FMLEventHandler
 	 @SubscribeEvent
 	 public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) 
 	 {
-	     if(event.modID.equals(WildAnimals.MODID))
+	     if(event.getModID().equals(WildAnimals.MODID))
 	     {
 	    	 WildAnimals.config.save();
 	         CommonProxy.syncConfig();
@@ -104,7 +104,7 @@ public class FMLEventHandler
 	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 	public void onEvent(PlayerLoggedInEvent event)
 	{
-		if (event.player.getDisplayName()=="MistMaestro")
+		if (event.player.getDisplayName().getUnformattedComponentText()=="MistMaestro")
 		{
 			// DEBUG
 			System.out.println("Welcome Master!");

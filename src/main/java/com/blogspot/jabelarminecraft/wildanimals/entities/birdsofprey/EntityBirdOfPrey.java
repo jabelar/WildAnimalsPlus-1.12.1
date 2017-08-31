@@ -18,7 +18,14 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey;
 
 import java.util.UUID;
 
-import net.minecraft.block.BlockColored;
+import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.AIStates;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessStateBirdOfPrey;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.UpdateStateBirdOfPrey;
+import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
+import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
@@ -27,23 +34,21 @@ import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.scoreboard.Team;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.AIStates;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessStateBirdOfPrey;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.UpdateStateBirdOfPrey;
-import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 {
@@ -53,10 +58,10 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     public UpdateStateBirdOfPrey aiUpdateState;
     
     // use fields for sounds to allow easy changes in child classes
-    protected String soundHurt = "wildanimals:mob.birdsofprey.death";
-    protected String soundDeath = "wildanimals:mob.birdsofprey.death";
-    protected String soundCall = "wildanimals:mob.birdsofprey.cry";
-    protected String soundFlapping = "wildanimals:mob.birdsofprey.flapping";
+    protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.death"));
+    protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.death"));
+    protected SoundEvent soundCall = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.cry"));
+    protected SoundEvent soundFlapping = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.flapping"));
     
     // to ensure that multiple entities don't get synced
     // create a random factor per entity
@@ -89,7 +94,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         syncDataCompound.setFloat("scaleFactor", 1.0F);
         syncDataCompound.setInteger("state", AIStates.STATE_TAKING_OFF);
         syncDataCompound.setInteger("stateCounter", 0);
-        syncDataCompound.setBoolean("soarClockwise", worldObj.rand.nextBoolean());
+        syncDataCompound.setBoolean("soarClockwise", world.rand.nextBoolean());
         syncDataCompound.setDouble("soarHeight", 126-randFactor);
         syncDataCompound.setInteger("stateCounter", 0);
         syncDataCompound.setDouble("anchorX", posX);
@@ -110,8 +115,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public void setupAI() 
     {
-        getNavigator().setAvoidsWater(true);
-        clearAITasks(); // clear any tasks assigned in super classes
+    	setPathPriority(PathNodeType.WATER, 0.0F);
+    	clearAITasks(); // clear any tasks assigned in super classes
         aiHelper = new ProcessStateBirdOfPrey(this);
         aiUpdateState = new UpdateStateBirdOfPrey(this);
     }
@@ -121,28 +126,19 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.5D);
-        getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0D);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.5D);
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
         // need to register any additional attributes
-        getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
-        getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(3.0D);
+        getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
     }
 
-    /**
-     * Returns true if the newer Entity AI code should be run
-     */
-    @Override
-    public boolean isAIEnabled()
-    {
-        return true;
-    }
 
     /**
      * This process the current state.
      */
-    @Override
-    protected void updateAITick()
-    {        
+    protected void syncOwner()
+    { 
         if (ticksExisted == 10)
         {
             // note that the setTamed also forces a full NBT sync to client
@@ -173,12 +169,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
     
     @Override
-    public AxisAlignedBB getBoundingBox()
-    {
-        return AxisAlignedBB.getBoundingBox(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, boundingBox.maxY, boundingBox.maxZ);
-    }
-    
-    @Override
     @SideOnly(Side.CLIENT)
     public boolean isInRangeToRenderDist(double parDistance)
     {
@@ -199,9 +189,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
      * Called when the mob is falling. Calculates and applies fall damage.
      */
     @Override
-    protected void fall(float p_70069_1_) 
+	public void fall(float parDistance, float parDamageMultiplier) 
     {
-        
+        // do nothing since bird cannot fall
     }
 
     /**
@@ -209,9 +199,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
      * and deal fall damage if landing on the ground.  Args: distanceFallenThisTick, onGround
      */
     @Override
-    protected void updateFallState(double p_70064_1_, boolean p_70064_3_) 
+    protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)
     {
-        
+    	// do nothing since birds cannot fall
     }
 
     /**
@@ -224,7 +214,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
     @Override
-    public boolean allowLeashing()
+    public boolean canBeLeashedTo(EntityPlayer parPlayer)
     {
         return false;
     }
@@ -238,13 +228,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public Item getDropItem()
     {
-        return Items.feather;
+        return Items.FEATHER;
     }
     
     @Override
     protected void dropFewItems(boolean parRecentlyHitByPlayer, int parLootLevel)
     {
-        dropItem(Items.feather, parLootLevel+1);
+        dropItem(Items.FEATHER, parLootLevel+1);
         return;
     }
     
@@ -289,7 +279,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
      * Returns the sound this mob makes while it's alive.
      */
     @Override
-    protected String getLivingSound()
+    protected SoundEvent getAmbientSound()
     {
         if (getState() == AIStates.STATE_TAKING_OFF || getState() == AIStates.STATE_TRAVELLING)
         {
@@ -301,23 +291,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         }
     }
 
-    /**
-     * Returns the sound this mob makes when it is hurt.
-     */
-    @Override
-    protected String getHurtSound()
-    {
-        return soundHurt; 
-    }
 
-    /**
-     * Returns the sound this mob makes on death.
-     */
-    @Override
-    protected String getDeathSound()
-    {
-        return soundDeath;
-    }
 
     /**
      * Returns the volume for the sounds this mob makes.
@@ -336,6 +310,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
+        syncOwner();
     }
 
     /**
@@ -352,19 +327,19 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public boolean attackEntityFrom(DamageSource parDamageSource, float parDamageAmount)
     {
-        if (isEntityInvulnerable())
+        if (this.getIsInvulnerable())
         {
             return false;
         }
         else
         {
             boolean result = super.attackEntityFrom(parDamageSource, parDamageAmount);
-            if (parDamageSource.getEntity() instanceof EntityLivingBase)
+            if (parDamageSource.getTrueSource() instanceof EntityLivingBase)
             {
-                setRevengeTarget((EntityLivingBase) parDamageSource.getEntity());
+                setRevengeTarget((EntityLivingBase) parDamageSource.getTrueSource());
             }
             // DEBUG
-            System.out.println("Eagle has been attacked by "+parDamageSource.getEntity()+" with source = "+parDamageSource.getSourceOfDamage()+" and revenge target set to "+getAITarget());
+            System.out.println("Eagle has been attacked by "+parDamageSource.getImmediateSource()+" with source = "+parDamageSource.getTrueSource()+" and revenge target set to "+getRevengeTarget());
             return result;
         }
     }
@@ -372,14 +347,14 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public boolean attackEntityAsMob(Entity parEntity)
     {
-        return parEntity.attackEntityFrom(DamageSource.causeMobDamage(this), (float)getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
+        return parEntity.attackEntityFrom(DamageSource.causeMobDamage(this), (float)getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
     }
     
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
     @Override
-    public boolean interact(EntityPlayer parPlayer)
+    public boolean processInteract(EntityPlayer parPlayer, EnumHand parHand)
     {
         
         // DEBUG
@@ -390,9 +365,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         {
             if (itemInHand != null)
             {
-                if (itemInHand.getItem() == Items.dye)
+                if (itemInHand.getItem() == Items.DYE)
                 {
-                    int i = BlockColored.func_150032_b(itemInHand.getMetadata());
+                    EnumDyeColor i = EnumDyeColor.byMetadata(itemInHand.getMetadata());
 
                     if (i != getLegBandColor())
                     {
@@ -400,7 +375,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-                            --itemInHand.stackSize;
+                            itemInHand.setCount(itemInHand.getCount()-1);
                         }
 
                         return true;
@@ -424,7 +399,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
                     System.out.println("It likes the raw salmon");
                     if (!parPlayer.capabilities.isCreativeMode)
                     {
-                        --itemInHand.stackSize;
+                        itemInHand.setCount(itemInHand.getCount()-1);
                     }
                 }
                 else
@@ -434,13 +409,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             }
         }
 
-        return super.interact(parPlayer);
+        return super.processInteract(parPlayer, parHand);
     }
     
     public boolean isTamingFood(ItemStack parItemStack)
     {
         // check for raw salmon
-        return (parItemStack.getItem() == Items.fish && parItemStack.getMetadata() == 1);
+        return (parItemStack.getItem() == Items.FISH && parItemStack.getMetadata() == 1);
     }
     
     /**
@@ -487,24 +462,24 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
     @Override
-    public boolean isOnSameTeam(EntityLivingBase parEntityLivingBase)
+    public boolean isOnSameTeam(Entity parEntity)
     {
         if (getOwner() != null)
         {
             EntityLivingBase entityOwner = getOwner();
 
-            if (parEntityLivingBase == entityOwner)
+            if (parEntity == entityOwner)
             {
                 return true;
             }
 
             if (entityOwner != null)
             {
-                return entityOwner.isOnSameTeam(parEntityLivingBase);
+                return entityOwner.isOnSameTeam(parEntity);
             }
         }
 
-        return super.isOnSameTeam(parEntityLivingBase);
+        return super.isOnSameTeam(parEntity);
     }
     
     /**
@@ -512,16 +487,16 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
      */
     protected void spawnTamingParticles(boolean shouldSpawnHearts)
     {
-        if (worldObj.isRemote)
+        if (world.isRemote)
         {
             return;
         }
         
-        String particleType = "heart";
+        EnumParticleTypes particleType = EnumParticleTypes.HEART;
 
         if (!shouldSpawnHearts)
         {
-            particleType = "smoke";
+            particleType = EnumParticleTypes.SMOKE_NORMAL;
         }
 
         for (int i = 0; i < 7; ++i)
@@ -529,7 +504,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             double d0 = rand.nextGaussian() * 0.02D;
             double d1 = rand.nextGaussian() * 0.02D;
             double d2 = rand.nextGaussian() * 0.02D;
-            worldObj.spawnParticle(particleType, posX + rand.nextFloat() * width * 2.0F - width, posY + 0.5D + rand.nextFloat() * height, posZ + rand.nextFloat() * width * 2.0F - width, d0, d1, d2);
+            world.spawnParticle(particleType, posX + rand.nextFloat() * width * 2.0F - width, posY + 0.5D + rand.nextFloat() * height, posZ + rand.nextFloat() * width * 2.0F - width, d0, d1, d2);
         }
     }
     
@@ -556,12 +531,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
     @Override
-    public void writeToNBT(NBTTagCompound parCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound parCompound)
     {
 //        // DEBUG
 //        System.out.println("Writing NBT");
         super.writeToNBT(parCompound);
         parCompound.setTag("extendedPropsJabelar", syncDataCompound);
+        return parCompound;
     }
 
     @Override
@@ -704,7 +680,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         {
             spawnTamingParticles(true);
             setAttackTarget(null);
-            getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(TAMED_HEALTH);
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
             setOwnerUUIDString(parNewOwner.getUniqueID().toString());
             return true;
         }
@@ -775,14 +751,14 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         preyArray = parPreyArray;
     }
 
-    public int getLegBandColor()
+    public EnumDyeColor getLegBandColor()
     {
-        return syncDataCompound.getByte("legBandColor");
+        return EnumDyeColor.byMetadata(syncDataCompound.getByte("legBandColor"));
     }
 
-    public void setLegBandColor(int parLegBandColor)
+    public void setLegBandColor(EnumDyeColor parLegBandColor)
     {
-        syncDataCompound.setByte("legBandColor", (byte) parLegBandColor);
+        syncDataCompound.setByte("legBandColor", (byte) parLegBandColor.getMetadata());
         
         // don't forget to sync client and server
         sendEntitySyncPacket();

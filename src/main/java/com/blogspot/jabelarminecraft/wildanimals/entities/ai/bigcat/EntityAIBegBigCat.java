@@ -16,13 +16,13 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat;
 
+import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
+
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
 
 public class EntityAIBegBigCat extends EntityAIBase
 {
@@ -35,7 +35,7 @@ public class EntityAIBegBigCat extends EntityAIBase
     public EntityAIBegBigCat(EntityBigCat par1EntityBigCat, float par2)
     {
         this.theBigCat = par1EntityBigCat;
-        this.worldObject = par1EntityBigCat.worldObj;
+        this.worldObject = par1EntityBigCat.world;
         this.minPlayerDistance = par2;
         this.setMutexBits(2);
     }
@@ -54,7 +54,7 @@ public class EntityAIBegBigCat extends EntityAIBase
      * Returns whether an in-progress EntityAIBase should continue executing
      */
     @Override
-	public boolean continueExecuting()
+	public boolean shouldContinueExecuting()
     {
         return !this.thePlayer.isEntityAlive() ? false : (this.theBigCat.getDistanceSqToEntity(this.thePlayer) > this.minPlayerDistance * this.minPlayerDistance ? false : this.field_75384_e > 0 && this.hasPlayerGotBoneInHand(this.thePlayer));
     }

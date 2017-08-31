@@ -16,14 +16,13 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.gui;
 
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraftforge.common.config.ConfigElement;
-import net.minecraftforge.common.config.Configuration;
-
 import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
 
-import cpw.mods.fml.client.config.GuiConfig;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.config.ConfigElement;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.config.GuiConfig;
  
 public class WildAnimalsConfigGUI extends GuiConfig 
 {
@@ -37,7 +36,7 @@ public class WildAnimalsConfigGUI extends GuiConfig
                  WildAnimals.MODID, 
                  false, 
                  true, 
-                 EnumChatFormatting.RED+"Changes Only Take Effect If You Completely Quit Minecraft Then Load World Again"
+                 TextFormatting.RED+"Changes Only Take Effect If You Completely Quit Minecraft Then Load World Again"
              );
          titleLine2 = GuiConfig.getAbridgedConfigPath(WildAnimals.config.toString());
     }

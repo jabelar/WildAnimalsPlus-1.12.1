@@ -19,6 +19,11 @@ package com.blogspot.jabelarminecraft.wildanimals.utilities;
 import java.util.List;
 import java.util.UUID;
 
+import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
+import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToClient;
+import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToServer;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -29,19 +34,13 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.util.BlockSnapshot;
-
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
-import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToClient;
-import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToServer;
 
 /**
  * @author jabelar
@@ -537,19 +536,19 @@ public class Utilities
 //        return returnMOP;
 //    }
 
-    public static float getYawFromVec(Vec3 parVec)
+    public static float getYawFromVec(Vec3d parVec)
     {
         // The coordinate system for Minecraft is a bit backwards as explained 
         // at https://github.com/chraft/c-raft/wiki/Vectors,-Location,-Yaw-and-Pitch-in-C%23raft
-        return (float) -Math.toDegrees(Math.atan2(parVec.xCoord, parVec.zCoord));
+        return (float) -Math.toDegrees(Math.atan2(parVec.x, parVec.z));
     }
     
-    public static float getPitchFromVec(Vec3 parVec)
+    public static float getPitchFromVec(Vec3d parVec)
     {
         // The coordinate system for Minecraft is a bit backwards as explained 
         // at https://github.com/chraft/c-raft/wiki/Vectors,-Location,-Yaw-and-Pitch-in-C%23raft
-        Vec3 theVec = parVec.normalize();
-        return (float) Math.toDegrees(Math.asin(theVec.yCoord));
+        Vec3d theVec = parVec.normalize();
+        return (float) Math.toDegrees(Math.asin(theVec.y));
     }
     
     /**

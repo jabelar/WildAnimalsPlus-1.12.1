@@ -33,10 +33,8 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityTiger;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityEagle;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityHawk;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityOwl;
-import com.blogspot.jabelarminecraft.wildanimals.entities.eggs.EntityWildAnimalsEgg;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityElephant;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
-import com.blogspot.jabelarminecraft.wildanimals.items.WildAnimalsMonsterPlacer;
 import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToClient;
 import com.blogspot.jabelarminecraft.wildanimals.networking.MessageToClient;
 import com.blogspot.jabelarminecraft.wildanimals.networking.MessageToServer;
@@ -44,11 +42,11 @@ import com.blogspot.jabelarminecraft.wildanimals.networking.MessageToServer;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Biomes;
-import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -61,7 +59,6 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class CommonProxy 
@@ -139,10 +136,10 @@ public class CommonProxy
     // register fluids
     public void registerFluids()
     {
-        // see tutorial at http://www.minecraftforge.net/wiki/Create_a_Fluid
-        Fluid testFluid = new Fluid("testfluid");
-        FluidRegistry.registerFluid(testFluid);
-        testFluid.setLuminosity(0).setDensity(1000).setViscosity(1000).setGaseous(false) ;
+//        // see tutorial at http://www.minecraftforge.net/wiki/Create_a_Fluid
+//        Fluid testFluid = new Fluid("testfluid", new ResourceLocation("testfluid"));
+//        FluidRegistry.registerFluid(testFluid);
+//        testFluid.setLuminosity(0).setDensity(1000).setViscosity(1000).setGaseous(false) ;
      }
     
     // register items
@@ -186,9 +183,6 @@ public class CommonProxy
     {    
          // DEBUG
         System.out.println("Registering entities");
-
-        // register generic spawn egg entity.  Make sure that the track changes flag is set true
-        registerModEntityFastTracking(EntityWildAnimalsEgg.class, "Spawn Egg");
         
         // uses configuration file to control whether each entity type is registered, to allow user customization
         
@@ -232,46 +226,41 @@ public class CommonProxy
         }
     }
      
-     public void registerModEntity(Class parEntityClass, String parEntityName)
+     public void registerModEntity(Class parClass, String parName)
      {
-            EntityRegistry.registerModEntity(parEntityClass, parEntityName, ++modEntityID, WildAnimals.instance, 80, 3, false);
+         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 3, false);
        	 // DEBUG
-       	 System.out.println("Registering mod entity "+parEntityName+" with ID ="+modEntityID);
+       	 System.out.println("Registering mod entity "+parName+" with ID ="+modEntityID);
      }
      
-     public void registerModEntityLongTracking(Class parEntityClass, String parEntityName)
+     public void registerModEntityLongTracking(Class parClass, String parName)
      {
-            EntityRegistry.registerModEntity(parEntityClass, parEntityName, ++modEntityID, WildAnimals.instance, 80000, 3, false);
+            EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80000, 3, false);
          // DEBUG
-         System.out.println("Registering mod entity "+parEntityName+" with ID ="+modEntityID);
+         System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }
 
-     public void registerModEntityWithEgg(Class parEntityClass, String parEntityName, int parEggColor, int parEggSpotsColor)
+     public void registerModEntityWithEgg(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
-            registerModEntity(parEntityClass, parEntityName);
-            registerSpawnEgg(parEntityName, parEggColor, parEggSpotsColor);
+         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 3, false, parEggColor, parEggSpotsColor);
+       	 // DEBUG
+       	 System.out.println("Registering mod entity "+parName+" with ID ="+modEntityID);
      }
 
-     public void registerModEntityWithEggLongTracking(Class parEntityClass, String parEntityName, int parEggColor, int parEggSpotsColor)
+     public void registerModEntityWithEggLongTracking(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
-            registerModEntityLongTracking(parEntityClass, parEntityName);
-            registerSpawnEgg(parEntityName, parEggColor, parEggSpotsColor);
+         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 3, false, parEggColor, parEggSpotsColor);
+       	 // DEBUG
+       	 System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }
 
-     // can't use vanilla spawn eggs with entities registered with modEntityID, so use custom eggs.
-     // name passed must match entity name string
-     public void registerSpawnEgg(String parSpawnName, int parEggColor, int parEggSpotsColor)
-     {
-       Item itemSpawnEgg = new WildAnimalsMonsterPlacer(parSpawnName, parEggColor, parEggSpotsColor).setUnlocalizedName("spawn_egg_"+parSpawnName.toLowerCase()).setTextureName("wildanimals:spawn_egg");
-       GameRegistry.registerItem(itemSpawnEgg, "spawnEgg"+parSpawnName);
-     }
      
      // for fast moving entities and projectiles need registration with tracking flag set true
-     public void registerModEntityFastTracking(Class parEntityClass, String parEntityName)
+     public void registerModEntityFastTracking(Class parClass, String parName)
      {
-            EntityRegistry.registerModEntity(parEntityClass, parEntityName, ++modEntityID, WildAnimals.instance, 80, 10, true);
+            EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 10, true);
           	 // DEBUG
-          	 System.out.println("Registering fast tracking mod entity "+parEntityName+" with ID ="+modEntityID);
+          	 System.out.println("Registering fast tracking mod entity "+parName+" with ID ="+modEntityID);
      }
           
     public void registerEntitySpawns()
@@ -510,13 +499,13 @@ public class CommonProxy
      */
     public EntityPlayer getPlayerEntityFromContext(MessageContext ctx) 
     {
-        return ctx.getServerHandler().playerEntity;
+        return ctx.getServerHandler().player;
     }
 
     /**
      * @param msg
      */
-    public void sendMessageToPlayer(ChatComponentText msg)
+    public void sendMessageToPlayer(TextComponentString msg)
     {
         // TODO Auto-generated method stub
         

@@ -16,12 +16,17 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 
+import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal.EntityAIPanicHerdAnimal;
+import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIFollowParent;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
@@ -33,18 +38,18 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.potion.Potion;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal.EntityAIHurtByTargetHerdAnimal;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal.EntityAIPanicHerdAnimal;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
 public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 {
@@ -53,6 +58,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     protected static final int REARING_TICKS_MAX = 20;
     
     protected boolean isHitWithoutResistance = false ;
+
+    protected SoundEvent ambientSound = new SoundEvent(new ResourceLocation("mob.cow.say"));
+    protected SoundEvent hurtSound = new SoundEvent(new ResourceLocation("mob.cow.say"));
+    protected SoundEvent deathSound = new SoundEvent(new ResourceLocation("mob.cow.say"));
+
     
     public EntityHerdAnimal(World par1World)
     {
@@ -78,20 +88,20 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     public void setupAI()
     {
-        getNavigator().setAvoidsWater(true);
+    	setPathPriority(PathNodeType.WATER, 0.0F);
         clearAITasks(); // clear any tasks assigned in super classes
         tasks.addTask(0, new EntityAISwimming(this));
         tasks.addTask(1, new EntityAIPanicHerdAnimal(this));
         // the leap and the collide together form an actual attack
         tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
-        tasks.addTask(3, new EntityAIAttackOnCollide(this, 1.0D, true));
+        tasks.addTask(3, new EntityAIAttackMelee(this, 1.0D, true));
         tasks.addTask(5, new EntityAIMate(this, 1.0D));
-        tasks.addTask(6, new EntityAITempt(this, 1.25D, Items.wheat, false));
+        tasks.addTask(6, new EntityAITempt(this, 1.25D, Items.WHEAT, false));
         tasks.addTask(7, new EntityAIFollowParent(this, 1.25D));
         tasks.addTask(8, new EntityAIWander(this, 1.0D));
         tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 6.0F));
         tasks.addTask(10, new EntityAILookIdle(this));
-        targetTasks.addTask(0, new EntityAIHurtByTargetHerdAnimal(this, true));         
+        targetTasks.addTask(0, new EntityAIHurtByTarget(this, true));         
     }
     
     // use clear tasks for subclasses then build up their ai task list specifically
@@ -102,55 +112,46 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         targetTasks.taskEntries.clear();
     }
 
-    /**
-     * Returns true if the newer Entity AI code should be run
-     */
-    @Override
-    public boolean isAIEnabled()
-    {
-        return true;
-    }
-
     // you don't have to call this as it is called automatically during entityLiving subclass creation
     @Override
     protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
         // standard attributes registered to EntityLivingBase
-        getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(10.0D);
-        getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.20000000298023224D);
-        getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(0.8D); // hard to knock back
-        getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(16.0D);
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.20000000298023224D);
+        getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.8D); // hard to knock back
+        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(16.0D);
         // need to register any additional attributes
-        getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
-        getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(4.0D);
+        getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
 
     /**
      * Returns the sound this mob makes while it's alive.
      */
     @Override
-    protected String getLivingSound()
+    protected SoundEvent getAmbientSound()
     {
-        return "mob.cow.say";
+        return ambientSound;
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
     @Override
-    protected String getHurtSound()
+    protected SoundEvent getHurtSound(DamageSource parDamageSource)
     {
-        return "mob.cow.hurt";
+        return hurtSound;
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
     @Override
-    protected String getDeathSound()
+    protected SoundEvent getDeathSound()
     {
-        return "mob.cow.hurt";
+        return deathSound;
     }
 
 //    @Override
@@ -177,7 +178,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected Item getDropItem()
     {
-        return Items.leather;
+        return Items.LEATHER;
     }
 
     /**
@@ -192,7 +193,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
         for (k = 0; k < j; ++k)
         {
-            dropItem(Items.leather, 1);
+            dropItem(Items.LEATHER, 1);
         }
 
         j = rand.nextInt(3) + 1 + rand.nextInt(1 + par2);
@@ -201,11 +202,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         {
             if (isBurning())
             {
-                dropItem(Items.cooked_beef, 1);
+                dropItem(Items.COOKED_BEEF, 1);
             }
             else
             {
-                dropItem(Items.beef, 1);
+                dropItem(Items.BEEF, 1);
             }
         }
     }
@@ -214,33 +215,37 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
     @Override
-    public boolean interact(EntityPlayer par1EntityPlayer)
-    {      
-        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+    public boolean processInteract(EntityPlayer player, EnumHand hand)
+    {
+        ItemStack itemstack = player.getHeldItem(hand);
 
-        if (itemstack != null && itemstack.getItem() == Items.bucket && !par1EntityPlayer.capabilities.isCreativeMode)
+        if (itemstack.getItem() == Items.BUCKET && !player.capabilities.isCreativeMode && !this.isChild())
         {
-            if (itemstack.stackSize-- == 1)
+            player.playSound(SoundEvents.ENTITY_COW_MILK, 1.0F, 1.0F);
+            itemstack.shrink(1);
+
+            if (itemstack.isEmpty())
             {
-                par1EntityPlayer.inventory.setInventorySlotContents(par1EntityPlayer.inventory.currentItem, new ItemStack(Items.milk_bucket));
+                player.setHeldItem(hand, new ItemStack(Items.MILK_BUCKET));
             }
-            else if (!par1EntityPlayer.inventory.addItemStackToInventory(new ItemStack(Items.milk_bucket)))
+            else if (!player.inventory.addItemStackToInventory(new ItemStack(Items.MILK_BUCKET)))
             {
-                par1EntityPlayer.dropPlayerItemWithRandomChoice(new ItemStack(Items.milk_bucket, 1, 0), false);
+                player.dropItem(new ItemStack(Items.MILK_BUCKET), false);
             }
 
             return true;
         }
         else
         {
-            return super.interact(par1EntityPlayer);
+            return super.processInteract(player, hand);
         }
     }
+
 
     @Override
     public EntityHerdAnimal createChild(EntityAgeable par1EntityAgeable)
     {
-        return new EntityHerdAnimal(worldObj);
+        return new EntityHerdAnimal(world);
     }
     
     /**
@@ -252,38 +257,32 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         // allow event cancellation
         if (ForgeHooks.onLivingAttack(this, par1DamageSource, parDamageAmount)) return false;
         
-        if (isEntityInvulnerable())
+        if (isEntityInvulnerable(par1DamageSource))
         {
             return false; // not really "attacked" if invulnerable
         }
         else
         {
-            if (worldObj.isRemote) // don't process attack on client side
+            if (world.isRemote) // don't process attack on client side
             {
                 return false; 
             }
             else // on server side so process attack
             {
-                entityToAttack = null;
+                setAttackTarget(null);
                 resetInLove();;
-                entityAge = 0;
+                growingAge = 0;
 
                 if (getHealth() <= 0.0F) // not really "attacked" if already dead
                 {
                     return false;
                 }
-                else if (par1DamageSource.isFireDamage() && isPotionActive(Potion.fireResistance)) // fire resistance negates fire attack
+                else if (par1DamageSource.isFireDamage() && isPotionActive(MobEffects.FIRE_RESISTANCE)) // fire resistance negates fire attack
                 {
                     return false;
                 }
                 else
                 {
-                    // process case of falling anvil
-                    if ((par1DamageSource == DamageSource.anvil || par1DamageSource == DamageSource.fallingBlock) && getEquipmentInSlot(4) != null)
-                    {
-                        getEquipmentInSlot(4).damageItem((int)(parDamageAmount * 4.0F + rand.nextFloat() * parDamageAmount * 2.0F), this);
-                        parDamageAmount *= 0.75F;
-                    }
 
                     limbSwingAmount = 1.5F;
                     isHitWithoutResistance = true;
@@ -304,7 +303,6 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
                     else // no resistance so normal hit
                     {
                         lastDamage = parDamageAmount;
-                        prevHealth = getHealth();
                         hurtResistantTime = maxHurtResistantTime; // start the resistance period
                         damageEntity(par1DamageSource, parDamageAmount);
                         hurtTime = maxHurtTime = 10;
@@ -313,7 +311,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
                     // process based on what is attacking
                     attackedAtYaw = 0.0F;
-                    Entity entity = par1DamageSource.getEntity();
+                    Entity entity = par1DamageSource.getTrueSource();
                     if (entity != null)
                     {
                         if (entity instanceof EntityLivingBase) // set revenge on any living entity that attacks
@@ -322,7 +320,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
                             System.out.println("Setting revenge target = "+entity.getClass().getSimpleName());
                             setRevengeTarget((EntityLivingBase)entity);
                             // DEBUG
-                            System.out.println("Attack target = "+this.getAITarget().getClass().getSimpleName());
+                            System.out.println("Attack target = "+this.getAttackTarget().getClass().getSimpleName());
                         }
 
                         if (entity instanceof EntityPlayer) // identify attacking player or wolf with kill time determination
@@ -344,10 +342,10 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
                     if (isHitWithoutResistance)
                     {
-                        worldObj.setEntityState(this, (byte)2);
+                        world.setEntityState(this, (byte)2);
 
                         // process knockback
-                        if (par1DamageSource != DamageSource.drown)
+                        if (par1DamageSource != DamageSource.DROWN)
                         {
                             setBeenAttacked(); // checks against knockback resistance, really should be merged into knockback() method
                         }
@@ -373,7 +371,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
                     // play sounds for hurt or death
                     // isHitWithoutResistance check helps ensure sound is played once and has time to complete
-                    String s;
+                    SoundEvent s;
 
                     if (getHealth() <= 0.0F) // dead
                     {
@@ -388,7 +386,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
                     }
                     else // hurt
                     {
-                        s = getHurtSound();
+                        s = getHurtSound(par1DamageSource);
 
                         if (isHitWithoutResistance && s != null)
                         {
@@ -405,7 +403,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     public boolean attackEntityAsMob(Entity par1Entity)
     {
-        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.attackDamage).getBaseValue());
+        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue());
     }
 
     // *****************************************************
@@ -415,7 +413,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         
     public void setRearing(Boolean parSetRearing)
     {
-        if (parSetRearing && getAITarget()==null) // don't rear if already has target
+        if (parSetRearing && getAttackTarget()==null) // don't rear if already has target
         {
             setRearingCounter(REARING_TICKS_MAX);
             syncDataCompound.setBoolean("isRearing", true);

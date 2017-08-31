@@ -16,20 +16,20 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.renderers;
 
+import org.lwjgl.opengl.GL11;
+
+import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-import org.lwjgl.opengl.GL11;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+@SuppressWarnings("rawtypes")
 @SideOnly(Side.CLIENT)
 public class RenderBigCat extends RenderLiving
 {

@@ -16,12 +16,15 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.serpents;
 
+import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+
 import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
@@ -42,11 +45,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
 public class EntitySerpent extends EntityAnimal implements IModEntity
 {
@@ -55,20 +59,20 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	// good to have instances of AI so task list can be modified, including in sub-classes
     protected EntityAIBase aiSwimming = new EntityAISwimming(this);
     protected EntityAIBase aiLeapAtTarget = new EntityAILeapAtTarget(this, 0.4F);
-    protected EntityAIBase aiAttackOnCollide = new EntityAIAttackOnCollide(this, 1.0D, true);
+    protected EntityAIBase aiAttackOnCollide = new EntityAIAttackMelee(this, 1.0D, true);
     protected EntityAIBase aiMate = new EntityAIMate(this, 1.0D);
     protected EntityAIBase aiWander = new EntityAIWander(this, 1.0D);
     protected EntityAIBase aiWatchClosest = new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F);
     protected EntityAIBase aiLookIdle = new EntityAILookIdle(this);
     protected EntityAIBase aiHurtByTarget = new EntityAIHurtByTarget(this, true);
     protected EntityAIBase aiPanic = new EntityAIPanic(this, 2.0D);
-	protected final EntityAIBase aiTargetChicken = new EntityAINearestAttackableTarget(this, EntityChicken.class, 200, false);
+	protected final EntityAIBase aiTargetChicken = new EntityAINearestAttackableTarget(this, EntityChicken.class, true, true);
 	private float field_70926_e;
 	
 	// use fields for sounds to allow easy changes in child classes
-	protected String soundHurt = "wildanimals:mob.serpent.death";
-	protected String soundDeath = "wildanimals:mob.serpent.death";
-	protected String soundCall = "wildanimals:mob.serpent.hiss";
+	protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
+	protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
+	protected SoundEvent soundCall = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.hiss"));
 
 	public EntitySerpent(World par1World)
 	{
@@ -94,7 +98,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	@Override
 	public void setupAI() 
 	{
-        getNavigator().setAvoidsWater(true);
+    	setPathPriority(PathNodeType.WATER, 0.0F);
         clearAITasks(); // clear any tasks assigned in super classes
         tasks.addTask(1, aiSwimming);
         tasks.addTask(2, aiPanic);
@@ -113,17 +117,8 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	protected void applyEntityAttributes()
     {
         super.applyEntityAttributes();
-        getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.2D);
-        getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0D);
-    }
-
-    /**
-     * Returns true if the newer Entity AI code should be run
-     */
-    @Override
-	public boolean isAIEnabled()
-    {
-        return true;
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
     }
 
     /**
@@ -184,7 +179,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
      * Returns the sound this mob makes while it's alive.
      */
     @Override
-	protected String getLivingSound()
+	protected SoundEvent getAmbientSound()
     {
         return soundCall;
     }
@@ -193,7 +188,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
      * Returns the sound this mob makes when it is hurt.
      */
     @Override
-	protected String getHurtSound()
+	protected SoundEvent getHurtSound(DamageSource parSource)
     {
         return soundHurt; 
     }
@@ -202,7 +197,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
      * Returns the sound this mob makes on death.
      */
     @Override
-	protected String getDeathSound()
+	protected SoundEvent getDeathSound()
     {
         return soundDeath;
     }
@@ -233,47 +228,18 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     }
 
     /**
-     * Called to update the entity's position/logic.
-     */
-    @Override
-	public void onUpdate()
-    {
-        super.onUpdate();
-        if (func_70922_bv())
-        {
-            field_70926_e += (1.0F - field_70926_e) * 0.4F;
-        }
-        else
-        {
-            field_70926_e += (0.0F - field_70926_e) * 0.4F;
-        }
-
-        if (func_70922_bv())
-        {
-            numTicksToChaseTarget = 10;
-        }
-
-        if (isWet())
-        {
-        	// can do special things if in water (or in rain)
-        }
-        else 
-        {
-        }
-    }
-    /**
      * Called when the entity is attacked.
      */
     @Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
     {
-        if (isEntityInvulnerable())
+        if (getIsInvulnerable())
         {
             return false;
         }
         else
         {
-            Entity entity = par1DamageSource.getEntity();
+            Entity entity = par1DamageSource.getTrueSource();
 
 //            if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
 //            {
@@ -295,7 +261,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
     @Override
-	public boolean interact(EntityPlayer par1EntityPlayer)
+	public boolean processInteract(EntityPlayer par1EntityPlayer, EnumHand parHand)
     {
         
         // DEBUG
@@ -303,7 +269,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         
         par1EntityPlayer.inventory.getCurrentItem();
 
-        return super.interact(par1EntityPlayer);
+        return super.processInteract(par1EntityPlayer, parHand);
     }
 
     /**
@@ -332,7 +298,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         // DEBUG
         System.out.println("EntitySerpent createChild()");
  
-        EntitySerpent entitySerpent = new EntitySerpent(worldObj);
+        EntitySerpent entitySerpent = new EntitySerpent(world);
 
         // transfer any attributes from parent to child here, if desired (like owner for tamed entities)
 

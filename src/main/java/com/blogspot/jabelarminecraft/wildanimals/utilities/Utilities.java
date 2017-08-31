@@ -16,31 +16,20 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.utilities;
 
-import java.util.List;
-import java.util.UUID;
-
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
+import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToClient;
 import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToServer;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Blocks;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraftforge.common.util.BlockSnapshot;
 
 /**
  * @author jabelar
@@ -60,16 +49,16 @@ public class Utilities
 			return "";
 		}
 		String outputString = "";
-		EnumChatFormatting[] colorChar = 
+		TextFormatting[] colorChar = 
 			{
-			EnumChatFormatting.RED,
-			EnumChatFormatting.GOLD,
-			EnumChatFormatting.YELLOW,
-			EnumChatFormatting.GREEN,
-			EnumChatFormatting.AQUA,
-			EnumChatFormatting.BLUE,
-			EnumChatFormatting.LIGHT_PURPLE,
-			EnumChatFormatting.DARK_PURPLE
+			TextFormatting.RED,
+			TextFormatting.GOLD,
+			TextFormatting.YELLOW,
+			TextFormatting.GREEN,
+			TextFormatting.AQUA,
+			TextFormatting.BLUE,
+			TextFormatting.LIGHT_PURPLE,
+			TextFormatting.DARK_PURPLE
 			};
 		for (int i = 0; i < stringLength; i++)
 		{
@@ -78,9 +67,9 @@ public class Utilities
 		// return color to a common one after (most chat is white, but for other GUI might want black)
 		if (parReturnToBlack)
 		{
-			return outputString+EnumChatFormatting.BLACK;
+			return outputString+TextFormatting.BLACK;
 		}
-		return outputString+EnumChatFormatting.WHITE;
+		return outputString+TextFormatting.WHITE;
 	}
 
 	// by default return to white (for chat formatting).
@@ -101,27 +90,27 @@ public class Utilities
 		{
 			if ((i+parShineLocation+Minecraft.getSystemTime()/20)%88==0)
 			{
-				outputString = outputString+EnumChatFormatting.WHITE+parString.substring(i, i+1);				
+				outputString = outputString+TextFormatting.WHITE+parString.substring(i, i+1);				
 			}
 			else if ((i+parShineLocation+Minecraft.getSystemTime()/20)%88==1)
 			{
-				outputString = outputString+EnumChatFormatting.YELLOW+parString.substring(i, i+1);				
+				outputString = outputString+TextFormatting.YELLOW+parString.substring(i, i+1);				
 			}
 			else if ((i+parShineLocation+Minecraft.getSystemTime()/20)%88==87)
 			{
-				outputString = outputString+EnumChatFormatting.YELLOW+parString.substring(i, i+1);				
+				outputString = outputString+TextFormatting.YELLOW+parString.substring(i, i+1);				
 			}
 			else
 			{
-				outputString = outputString+EnumChatFormatting.GOLD+parString.substring(i, i+1);								
+				outputString = outputString+TextFormatting.GOLD+parString.substring(i, i+1);								
 			}
 		}
 		// return color to a common one after (most chat is white, but for other GUI might want black)
 		if (parReturnToBlack)
 		{
-			return outputString+EnumChatFormatting.BLACK;
+			return outputString+TextFormatting.BLACK;
 		}
-		return outputString+EnumChatFormatting.WHITE;
+		return outputString+TextFormatting.WHITE;
 	}
 
 	// by default return to white (for chat formatting).
@@ -228,193 +217,197 @@ public class Utilities
     public static void sendEntitySyncPacketToClient(IModEntity parEntity) 
     {
     	Entity theEntity = (Entity)parEntity;
-        if (!theEntity.worldObj.isRemote)
+        if (!theEntity.world.isRemote)
         {
 //        	// DEBUG
 //        	System.out.println("sendEntitySyncPacket from server");
-            WildAnimals.network.sendToAll(new MessageSyncEntityToClient(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
+            MainMod.network.sendToAll(new MessageSyncEntityToClient(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
         }
     }
 
     public static void sendEntitySyncPacketToServer(IModEntity parEntity) 
     {
     	Entity theEntity = (Entity)parEntity;
-        if (theEntity.worldObj.isRemote)
+        if (theEntity.world.isRemote)
         {
         	// DEBUG
         	System.out.println("sendEntitySyncPacket from client");
-            WildAnimals.network.sendToServer(new MessageSyncEntityToServer(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
+            MainMod.network.sendToServer(new MessageSyncEntityToServer(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
         }
     }
     
-    /**
-     * Sets the block ID and metadata at a given location. Args: X, Y, Z, new block ID, new metadata, flags. Flag 1 will
-     * cause a block update. Flag 2 will send the change to clients (you almost always want parChunk). Flag 4 prevents the
-     * block from being re-rendered, if parChunk is a client world. Flags can be added together.
-     */
-    public static boolean setBlockFast(World parWorld, int parX, int parY, int parZ, Block parBlock, int parMetaData, int parFlag)
-    {
-        // Make sure position is within valid range
-        if (parX >= -30000000 && parZ >= -30000000 && parX < 30000000 && parZ < 30000000)
-        {
-            if (parY < 0)
-            {
-                return false;
-            }
-            else if (parY >= 256)
-            {
-                return false;
-            }
-            else
-            {
-                Chunk chunk = parWorld.getChunkFromChunkCoords(parX >> 4, parZ >> 4);
-                Block existingBlock = null;
-                BlockSnapshot blockSnapshot = null;
-
-                if ((parFlag & 1) != 0)
-                {
-                    existingBlock = chunk.getBlock(parX & 15, parY, parZ & 15);
-                }
-
-                if (parWorld.captureBlockSnapshots && !parWorld.isRemote)
-                {
-                    blockSnapshot = BlockSnapshot.getBlockSnapshot(parWorld, parX, parY, parZ, parFlag);
-                    parWorld.capturedBlockSnapshots.add(blockSnapshot);
-                }
-
-                boolean setBlockSuceeded = setBlockInChunkFast(chunk, parX & 15, parY, parZ & 15, parBlock, parMetaData);
-
-                if (!setBlockSuceeded && blockSnapshot != null)
-                {
-                    parWorld.capturedBlockSnapshots.remove(blockSnapshot);
-                    blockSnapshot = null;
-                }
-
-                if (setBlockSuceeded && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
-                {
-                    // Modularize client and physic updates
-                    parWorld.markAndNotifyBlock(parX, parY, parZ, chunk, existingBlock, parBlock, parFlag);
-                }
-
-                return setBlockSuceeded;
-            }
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public static boolean setBlockInChunkFast(Chunk parChunk, int parX, int parY, int parZ, Block parBlock, int parMetaData)
-    {
-        int mapKey = parZ << 4 | parX;
-
-        if (parY >= parChunk.precipitationHeightMap[mapKey] - 1)
-        {
-            parChunk.precipitationHeightMap[mapKey] = -999;
-        }
-
-        Block existingBlock = parChunk.getBlock(parX, parY, parZ);
-        int existingMetaData = parChunk.getBlockMetadata(parX, parY, parZ);
-
-        if (existingBlock == parBlock && existingMetaData == parMetaData)
-        {
-            return false;
-        }
-        else
-        {
-            ExtendedBlockStorage extendedblockstorage = parChunk.getBlockStorageArray()[parY >> 4];
-
-            if (extendedblockstorage == null)
-            {
-                if (parBlock == Blocks.air)
-                {
-                    return false;
-                }
-
-                extendedblockstorage = parChunk.getBlockStorageArray()[parY >> 4] = new ExtendedBlockStorage(parY >> 4 << 4, !parChunk.worldObj.provider.hasNoSky);
-            }
-
-            int worldPosX = parChunk.xPosition * 16 + parX;
-            int worldPosZ = parChunk.zPosition * 16 + parZ;
-
-            if (!parChunk.worldObj.isRemote)
-            {
-                existingBlock.onBlockPreDestroy(parChunk.worldObj, worldPosX, parY, worldPosZ, existingMetaData);
-            }
-
-            extendedblockstorage.setExtBlockID(parX, parY & 15, parZ, parBlock);
-            extendedblockstorage.setExtBlockMetadata(parX, parY & 15, parZ, parMetaData); // This line duplicates the one below, so breakBlock fires with valid worldstate
-
-            if (!parChunk.worldObj.isRemote)
-            {
-                existingBlock.breakBlock(parChunk.worldObj, worldPosX, parY, worldPosZ, existingBlock, existingMetaData);
-                // After breakBlock a phantom TE might have been created with incorrect meta. This attempts to kill that phantom TE so the normal one can be create properly later
-                TileEntity te = parChunk.getTileEntityUnsafe(parX & 0x0F, parY, parZ & 0x0F);
-                if (te != null && te.shouldRefresh(existingBlock, parChunk.getBlock(parX & 0x0F, parY, parZ & 0x0F), existingMetaData, parChunk.getBlockMetadata(parX & 0x0F, parY, parZ & 0x0F), parChunk.worldObj, worldPosX, parY, worldPosZ))
-                {
-                    parChunk.removeTileEntity(parX & 0x0F, parY, parZ & 0x0F);
-                }
-            }
-            else if (existingBlock.hasTileEntity(existingMetaData))
-            {
-                TileEntity te = parChunk.getTileEntityUnsafe(parX & 0x0F, parY, parZ & 0x0F);
-                if (te != null && te.shouldRefresh(existingBlock, parBlock, existingMetaData, parMetaData, parChunk.worldObj, worldPosX, parY, worldPosZ))
-                {
-                    parChunk.worldObj.removeTileEntity(worldPosX, parY, worldPosZ);
-                }
-            }
-
-            if (extendedblockstorage.getBlockByExtId(parX, parY & 15, parZ) != parBlock)
-            {
-                return false;
-            }
-            else
-            {
-                extendedblockstorage.setExtBlockMetadata(parX, parY & 15, parZ, parMetaData);
-
-                TileEntity tileentity;
-
-                if (!parChunk.worldObj.isRemote)
-                {
-                    parBlock.onBlockAdded(parChunk.worldObj, worldPosX, parY, worldPosZ);
-                }
-
-                if (parBlock.hasTileEntity(parMetaData))
-                {
-                    tileentity = parChunk.getBlockTileEntityInChunk(parX, parY, parZ);
-
-                    if (tileentity != null)
-                    {
-                        tileentity.updateContainingBlockInfo();
-                        tileentity.blockMetadata = parMetaData;
-                    }
-                }
-
-                parChunk.isModified = true;
-                return true;
-            }
-        }
-    }
+//    /**
+//     * Sets the block ID and metadata at a given location. Args: X, Y, Z, new block ID, new metadata, flags. Flag 1 will
+//     * cause a block update. Flag 2 will send the change to clients (you almost always want parChunk). Flag 4 prevents the
+//     * block from being re-rendered, if parChunk is a client world. Flags can be added together.
+//     */
+//    public static boolean setBlockFast(World parWorld, int parX, int parY, int parZ, IBlockState parBlock, int parMetaData, int parFlag)
+//    {
+//    	BlockPos blockPos = new BlockPos(parX, parY, parZ);
+//    	
+//        // Make sure position is within valid range
+//        if (parX >= -30000000 && parZ >= -30000000 && parX < 30000000 && parZ < 30000000)
+//        {
+//            if (parY < 0)
+//            {
+//                return false;
+//            }
+//            else if (parY >= 256)
+//            {
+//                return false;
+//            }
+//            else
+//            {
+//                Chunk chunk = parWorld.getChunkFromChunkCoords(parX >> 4, parZ >> 4);
+//                IBlockState existingBlock = null;
+//                BlockSnapshot blockSnapshot = null;
+//
+//                if ((parFlag & 1) != 0)
+//                {
+//                    existingBlock = chunk.getBlockState(parX & 15, parY, parZ & 15);
+//                }
+//
+//                if (parWorld.captureBlockSnapshots && !parWorld.isRemote)
+//                {
+//                    blockSnapshot = BlockSnapshot.getBlockSnapshot(parWorld, blockPos, parFlag);
+//                    parWorld.capturedBlockSnapshots.add(blockSnapshot);
+//                }
+//
+//                boolean setBlockSuceeded = setBlockInChunkFast(chunk, parX & 15, parY, parZ & 15, parBlock, parMetaData);
+//
+//                if (!setBlockSuceeded && blockSnapshot != null)
+//                {
+//                    parWorld.capturedBlockSnapshots.remove(blockSnapshot);
+//                    blockSnapshot = null;
+//                }
+//
+//                if (setBlockSuceeded && blockSnapshot == null) // Don't notify clients or update physics while capturing blockstates
+//                {
+//                    // Modularize client and physic updates
+//                    parWorld.markAndNotifyBlock(blockPos, chunk, existingBlock, parBlock, parFlag);
+//                }
+//
+//                return setBlockSuceeded;
+//            }
+//        }
+//        else
+//        {
+//            return false;
+//        }
+//    }
+//
+//    public static boolean setBlockInChunkFast(Chunk parChunk, int parX, int parY, int parZ, IBlockState parBlock, int parMetaData)
+//    {
+//    	BlockPos blockPos = new BlockPos(parX, parY, parZ);
+//    	
+//        int mapKey = parZ << 4 | parX;
+//
+////        if (parY >= parChunk.getPrecipitationHeight(blockPos) - 1)
+////        {
+////            parChunk.setPecipitationHeightMap[mapKey] = -999;
+////        }
+//
+//        IBlockState existingBlock = parChunk.getBlockState(blockPos);
+//
+//        if (existingBlock == parBlock)
+//        {
+//            return false;
+//        }
+//        else
+//        {
+//            ExtendedBlockStorage extendedblockstorage = parChunk.getBlockStorageArray()[parY >> 4];
+//
+//            if (extendedblockstorage == null)
+//            {
+//                if (parBlock == Blocks.AIR)
+//                {
+//                    return false;
+//                }
+//
+//                extendedblockstorage = parChunk.getBlockStorageArray()[parY >> 4] = new ExtendedBlockStorage(parY >> 4 << 4, !parChunk.getWorld().provider..hasNoSky);
+//            }
+//
+//            int worldPosX = parChunk.x * 16 + parX;
+//            int worldPosZ = parChunk.z * 16 + parZ;
+//
+////            if (!parChunk.getWorld().isRemote)
+////            {
+////                existingBlock.onBlockPreDestroy(parChunk.getWorld(), worldPosX, parY, worldPosZ);
+////            }
+//
+//            extendedblockstorage.setExtBlockID(parX, parY & 15, parZ, parBlock);
+//            extendedblockstorage.setExtBlockMetadata(parX, parY & 15, parZ, parMetaData); // This line duplicates the one below, so breakBlock fires with valid worldstate
+//
+//            if (!parChunk.getWorld().isRemote)
+//            {
+//                existingBlock.breakBlock(parChunk.world, worldPosX, parY, worldPosZ, existingBlock, existingMetaData);
+//                // After breakBlock a phantom TE might have been created with incorrect meta. This attempts to kill that phantom TE so the normal one can be create properly later
+//                BlockPos tilePos = new BlockPos(parX & 0x0F, parY, parZ & 0x0F);
+//                TileEntity te = parChunk.getTileEntity(tilePos, null);
+//                if (te != null && te.shouldRefresh(existingBlock, parChunk.getBlockState(parX & 0x0F, parY, parZ & 0x0F), existingMetaData, parChunk.getBlockState(parX & 0x0F, parY, parZ & 0x0F), parChunk.getWorld(), worldPosX, parY, worldPosZ))
+//                {
+//                    parChunk.removeTileEntity(new BlockPos(parX & 0x0F, parY, parZ & 0x0F));
+//                }
+//            }
+//            else if (existingBlock.hasTileEntity(existingMetaData))
+//            {
+//                TileEntity te = parChunk.getTileEntityUnsafe(parX & 0x0F, parY, parZ & 0x0F);
+//                if (te != null && te.shouldRefresh(existingBlock, parBlock, existingMetaData, parMetaData, parChunk.world, worldPosX, parY, worldPosZ))
+//                {
+//                    parChunk.world.removeTileEntity(worldPosX, parY, worldPosZ);
+//                }
+//            }
+//
+//            if (extendedblockstorage.getBlockByExtId(parX, parY & 15, parZ) != parBlock)
+//            {
+//                return false;
+//            }
+//            else
+//            {
+//                extendedblockstorage.setExtBlockMetadata(parX, parY & 15, parZ, parMetaData);
+//
+//                TileEntity tileentity;
+//
+//                if (!parChunk.world.isRemote)
+//                {
+//                    parBlock.onBlockAdded(parChunk.world, worldPosX, parY, worldPosZ);
+//                }
+//
+//                if (parBlock.hasTileEntity(parMetaData))
+//                {
+//                    tileentity = parChunk.getBlockTileEntityInChunk(parX, parY, parZ);
+//
+//                    if (tileentity != null)
+//                    {
+//                        tileentity.updateContainingBlockInfo();
+//                        tileentity.blockMetadata = parMetaData;
+//                    }
+//                }
+//
+//                parChunk.isModified = true;
+//                return true;
+//            }
+//        }
+//    }
     
-    // this will work across all dimensions
-    // thanks to diesieben07 for this tip on http://www.minecraftforge.net/forum/index.php?topic=27715.0
-    public static EntityPlayer getPlayerOnServerFromUUID(UUID parUUID) 
-    {
-        if (parUUID == null) 
-        {
-            return null;
-        }
-        List<EntityPlayerMP> allPlayers = MinecraftServer.getServer().getConfigurationManager().playerEntityList;
-        for (EntityPlayerMP player : allPlayers) 
-        {
-            if (player.getUniqueID().equals(parUUID)) 
-            {
-                return player;
-            }
-        }
-        return null;
-    }
+//    // this will work across all dimensions
+//    // thanks to diesieben07 for this tip on http://www.minecraftforge.net/forum/index.php?topic=27715.0
+//    public static EntityPlayer getPlayerOnServerFromUUID(World parWorld, UUID parUUID) 
+//    {
+//        if (parUUID == null) 
+//        {
+//            return null;
+//        }
+//        PlayerList allPlayers = parWorld.getMinecraftServer().getPlayerList();
+//        for (EntityPlayerMP player : allPlayers) 
+//        {
+//            if (player.getUniqueID().equals(parUUID)) 
+//            {
+//                return player;
+//            }
+//        }
+//        return null;
+//    }
 
     
     /**
@@ -551,23 +544,28 @@ public class Utilities
         return (float) Math.toDegrees(Math.asin(theVec.y));
     }
     
+    public static AxisAlignedBB copyBoundingBox(AxisAlignedBB aabbIn)
+    {
+    	return new AxisAlignedBB(aabbIn.minX, aabbIn.minY, aabbIn.minZ, aabbIn.maxX, aabbIn.maxY, aabbIn.maxZ);
+    }
+    
     /**
      * True if the entity has an unobstructed line of travel to the waypoint.
      */
     public static boolean isCourseTraversable(Entity parEntity, double parX, double parY, double parZ)
     {
-        double theDistance = MathHelper.sqrt_double(parX * parX + parY * parY + parZ * parZ);
+        double theDistance = MathHelper.sqrt(parX * parX + parY * parY + parZ * parZ);
 
         double incrementX = (parX - parEntity.posX) / theDistance;
         double incrementY = (parY - parEntity.posY) / theDistance;
         double incrementZ = (parZ - parEntity.posZ) / theDistance;
-        AxisAlignedBB entityBoundingBox = parEntity.boundingBox.copy();
+        AxisAlignedBB entityBoundingBox = copyBoundingBox(parEntity.getEntityBoundingBox());
 
         for (int i = 1; i < theDistance; ++i)
         {
             entityBoundingBox.offset(incrementX, incrementY, incrementZ);
 
-            if (!parEntity.worldObj.getCollidingBoundingBoxes(parEntity, entityBoundingBox).isEmpty())
+            if (!parEntity.world.getCollisionBoxes(parEntity, entityBoundingBox).isEmpty())
             {
                 return false;
             }

@@ -16,7 +16,7 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.networking;
 
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
+import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 
 import io.netty.buffer.ByteBuf;
@@ -72,7 +72,7 @@ public class MessageSyncEntityToClient implements IMessage
 		@Override
 		public IMessage onMessage(MessageSyncEntityToClient message, MessageContext ctx)
 		{
-        	EntityPlayer thePlayer = WildAnimals.proxy.getPlayerEntityFromContext(ctx);
+        	EntityPlayer thePlayer = MainMod.proxy.getPlayerEntityFromContext(ctx);
         	IModEntity theEntity = (IModEntity)thePlayer.world.getEntityByID(message.entityId);
         	if (theEntity != null)
         	{

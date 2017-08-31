@@ -19,7 +19,7 @@ package com.blogspot.jabelarminecraft.wildanimals.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
+import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -83,7 +83,7 @@ public class CommandConjure extends CommandBase
 			
 		    sender.sendMessage(new TextComponentString("Conjuring: [" + argString[0] + "]"));
 		    
-		    fullEntityName = new ResourceLocation(WildAnimals.MODID+"."+argString[0]);
+		    fullEntityName = new ResourceLocation(MainMod.MODID+"."+argString[0]);
 		    if (EntityList.getClass(fullEntityName) != null)
 		    {
 	            conjuredEntity = EntityList.createEntityByIDFromName(fullEntityName, world);

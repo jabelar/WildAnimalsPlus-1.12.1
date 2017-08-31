@@ -18,12 +18,16 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
 import java.util.UUID;
 
-import net.minecraft.block.BlockColored;
+import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIFollowBigCat;
+import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
+import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackOnCollide;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
@@ -35,38 +39,40 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundEvent;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIFollowBigCat;
-import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityBigCat extends EntityTameable implements IModEntity
 {
     protected NBTTagCompound syncDataCompound = new NBTTagCompound();
+    
+    protected SoundEvent soundAmbientGrowl = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.growl"));
+    protected SoundEvent soundAmbientWhine = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.whine"));
+    protected SoundEvent soundAmbientPanting = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.panting"));
+    protected SoundEvent soundAmbientBark = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.bark"));
+    protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.hurt"));
+    protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.death"));
+    protected SoundEvent soundShake = new SoundEvent(new ResourceLocation( "wildanimals:mob.bigCat.shake"));
 
     /**
      * fields for controlling head tilt, like when interested or shaking
@@ -176,33 +182,25 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     {
         super.applyEntityAttributes(); // registers the common attributes
         
-        getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0D);
-        getEntityAttribute(SharedMonsterAttributes.movementSpeed).setBaseValue(0.30D);
-        getEntityAttribute(SharedMonsterAttributes.knockbackResistance).setBaseValue(0.0D);
-        getEntityAttribute(SharedMonsterAttributes.followRange).setBaseValue(16.0D);
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.30D);
+        getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(16.0D);
 
         // need to register any additional attributes
-        getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage);
-        getEntityAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(4.0D);
+        getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
     
     public void adjustEntityAttributes()
     {
         if (isTamed())
         {
-            getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(TAMED_HEALTH);
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
         }
     }
 
-    /**
-     * Returns true if the newer Entity AI code should be run
-     */
-    @Override
-	public boolean isAIEnabled()
-    {
-        return true;
-    }
-
+ 
     /**
      * Sets the active target the Task system uses for tracking
      */
@@ -280,27 +278,27 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      * Returns the sound this mob makes while it's alive.
      */
     @Override
-	protected String getLivingSound()
+	protected SoundEvent getAmbientSound()
     {
-        return isAngry() ? "wildanimals:mob.bigCat.growl" : (rand.nextInt(3) == 0 ? (isTamed() && getHealth() < 10.0F ? "wildanimals:mob.bigCat.whine" : "wildanimals:mob.bigCat.panting") : "wildanimals:mob.bigCat.bark");
+        return isAngry() ? soundAmbientGrowl : (rand.nextInt(3) == 0 ? (isTamed() && getHealth() < 10.0F ? soundAmbientWhine : soundAmbientPanting) : soundAmbientBark);
     }
 
     /**
      * Returns the sound this mob makes when it is hurt.
      */
     @Override
-	protected String getHurtSound()
+	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return "wildanimals:mob.bigCat.hurt"; // It uses sounds.json file to randomize and adds 1, 2 or 3 and .ogg
+        return soundHurt; // It uses sounds.json file to randomize and adds 1, 2 or 3 and .ogg
     }
 
     /**
      * Returns the sound this mob makes on death.
      */
     @Override
-	protected String getDeathSound()
+	protected SoundEvent getDeathSound()
     {
-        return "wildanimals:mob.bigCat.death";
+        return soundDeath;
     }
 
     /**
@@ -327,12 +325,12 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     {
         super.onLivingUpdate();
 
-        if (!worldObj.isRemote && isShaking && !startedShaking && !hasPath() && onGround)
+        if (!world.isRemote && isShaking && !startedShaking && !hasPath() && onGround)
         {
             startedShaking = true;
             timeBigCatIsShaking = 0.0F;
             prevTimeBigCatIsShaking = 0.0F;
-            worldObj.setEntityState(this, (byte)8);
+            world.setEntityState(this, (byte)8);
         }
     }
 
@@ -366,7 +364,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         {
             if (timeBigCatIsShaking == 0.0F)
             {
-                playSound("wildanimals:mob.bigCat.shake", getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                playSound(soundShake, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
             }
 
             prevTimeBigCatIsShaking = timeBigCatIsShaking;
@@ -382,14 +380,14 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
             if (timeBigCatIsShaking > 0.4F)
             {
-                float f = (float)boundingBox.minY;
+                float f = (float)getEntityBoundingBox().minY;
                 int i = (int)(MathHelper.sin((timeBigCatIsShaking - 0.4F) * (float)Math.PI) * 7.0F);
 
                 for (int j = 0; j < i; ++j)
                 {
                     float f1 = (rand.nextFloat() * 2.0F - 1.0F) * width * 0.5F;
                     float f2 = (rand.nextFloat() * 2.0F - 1.0F) * width * 0.5F;
-                    worldObj.spawnParticle("splash", posX + f1, f + 0.8F, posZ + f2, motionX, motionY, motionZ);
+                    world.spawnParticle(EnumParticleTypes.WATER_SPLASH, posX + f1, f + 0.8F, posZ + f2, motionX, motionY, motionZ);
                 }
             }
         }
@@ -474,20 +472,19 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	public boolean attackEntityAsMob(Entity par1Entity)
     {
-        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
+        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
     }
 
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
      */
     @Override
-	public boolean interact(EntityPlayer parPlayer)
+	public boolean processInteract(EntityPlayer parPlayer, EnumHand parHand)
     {
-        
         // DEBUG
         System.out.println("EntityBigCat interact()");
  
-        ItemStack itemInHand = parPlayer.inventory.getCurrentItem();
+        ItemStack itemInHand = parPlayer.getHeldItem(parHand);
 
         // heal tamed with food
         if (isTamed())
@@ -507,7 +504,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
                         heal(itemfood.getHealAmount(itemInHand));
 
-                        if (itemInHand.stackSize <= 0)
+                        if (itemInHand.getCount() <= 0)
                         {
                             parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
                         }
@@ -515,9 +512,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                         return true;
                     }
                 }
-                else if (itemInHand.getItem() == Items.dye)
+                else if (itemInHand.getItem() == Items.DYE)
                 {
-                    int i = BlockColored.func_150032_b(itemInHand.getMetadata());
+                    EnumDyeColor i = EnumDyeColor.byMetadata(itemInHand.getMetadata());
 
                     if (i != getCollarColor())
                     {
@@ -534,7 +531,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             }
 
             // toggle sitting
-            if (parPlayer.getCommandSenderName().equalsIgnoreCase(getOwnerName()) && !worldObj.isRemote && !isBreedingItem(itemInHand))
+            if (parPlayer.getCommandSenderEntity().equalsIgnoreCase(getOwnerName()) && !world.isRemote && !isBreedingItem(itemInHand))
             {
                 setSitting(!isSitting());
                 aiSit.setSitting(isSitting());
@@ -553,13 +550,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                 --itemInHand.stackSize;
             }
 
-            if (itemInHand.stackSize <= 0)
+            if (itemInHand.getCount() <= 0)
             {
                 parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
             }
 
             // Try taming
-            if (!worldObj.isRemote)
+            if (!world.isRemote)
             {
                 if (rand.nextInt(3) == 0)
                 {
@@ -570,20 +567,20 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                     setHealth(TAMED_HEALTH);
                     setOwner(parPlayer.getUniqueID());
                     playTameEffect(true);
-                    worldObj.setEntityState(this, (byte)7);
+                    world.setEntityState(this, (byte)7);
                     // DEBUG
-                    System.out.println("Taming successful for owner = "+parPlayer.getCommandSenderName());
+                    System.out.println("Taming successful for owner = "+parPlayer.getCommandSenderEntity());
                 }
                 else
                 {
                     playTameEffect(false);
-                    worldObj.setEntityState(this, (byte)6);
+                    world.setEntityState(this, (byte)6);
                 }
             }
         }
         
         // grow with meat
-        else if (itemInHand != null && itemInHand.getItem() == Items.beef && !isAngry())
+        else if (itemInHand != null && itemInHand.getItem() == Items.BEEF && !isAngry())
         {
             if (!parPlayer.capabilities.isCreativeMode)
             {
@@ -595,17 +592,17 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                 parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
             }
 
-            if (!worldObj.isRemote)
+            if (!world.isRemote)
             {
                 if (rand.nextInt(3) == 0)
                 {
                     setGrowingAge(getAge()+500);
-                    worldObj.setEntityState(this, (byte)7);
+                    world.setEntityState(this, (byte)7);
                 }
                 else
                 {
                     playTameEffect(false);
-                    worldObj.setEntityState(this, (byte)6);
+                    world.setEntityState(this, (byte)6);
                 }
             }
 
@@ -633,11 +630,11 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
         if (parTamed)
         {
-            getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(TAMED_HEALTH);
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
         }
         else
         {
-            getEntityAttribute(SharedMonsterAttributes.maxHealth).setBaseValue(8.0D);
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
         }
     }
 
@@ -658,7 +655,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     public String getOwnerName()
     {
-        return getOwner().getCommandSenderName();
+        return getOwner().getCommandSenderEntity().getName();
     }
 
     public void setOwner(UUID parOwnerUUID)
@@ -674,24 +671,24 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     public EntityLivingBase getOwner()
     {
         UUID uuid = new UUID(syncDataCompound.getLong("ownerUUIDMSB"), syncDataCompound.getLong("ownerUUIDLSB"));
-        return worldObj.getPlayerEntityByUUID(uuid); 
+        return world.getPlayerEntityByUUID(uuid); 
     }
 
-    @Override
-	@SideOnly(Side.CLIENT)
-    public void handleHealthUpdate(byte par1)
-    {
-        if (par1 == 8)
-        {
-            startedShaking = true;
-            timeBigCatIsShaking = 0.0F;
-            prevTimeBigCatIsShaking = 0.0F;
-        }
-        else
-        {
-            super.handleHealthUpdate(par1);
-        }
-    }
+//    @Override
+//	@SideOnly(Side.CLIENT)
+//    public void handleHealthUpdate(byte par1)
+//    {
+//        if (par1 == 8)
+//        {
+//            startedShaking = true;
+//            timeBigCatIsShaking = 0.0F;
+//            prevTimeBigCatIsShaking = 0.0F;
+//        }
+//        else
+//        {
+//            super.handleHealthUpdate(par1);
+//        }
+//    }
 
     @SideOnly(Side.CLIENT)
     public float getTailRotation()
@@ -740,17 +737,17 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     /**
      * Return this bigCat's collar color.
      */
-    public int getCollarColor()
+    public EnumDyeColor getCollarColor()
     {
-        return syncDataCompound.getByte("collarColor");
+        return EnumDyeColor.byMetadata(syncDataCompound.getByte("collarColor"));
     }
 
     /**
      * Set this bigCat's collar color.
      */
-    public void setCollarColor(int parCollarColor)
+    public void setCollarColor(EnumDyeColor parCollarColor)
     {
-        syncDataCompound.setByte("collarColor", (byte) parCollarColor);
+        syncDataCompound.setByte("collarColor", (byte) parCollarColor.getMetadata());
         
         // don't forget to sync client and server
         sendEntitySyncPacket();
@@ -763,16 +760,15 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         // DEBUG
         System.out.println("EntityBigCat createChild()");
  
-        EntityBigCat entitybigCat = new EntityBigCat(worldObj);
-        String s = func_152113_b(); // used to be getOwnerName();
+        EntityBigCat entityBigCat = new EntityBigCat(world);
+        UUID s = entityBigCat.getOwnerId(); // used to be getOwnerName();
 
-        if (s != null && s.trim().length() > 0)
+        if (s != null)
         {
-            entitybigCat.func_152115_b(s); // used to be setOwner(s);
-            entitybigCat.setTamed(true);
+            entityBigCat.setTamed(true);
         }
 
-        return entitybigCat;
+        return entityBigCat;
     }
 
     public void setInterested(boolean parIsInterested)
@@ -824,32 +820,32 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return !isTamed() && ticksExisted > 2400;
     }
 
-    /*
-     * Used by the EntityAIOwnerHurt target and EntityAIOwnerHurtByTarget classes to identity 
-     * suitable attack targets
-     */
-    @Override
-	public boolean func_142018_a(EntityLivingBase par1EntityLivingBase, EntityLivingBase par2EntityLivingBase)
-    {
-        if (!(par1EntityLivingBase instanceof EntityCreeper) && !(par1EntityLivingBase instanceof EntityGhast))
-        {
-            if (par1EntityLivingBase instanceof EntityBigCat)
-            {
-                EntityBigCat entitybigCat = (EntityBigCat)par1EntityLivingBase;
-
-                if (entitybigCat.isTamed() && entitybigCat.getOwner() == par2EntityLivingBase)
-                {
-                    return false;
-                }
-            }
-
-            return par1EntityLivingBase instanceof EntityPlayer && par2EntityLivingBase instanceof EntityPlayer && !((EntityPlayer)par2EntityLivingBase).canAttackPlayer((EntityPlayer)par1EntityLivingBase) ? false : !(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).isTame();
-        }
-        else
-        {
-            return false;
-        }
-    }
+//    /*
+//     * Used by the EntityAIOwnerHurt target and EntityAIOwnerHurtByTarget classes to identity 
+//     * suitable attack targets
+//     */
+//    @Override
+//	public boolean func_142018_a(EntityLivingBase par1EntityLivingBase, EntityLivingBase par2EntityLivingBase)
+//    {
+//        if (!(par1EntityLivingBase instanceof EntityCreeper) && !(par1EntityLivingBase instanceof EntityGhast))
+//        {
+//            if (par1EntityLivingBase instanceof EntityBigCat)
+//            {
+//                EntityBigCat entitybigCat = (EntityBigCat)par1EntityLivingBase;
+//
+//                if (entitybigCat.isTamed() && entitybigCat.getOwner() == par2EntityLivingBase)
+//                {
+//                    return false;
+//                }
+//            }
+//
+//            return par1EntityLivingBase instanceof EntityPlayer && par2EntityLivingBase instanceof EntityPlayer && !((EntityPlayer)par2EntityLivingBase).canAttackPlayer((EntityPlayer)par1EntityLivingBase) ? false : !(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).isTame();
+//        }
+//        else
+//        {
+//            return false;
+//        }
+//    }
 
     // *****************************************************
     // ENCAPSULATION SETTER AND GETTER METHODS

@@ -20,7 +20,7 @@ import com.blogspot.jabelarminecraft.wildanimals.EventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.FMLEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.OreGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.TerrainGenEventHandler;
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
+import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.commands.CommandConjure;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLion;
@@ -104,26 +104,26 @@ public class CommonProxy
     
     protected void initConfig(FMLPreInitializationEvent event)
     {
-        WildAnimals.configFile = event.getSuggestedConfigurationFile();
+        MainMod.configFile = event.getSuggestedConfigurationFile();
         // DEBUG
-        System.out.println(WildAnimals.MODNAME+" config path = "+WildAnimals.configFile.getAbsolutePath());
-        System.out.println("Config file exists = "+WildAnimals.configFile.canRead());
+        System.out.println(MainMod.MODNAME+" config path = "+MainMod.configFile.getAbsolutePath());
+        System.out.println("Config file exists = "+MainMod.configFile.canRead());
   
-        WildAnimals.config = new Configuration(WildAnimals.configFile);
+        MainMod.config = new Configuration(MainMod.configFile);
       	syncConfig();
     }
     
     public static void syncConfig() 
     {
-    	WildAnimals.configBigCatsAreManEaters = WildAnimals.config.getBoolean("BigCatsAreManEaters", Configuration.CATEGORY_GENERAL, WildAnimals.configBigCatsAreManEaters, "A Boolean!");
-    	WildAnimals.configIncludeSnakes = WildAnimals.config.getBoolean("IncludeSnakes", Configuration.CATEGORY_GENERAL, WildAnimals.configIncludeSnakes, "A Boolean!");
-    	WildAnimals.configIncludeBigCats = WildAnimals.config.getBoolean("IncludeBigCats", Configuration.CATEGORY_GENERAL, WildAnimals.configIncludeBigCats, "A Boolean!");
-    	WildAnimals.configIncludeHerdAnimals = WildAnimals.config.getBoolean("IncludeHerdAnimals", Configuration.CATEGORY_GENERAL, WildAnimals.configIncludeHerdAnimals, "A Boolean!");
-        WildAnimals.configIncludeBirdsOfPrey = WildAnimals.config.getBoolean("IncludeBirdsOfPrey", Configuration.CATEGORY_GENERAL, WildAnimals.configIncludeBirdsOfPrey, "A Boolean!");
+    	MainMod.configBigCatsAreManEaters = MainMod.config.getBoolean("BigCatsAreManEaters", Configuration.CATEGORY_GENERAL, MainMod.configBigCatsAreManEaters, "A Boolean!");
+    	MainMod.configIncludeSnakes = MainMod.config.getBoolean("IncludeSnakes", Configuration.CATEGORY_GENERAL, MainMod.configIncludeSnakes, "A Boolean!");
+    	MainMod.configIncludeBigCats = MainMod.config.getBoolean("IncludeBigCats", Configuration.CATEGORY_GENERAL, MainMod.configIncludeBigCats, "A Boolean!");
+    	MainMod.configIncludeHerdAnimals = MainMod.config.getBoolean("IncludeHerdAnimals", Configuration.CATEGORY_GENERAL, MainMod.configIncludeHerdAnimals, "A Boolean!");
+        MainMod.configIncludeBirdsOfPrey = MainMod.config.getBoolean("IncludeBirdsOfPrey", Configuration.CATEGORY_GENERAL, MainMod.configIncludeBirdsOfPrey, "A Boolean!");
  
-        if(WildAnimals.config.hasChanged())
+        if(MainMod.config.hasChanged())
         {
-        	WildAnimals.config.save();
+        	MainMod.config.save();
         }
     }
 
@@ -187,9 +187,9 @@ public class CommonProxy
         // uses configuration file to control whether each entity type is registered, to allow user customization
         
         // Big cats
-        if (WildAnimals.configIncludeBigCats)
+        if (MainMod.configIncludeBigCats)
         {
-            if (WildAnimals.configBigCatsAreManEaters)
+            if (MainMod.configBigCatsAreManEaters)
             {
                 registerModEntityWithEgg(EntityManEatingTiger.class, "Tiger", 0xE18519, 0x000000);
                 registerModEntityWithEgg(EntityManEatingLion.class, "Lion", 0xD9C292, 0xFFFFFF);
@@ -206,19 +206,19 @@ public class CommonProxy
         }
 
         // Herd animals
-        if (WildAnimals.configIncludeHerdAnimals)
+        if (MainMod.configIncludeHerdAnimals)
         {
             registerModEntityWithEgg(EntityElephant.class, "Elephant", 0x888888, 0xAAAAAA);
         }
         
         // Serpents
-        if (WildAnimals.configIncludeSnakes)
+        if (MainMod.configIncludeSnakes)
         {
             registerModEntityWithEgg(EntitySerpent.class, "Python", 0x3F5505, 0x4E6414);
         }
         
         // Birds of Prey
-        if (WildAnimals.configIncludeBirdsOfPrey)
+        if (MainMod.configIncludeBirdsOfPrey)
         {
             registerModEntityWithEggLongTracking(EntityEagle.class, "Eagle", 0xFFF2E3, 0x7D6C57);
             registerModEntityWithEggLongTracking(EntityHawk.class, "Hawk", 0x7D6C57, 0xFFF2E3);
@@ -228,28 +228,28 @@ public class CommonProxy
      
      public void registerModEntity(Class parClass, String parName)
      {
-         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 3, false);
+         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false);
        	 // DEBUG
        	 System.out.println("Registering mod entity "+parName+" with ID ="+modEntityID);
      }
      
      public void registerModEntityLongTracking(Class parClass, String parName)
      {
-            EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80000, 3, false);
+            EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, MainMod.instance, 80000, 3, false);
          // DEBUG
          System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }
 
      public void registerModEntityWithEgg(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
-         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 3, false, parEggColor, parEggSpotsColor);
+         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
        	 // DEBUG
        	 System.out.println("Registering mod entity "+parName+" with ID ="+modEntityID);
      }
 
      public void registerModEntityWithEggLongTracking(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
-         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 3, false, parEggColor, parEggSpotsColor);
+         EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
        	 // DEBUG
        	 System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }
@@ -258,7 +258,7 @@ public class CommonProxy
      // for fast moving entities and projectiles need registration with tracking flag set true
      public void registerModEntityFastTracking(Class parClass, String parName)
      {
-            EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, WildAnimals.instance, 80, 10, true);
+            EntityRegistry.registerModEntity(new ResourceLocation(parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 10, true);
           	 // DEBUG
           	 System.out.println("Registering fast tracking mod entity "+parName+" with ID ="+modEntityID);
      }
@@ -375,7 +375,7 @@ public class CommonProxy
         // JUNGLE
         EntityRegistry.addSpawn(EntityJaguar.class, 6, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE); //change the values to vary the spawn rarity, biome, etc.              
         EntityRegistry.addSpawn(EntityTiger.class, 1, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE); //change the values to vary the spawn rarity, biome, etc.              
-        if (WildAnimals.configBigCatsAreManEaters)
+        if (MainMod.configBigCatsAreManEaters)
         {
             EntityRegistry.addSpawn(EntityManEatingTiger.class, 1, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE); //change the values to vary the spawn rarity, biome, etc.            
         }
@@ -385,7 +385,7 @@ public class CommonProxy
         // JUNGLE hills
         EntityRegistry.addSpawn(EntityJaguar.class, 3, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE_HILLS); //change the values to vary the spawn rarity, biome, etc.              
         EntityRegistry.addSpawn(EntityTiger.class, 1, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE_HILLS); //change the values to vary the spawn rarity, biome, etc.              
-           if (WildAnimals.configBigCatsAreManEaters)
+           if (MainMod.configBigCatsAreManEaters)
         {
             EntityRegistry.addSpawn(EntityManEatingTiger.class, 1, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE_HILLS); //change the values to vary the spawn rarity, biome, etc.            
         }
@@ -395,7 +395,7 @@ public class CommonProxy
         // JUNGLE edge
         EntityRegistry.addSpawn(EntityJaguar.class, 1, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE_EDGE); //change the values to vary the spawn rarity, biome, etc.              
         EntityRegistry.addSpawn(EntityTiger.class, 1, 0, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE_EDGE); //change the values to vary the spawn rarity, biome, etc.              
-           if (WildAnimals.configBigCatsAreManEaters)
+           if (MainMod.configBigCatsAreManEaters)
         {
             EntityRegistry.addSpawn(EntityManEatingTiger.class, 1, 1, 1, EnumCreatureType.CREATURE, Biomes.JUNGLE_EDGE); //change the values to vary the spawn rarity, biome, etc.            
         }
@@ -441,9 +441,6 @@ public class CommonProxy
         MinecraftForge.EVENT_BUS.register(new EventHandler());
         MinecraftForge.TERRAIN_GEN_BUS.register(new TerrainGenEventHandler());
         MinecraftForge.ORE_GEN_BUS.register(new OreGenEventHandler());        
-
-        // some events, especially tick, is handled on FML bus
-        FMLCommonHandler.instance().bus().register(new FMLEventHandler());
     }
     
     /*
@@ -456,14 +453,14 @@ public class CommonProxy
     {
         // DEBUG
         System.out.println("registering simple networking");
-        WildAnimals.network = NetworkRegistry.INSTANCE.newSimpleChannel(WildAnimals.NETWORK_CHANNEL_NAME);
+        MainMod.network = NetworkRegistry.INSTANCE.newSimpleChannel(MainMod.NETWORK_CHANNEL_NAME);
 
         int packetId = 0;
         // register messages from client to server
-        WildAnimals.network.registerMessage(MessageToServer.Handler.class, MessageToServer.class, packetId++, Side.SERVER);
+        MainMod.network.registerMessage(MessageToServer.Handler.class, MessageToServer.class, packetId++, Side.SERVER);
         // register messages from server to client
-        WildAnimals.network.registerMessage(MessageToClient.Handler.class, MessageToClient.class, packetId++, Side.CLIENT);
-        WildAnimals.network.registerMessage(MessageSyncEntityToClient.Handler.class, MessageSyncEntityToClient.class, packetId++, Side.CLIENT);
+        MainMod.network.registerMessage(MessageToClient.Handler.class, MessageToClient.class, packetId++, Side.CLIENT);
+        MainMod.network.registerMessage(MessageSyncEntityToClient.Handler.class, MessageSyncEntityToClient.class, packetId++, Side.CLIENT);
     }
 
 	public void fmlLifeCycleEvent(FMLServerStartingEvent event) 

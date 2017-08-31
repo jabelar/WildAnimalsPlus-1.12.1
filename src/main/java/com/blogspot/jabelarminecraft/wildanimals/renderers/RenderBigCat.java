@@ -16,15 +16,15 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.renderers;
 
-import org.lwjgl.opengl.GL11;
-
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntitySheep;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -36,9 +36,10 @@ public class RenderBigCat extends RenderLiving
     protected ResourceLocation normalTexture ;
     protected ResourceLocation tamedTexture ;
     protected ResourceLocation angryTexture ;
-    protected ResourceLocation collarTexture ;
 
-    public RenderBigCat(
+    @SuppressWarnings("unchecked")
+	public RenderBigCat(
+    		RenderManager parRenderManager,
             ModelBase parModelBase1, 
             ModelBase parModelBase2, 
             float parShadowSize, 
@@ -47,12 +48,11 @@ public class RenderBigCat extends RenderLiving
     		ResourceLocation parAngryTexture, 
     		ResourceLocation parCollarTexture)
     {
-        super(parModelBase1, parShadowSize);
-        setRenderPassModel(parModelBase2); // I think this is for collar rendering
+        super(parRenderManager, parModelBase1, parShadowSize);
         normalTexture = parNormalTexture ;
         tamedTexture = parTamedTexture ;
         angryTexture = parAngryTexture ;
-        collarTexture = parCollarTexture ;
+        addLayer(new LayerBigCatCollar(this, parCollarTexture));
     }
 
     /**
@@ -64,28 +64,12 @@ public class RenderBigCat extends RenderLiving
     }
 
     /**
-     * Queries whether should render the specified pass or not.
+     * Defines what float the third param in setRotationAngles of ModelBase is
      */
-    protected int shouldRenderPass(EntityBigCat parEntityBigCat, int parRenderPass, float parShakeShadingFactor)
+    @Override
+	protected float handleRotationFloat(EntityLivingBase par1EntityLivingBase, float par2)
     {
-        if (parRenderPass == 0 && parEntityBigCat.getBigCatShaking())
-        {
-            float colorComponent = parEntityBigCat.getBrightness(parShakeShadingFactor) * parEntityBigCat.getShadingWhileShaking(parShakeShadingFactor);
-            bindTexture(normalTexture);
-            GL11.glColor3f(colorComponent, colorComponent, colorComponent);
-            return 1;
-        }
-        else if (parRenderPass == 1 && parEntityBigCat.isTamed())
-        {
-            bindTexture(collarTexture);
-            int collarColor = parEntityBigCat.getCollarColor();
-            GL11.glColor3f(EntitySheep.fleeceColorTable[collarColor][0], EntitySheep.fleeceColorTable[collarColor][1], EntitySheep.fleeceColorTable[collarColor][2]);
-            return 1;
-        }
-        else
-        {
-            return -1;
-        }
+        return handleRotationFloat((EntityBigCat)par1EntityLivingBase, par2);
     }
 
     /**
@@ -106,20 +90,17 @@ public class RenderBigCat extends RenderLiving
     }
 
     /**
-     * Queries whether should render the specified pass or not.
+     * Renders the desired {@code T} type Entity.
      */
-    @Override
-	protected int shouldRenderPass(EntityLivingBase par1EntityLivingBase, int par2, float par3)
+    @SuppressWarnings("unchecked")
+	public void doRender(EntityWolf entity, double x, double y, double z, float entityYaw, float partialTicks)
     {
-        return shouldRenderPass((EntityBigCat)par1EntityLivingBase, par2, par3);
-    }
+        if (entity.isWolfWet())
+        {
+            float f = entity.getBrightness() * entity.getShadingWhileWet(partialTicks);
+            GlStateManager.color(f, f, f);
+        }
 
-    /**
-     * Defines what float the third param in setRotationAngles of ModelBase is
-     */
-    @Override
-	protected float handleRotationFloat(EntityLivingBase par1EntityLivingBase, float par2)
-    {
-        return handleRotationFloat((EntityBigCat)par1EntityLivingBase, par2);
+        super.doRender(entity, x, y, z, entityYaw, partialTicks);
     }
 }

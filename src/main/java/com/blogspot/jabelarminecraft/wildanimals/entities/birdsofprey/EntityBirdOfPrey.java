@@ -219,7 +219,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return false;
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     public boolean canAttackClass(Class parClass)
     {
         return true;
@@ -654,7 +655,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         try
         {
             UUID uuid = UUID.fromString(getOwnerUUIDString());
-            return uuid == null ? null : Utilities.getPlayerOnServerFromUUID(uuid);
+            return uuid == null ? null : world.getPlayerEntityByUUID(uuid);
         }
         catch (IllegalArgumentException illegalargumentexception)
         {
@@ -741,12 +742,14 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return randFactor;
     }
 
-    public Class[] getPreyArray()
+    @SuppressWarnings("rawtypes")
+	public Class[] getPreyArray()
     {
         return preyArray;
     }
 
-    public void setPreyArray(Class[] parPreyArray)
+    @SuppressWarnings("rawtypes")
+	public void setPreyArray(Class[] parPreyArray)
     {
         preyArray = parPreyArray;
     }

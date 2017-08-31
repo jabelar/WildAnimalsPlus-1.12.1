@@ -16,7 +16,7 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.networking;
 
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
+import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 
 import io.netty.buffer.ByteBuf;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
@@ -66,7 +66,7 @@ public class MessageToClient implements IMessage
  		@Override
 		public IMessage onMessage(MessageToClient message, MessageContext ctx) 
 		{
-            System.out.println(String.format("Received %s from %s", message.text, WildAnimals.proxy.getPlayerEntityFromContext(ctx).getDisplayName()));
+            System.out.println(String.format("Received %s from %s", message.text, MainMod.proxy.getPlayerEntityFromContext(ctx).getDisplayName()));
 			// TODO Auto-generated method stub
 			return null;
 		}

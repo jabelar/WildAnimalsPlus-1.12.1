@@ -16,21 +16,23 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.renderers;
 
+import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
+
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 
-import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
-
+@SuppressWarnings("rawtypes")
 public class RenderHerdAnimal extends RenderLiving
 {
     protected ResourceLocation herdAnimalTexture;
 
-    public RenderHerdAnimal(ModelBase par1ModelBase, float parShadowSize)
+    public RenderHerdAnimal(RenderManager parRenderManager, ModelBase par1ModelBase, float parShadowSize)
     {
-        super(par1ModelBase, parShadowSize);
+        super(parRenderManager, par1ModelBase, parShadowSize);
         setEntityTexture();
         
     }

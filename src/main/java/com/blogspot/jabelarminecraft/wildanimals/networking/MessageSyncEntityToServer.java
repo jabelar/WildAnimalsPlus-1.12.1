@@ -16,17 +16,16 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.networking;
 
+import com.blogspot.jabelarminecraft.wildanimals.MainMod;
+import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
-
-import com.blogspot.jabelarminecraft.wildanimals.WildAnimals;
-import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-
-import cpw.mods.fml.common.network.ByteBufUtils;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;
-import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * @author jabelar
@@ -74,8 +73,8 @@ public class MessageSyncEntityToServer implements IMessage
         @Override
         public IMessage onMessage(MessageSyncEntityToServer message, MessageContext ctx) 
         {
-        	EntityPlayer thePlayer = WildAnimals.proxy.getPlayerEntityFromContext(ctx);
-        	IModEntity theEntity = (IModEntity)thePlayer.worldObj.getEntityByID(message.entityId);
+        	EntityPlayer thePlayer = MainMod.proxy.getPlayerEntityFromContext(ctx);
+        	IModEntity theEntity = (IModEntity)thePlayer.world.getEntityByID(message.entityId);
         	if (theEntity != null)
         	{
         		theEntity.setSyncDataCompound(message.entitySyncDataCompound);

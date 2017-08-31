@@ -16,13 +16,12 @@
 
 package com.blogspot.jabelarminecraft.wildanimals;
 
-import com.blogspot.jabelarminecraft.wildanimals.gui.WildAnimalsConfigGUI;
+import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
 
-import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 
 public class EventHandler 
@@ -546,16 +545,16 @@ public class EventHandler
 //        
 //    }
 //
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-    public void onEvent(GuiOpenEvent event)
-    {
-        if (event.getGui() instanceof GuiIngameModOptions)
-        {
-            System.out.println("GuiOpenEvent for GuiIngameModOptions");
-            event.setGui(new WildAnimalsConfigGUI(null));        
-        }
-    }
+//    @SideOnly(Side.CLIENT)
+//    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//    public void onEvent(GuiOpenEvent event)
+//    {
+//        if (event.getGui() instanceof GuiIngameModOptions)
+//        {
+//            System.out.println("GuiOpenEvent for GuiIngameModOptions");
+//            event.setGui(new WildAnimalsConfigGUI(null));        
+//        }
+//    }
  //
 //    @SideOnly(Side.CLIENT)
 //    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
@@ -784,5 +783,144 @@ public class EventHandler
 //    {
 //        
 //    }
+    
+    /*
+     * These events below were previously registered on FML Event Bus
+     * In earlier versions of Forge
+     */
+    
+	/*
+	 * Common events
+	 */
+
+	// events in the cpw.mods.fml.common.event package are actually handled with
+	// @EventHandler annotation in the main mod class or the proxies.
+	
+	/*
+	 * Game input events
+	 */
+
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(InputEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(KeyInputEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(MouseInputEvent event)
+//	{
+//
+//	}
+	
+	/*
+	 * Config events
+	 */
+	 @SubscribeEvent
+	 public void onConfigChanged(ConfigChangedEvent.OnConfigChangedEvent event) 
+	 {
+	     if(event.getModID().equals(MainMod.MODID))
+	     {
+	    	 MainMod.config.save();
+	         CommonProxy.syncConfig();
+	     }
+	 }
+	   
+	/*
+	 * Player events
+	 */
+
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(PlayerEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(ItemCraftedEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(ItemPickupEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(ItemSmeltedEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(PlayerChangedDimensionEvent event)
+//	{
+//		
+//	}
+
+	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+	public void onEvent(PlayerLoggedInEvent event)
+	{
+		if (event.player.getDisplayName().getUnformattedComponentText()=="MistMaestro")
+		{
+			// DEBUG
+			System.out.println("Welcome Master!");
+		}
+		
+	}
+
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(PlayerLoggedOutEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(PlayerRespawnEvent event)
+//	{
+//
+//	}
+
+	/*
+	 * Tick events
+	 */
+
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(ClientTickEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(PlayerTickEvent event)
+//	{
+// 
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(RenderTickEvent event)
+//	{
+//		
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(WorldTickEvent event)
+//	{
+//		// force update of beanstalk block
+//		// world.scheduleBlockUpdate(x, y, z, block, block.tickRate(world))
+//	}
+//
+//	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//	public void onEvent(ServerTickEvent event)
+//	{
+//		
+//	}
 }
 

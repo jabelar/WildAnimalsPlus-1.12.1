@@ -37,6 +37,7 @@ import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderHerdAnimal;
 import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderSerpent;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
@@ -90,52 +91,91 @@ public class ClientProxy extends CommonProxy
     {
         // the float parameter passed to the Render class is the shadow size for the entity
 
+		RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
         // Big cats
 	    RenderingRegistry.registerEntityRenderingHandler(
 	            EntityTiger.class, 
 	            new RenderBigCat(
+	            		renderManager,
 	                    new ModelBigCat(), 
 	                    new ModelBigCat(), 
 	                    0.5F,
 	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger.png"), 
 	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger_tame.png"),
 	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger_angry.png"),
-	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))); // not sure about second model
-	    RenderingRegistry.registerEntityRenderingHandler(EntityManEatingTiger.class, new RenderBigCat(new ModelBigCat(), new ModelBigCat(), 
-	    		0.5F,
-	    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger.png"), 
-	    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_tame.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_angry.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))); // not sure about second model
-	    RenderingRegistry.registerEntityRenderingHandler(EntityLion.class, new RenderBigCat(new ModelBigCat(), new ModelBigCat(), 
-	    		0.5F,
-	    		new ResourceLocation("wildanimals:textures/entity/lion/lion.png"), 
-	    		new ResourceLocation("wildanimals:textures/entity/lion/lion_tame.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/lion/lion_angry.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))); // not sure about second model
-	    RenderingRegistry.registerEntityRenderingHandler(EntityLynx.class, new RenderBigCat(new ModelBigCat(), new ModelBigCat(), 
-	    		0.5F,
-	    		new ResourceLocation("wildanimals:textures/entity/lion/lion.png"), 
-	    		new ResourceLocation("wildanimals:textures/entity/lion/lion_tame.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/lion/lion_angry.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))); // not sure about second model
-	    RenderingRegistry.registerEntityRenderingHandler(EntityJaguar.class, new RenderBigCat(new ModelBigCat(), new ModelBigCat(), 
-	    		0.5F,
-	    		new ResourceLocation("wildanimals:textures/entity/panther/panther.png"), 
-	    		new ResourceLocation("wildanimals:textures/entity/panther/panther_tame.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/panther/panther_angry.png"),
-	    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))); // not sure about second model
+	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))
+	            ); // not sure about second model
+	    RenderingRegistry.registerEntityRenderingHandler(
+	    		EntityManEatingTiger.class, 
+	    		new RenderBigCat(
+	            		renderManager,
+	            		new ModelBigCat(), 
+	            		new ModelBigCat(), 
+			    		0.5F,
+			    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger.png"), 
+			    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_tame.png"),
+			    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_angry.png"),
+			    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))
+	    		); // not sure about second model
+	    RenderingRegistry.registerEntityRenderingHandler(
+	    		EntityLion.class, 
+	    		new RenderBigCat(
+	            		renderManager,
+	            		new ModelBigCat(), 
+	            		new ModelBigCat(), 
+			    		0.5F,
+			    		new ResourceLocation("wildanimals:textures/entity/lion/lion.png"), 
+			    		new ResourceLocation("wildanimals:textures/entity/lion/lion_tame.png"),
+			    		new ResourceLocation("wildanimals:textures/entity/lion/lion_angry.png"),
+			    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))
+	    		); // not sure about second model
+	    RenderingRegistry.registerEntityRenderingHandler(
+	    		EntityLynx.class, 
+	    		new RenderBigCat(
+	            		renderManager,
+	            		new ModelBigCat(), 
+	            		new ModelBigCat(), 
+			    		0.5F,
+			    		new ResourceLocation("wildanimals:textures/entity/lion/lion.png"), 
+			    		new ResourceLocation("wildanimals:textures/entity/lion/lion_tame.png"),
+			    		new ResourceLocation("wildanimals:textures/entity/lion/lion_angry.png"),
+			    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))
+	    		); // not sure about second model
+	    RenderingRegistry.registerEntityRenderingHandler(
+	    		EntityJaguar.class, 
+	    		new RenderBigCat(
+	            		renderManager,
+	            		new ModelBigCat(), 
+	            		new ModelBigCat(), 
+		    		0.5F,
+		    		new ResourceLocation("wildanimals:textures/entity/panther/panther.png"), 
+		    		new ResourceLocation("wildanimals:textures/entity/panther/panther_tame.png"),
+		    		new ResourceLocation("wildanimals:textures/entity/panther/panther_angry.png"),
+		    		new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png"))
+	    		); // not sure about second model
 	    
 	    // Herd animals
-	    RenderingRegistry.registerEntityRenderingHandler(EntityElephant.class, new RenderHerdAnimal(new ModelElephant(), 0.5F));
+	    RenderingRegistry.registerEntityRenderingHandler(
+	    		EntityElephant.class, 
+	    		new RenderHerdAnimal(
+	            		renderManager,
+	            		new ModelElephant(), 
+	            		0.5F)
+	    		);
 
 	    // Serpents
-	    RenderingRegistry.registerEntityRenderingHandler(EntitySerpent.class, new RenderSerpent(new ModelSerpent(), 0.0F));
+	    RenderingRegistry.registerEntityRenderingHandler(
+	    		EntitySerpent.class, 
+	    		new RenderSerpent(
+	            		renderManager,
+	            		new ModelSerpent(), 
+	            		0.0F));
 
 	    // Birds of Prey
         RenderingRegistry.registerEntityRenderingHandler(
                 EntityEagle.class, 
                 new RenderBirdOfPrey(
+	            		renderManager,
                         new ModelBirdOfPrey(), 
                         new ModelBirdOfPrey(), 
                         0.5F,
@@ -146,6 +186,7 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(
                 EntityHawk.class, 
                 new RenderBirdOfPrey(
+	            		renderManager,
                         new ModelBirdOfPrey(), 
                         new ModelBirdOfPrey(), 
                         0.5F,
@@ -156,6 +197,7 @@ public class ClientProxy extends CommonProxy
         RenderingRegistry.registerEntityRenderingHandler(
                 EntityOwl.class, 
                 new RenderBirdOfPrey(
+	            		renderManager,
                         new ModelOwl(), 
                         new ModelOwl(), 
                         0.5F,

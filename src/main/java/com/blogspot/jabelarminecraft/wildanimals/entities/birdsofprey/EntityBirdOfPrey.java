@@ -67,7 +67,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     // create a random factor per entity
     protected int randFactor;
     
-    private Class[] preyArray = new Class[] {EntityChicken.class, EntityBat.class, EntitySerpent.class};
+    @SuppressWarnings("rawtypes")
+	private Class[] preyArray = new Class[] {EntityChicken.class, EntityBat.class, EntitySerpent.class};
 
     private final double TAMED_HEALTH = 30.0D;
     

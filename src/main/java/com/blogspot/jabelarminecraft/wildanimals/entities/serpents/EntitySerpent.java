@@ -19,10 +19,8 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.serpents;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
-import net.minecraft.block.BlockColored;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -35,19 +33,13 @@ import net.minecraft.entity.ai.EntityAIPanic;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
@@ -66,9 +58,8 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     protected EntityAIBase aiLookIdle = new EntityAILookIdle(this);
     protected EntityAIBase aiHurtByTarget = new EntityAIHurtByTarget(this, true);
     protected EntityAIBase aiPanic = new EntityAIPanic(this, 2.0D);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	protected final EntityAIBase aiTargetChicken = new EntityAINearestAttackableTarget(this, EntityChicken.class, true, true);
-	private float field_70926_e;
-	
 	// use fields for sounds to allow easy changes in child classes
 	protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
 	protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
@@ -119,60 +110,6 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         super.applyEntityAttributes();
         getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
         getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
-    }
-
-    /**
-     * Sets the active target the Task system uses for tracking
-     */
-    @Override
-	public void setAttackTarget(EntityLivingBase par1EntityLivingBase)
-    {
-        super.setAttackTarget(par1EntityLivingBase);
-    }
-
-    /**
-     * main AI tick function, replaces updateEntityActionState
-     */
-    @Override
-	protected void updateAITick()
-    {
-        dataWatcher.updateObject(18, Float.valueOf(getHealth()));
-    }
-
-    @Override
-	protected void entityInit()
-    {
-        super.entityInit();
-        dataWatcher.addObject(18, new Float(getHealth()));
-        dataWatcher.addObject(19, new Byte((byte)0));
-        dataWatcher.addObject(20, new Byte((byte)BlockColored.func_150032_b(1)));
-    }
-
-//    @Override
-//    // play step sound
-//	protected void func_145780_a(int p_145780_1_, int p_145780_2_, int p_145780_3_, Block p_145780_4_)
-//    {
-//    	// serpents are silent when moving
-//    }
-
-    /**
-     * (abstract) Protected helper method to write subclass entity data to NBT.
-     */
-    @Override
-	public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
-    {
-        super.writeEntityToNBT(par1NBTTagCompound);
-        // store additional custom variables for save, example: par1NBTTagCompound.setBoolean("Angry", isAngry());
-    }
-
-    /**
-     * (abstract) Protected helper method to read subclass entity data from NBT.
-     */
-    @Override
-	public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
-    {
-        super.readEntityFromNBT(par1NBTTagCompound);
-        // retrieve additional custom variables from save, example: setAngry(par1NBTTagCompound.getBoolean("Angry"));
     }
 
     /**
@@ -227,68 +164,11 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         super.onLivingUpdate();
     }
 
-    /**
-     * Called when the entity is attacked.
-     */
-    @Override
-	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
-    {
-        if (getIsInvulnerable())
-        {
-            return false;
-        }
-        else
-        {
-            Entity entity = par1DamageSource.getTrueSource();
-
-//            if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
-//            {
-//                par2 = (par2 + 1.0F) / 2.0F;
-//            }
-
-            return super.attackEntityFrom(par1DamageSource, par2);
-        }
-    }
-
     @Override
 	public boolean attackEntityAsMob(Entity par1Entity)
     {
-        int i = 2;
-        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), i);
-    }
-    
-    /**
-     * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
-     */
-    @Override
-	public boolean processInteract(EntityPlayer par1EntityPlayer, EnumHand parHand)
-    {
-        
-        // DEBUG
-        System.out.println("EntitySerpent interact()");
-        
-        par1EntityPlayer.inventory.getCurrentItem();
-
-        return super.processInteract(par1EntityPlayer, parHand);
-    }
-
-    /**
-     * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
-     * the animal type)
-     */
-    @Override
-	public boolean isBreedingItem(ItemStack par1ItemStack)
-    {
-        return par1ItemStack == null ? false : (!(par1ItemStack.getItem() instanceof ItemFood) ? false : ((ItemFood)par1ItemStack.getItem()).isWolfsFavoriteMeat());
-    }
-
-    /**
-     * Will return how many at most can spawn in a chunk at once.
-     */
-    @Override
-	public int getMaxSpawnedInChunk()
-    {
-        return 8;
+        setLastAttackedEntity(par1Entity);
+        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue());
     }
 
     @Override
@@ -303,65 +183,6 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         // transfer any attributes from parent to child here, if desired (like owner for tamed entities)
 
         return entitySerpent;
-    }
-
-    public void func_70918_i(boolean par1)
-    {
-        if (par1)
-        {
-            dataWatcher.updateObject(19, Byte.valueOf((byte)1));
-        }
-        else
-        {
-            dataWatcher.updateObject(19, Byte.valueOf((byte)0));
-        }
-    }
-
-    /**
-     * Returns true if the mob is currently able to mate with the specified mob.
-     */
-    @Override
-	public boolean canMateWith(EntityAnimal par1EntityAnimal)
-    {
-        if (par1EntityAnimal == this)
-        {
-            return false;
-        }
-        else if (!(par1EntityAnimal instanceof EntitySerpent))
-        {
-            return false;
-        }
-        else
-        {
-            EntitySerpent entitySerpent = (EntitySerpent)par1EntityAnimal;
-            return (isInLove() && entitySerpent.isInLove());
-        }
-    }
-
-    public boolean func_70922_bv()
-    {
-        return dataWatcher.getWatchableObjectByte(19) == 1;
-    }
-
-    /**
-     * Determines if an entity can be despawned, used on idle far away entities
-     */
-    @Override
-	protected boolean canDespawn()
-    {
-        return ticksExisted > 2400;
-    }
-
-    public boolean func_142018_a(EntityLivingBase par1EntityLivingBase, EntityLivingBase par2EntityLivingBase)
-    {
-        if (!(par1EntityLivingBase instanceof EntityCreeper) && !(par1EntityLivingBase instanceof EntityGhast))
-        { 
-            return par1EntityLivingBase instanceof EntityPlayer && par2EntityLivingBase instanceof EntityPlayer && !((EntityPlayer)par2EntityLivingBase).canAttackPlayer((EntityPlayer)par1EntityLivingBase) ? false : !(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).isTame();
-        }
-        else
-        {
-            return false;
-        }
     }
 
     // *****************************************************

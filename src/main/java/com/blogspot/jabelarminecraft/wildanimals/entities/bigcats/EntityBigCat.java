@@ -24,6 +24,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIFoll
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 import com.google.common.base.Predicate;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
@@ -111,13 +112,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected EntityAIBase aiHurtByTarget = new EntityAIHurtByTarget(this, true);
 	@SuppressWarnings("unchecked")
     protected EntityAIBase aiTargetNonTamedSheep = new EntityAITargetNonTamed(this, EntitySheep.class, false, (Predicate)null);
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected EntityAIBase aiTargetNonTamedCow = new EntityAITargetNonTamed(this, EntityCow.class, false, (Predicate)null);
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected EntityAIBase aiTargetNonTamedPig = new EntityAITargetNonTamed(this, EntityPig.class, false, (Predicate)null);
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected EntityAIBase aiTargetNonTamedChicken = new EntityAITargetNonTamed(this, EntityChicken.class, false, (Predicate)null);
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected EntityAIBase aiTargetNonTamedHerdAnimal = new EntityAITargetNonTamed(this, EntityHerdAnimal.class, false, (Predicate)null);
 
 	
@@ -494,7 +495,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         // heal tamed with food
         if (isTamed())
         {
-            if (itemInHand != null)
+            if (!itemInHand.isEmpty())
             {
                 if (itemInHand.getItem() instanceof ItemFood)
                 {
@@ -504,75 +505,74 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                     {
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-                            itemInHand.setCount(itemInHand.getCount()-1);
+                            itemInHand.shrink(1);
                         }
-
-                        heal(itemfood.getHealAmount(itemInHand));
 
                         if (itemInHand.getCount() <= 0)
                         {
-                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
+                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
                         }
 
+                        heal(itemfood.getHealAmount(itemInHand));
                         return true;
                     }
                 }
                 else if (itemInHand.getItem() == Items.DYE)
                 {
-                    EnumDyeColor i = EnumDyeColor.byMetadata(itemInHand.getMetadata());
+                    EnumDyeColor dyeColor = EnumDyeColor.byMetadata(itemInHand.getMetadata());
 
-                    if (i != getCollarColor())
+                    if (dyeColor != getCollarColor())
                     {
-                        setCollarColor(i);
-                        itemInHand.setCount(itemInHand.getCount()-1);
-
-                        if (!parPlayer.capabilities.isCreativeMode && itemInHand.getCount() <= 0)
+                        setCollarColor(dyeColor);
+                        
+                        if (!parPlayer.capabilities.isCreativeMode)
                         {
-                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
+	                        itemInHand.shrink(1);
+	                        if (!parPlayer.capabilities.isCreativeMode && itemInHand.getCount() <= 0)
+	                        {
+	                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+	                        }
                         }
                         
-
                         return true;
                     }
                 }
             }
 
             // toggle sitting
-            if (parPlayer.getCommandSenderEntity().equals(getOwner()) && !world.isRemote && !isBreedingItem(itemInHand))
+            if (isOwner(parPlayer) && !world.isRemote && !isBreedingItem(itemInHand))
             {
                 setSitting(!isSitting());
                 aiSit.setSitting(isSitting());
                 isJumping = false;
-                setPathToEntity((PathEntity)null);
-                setRevengeTarget((Entity)null);
+                navigator.clearPathEntity();
                 setAttackTarget((EntityLivingBase)null);
             }
         }
         
         // tame with bone
-        else if (itemInHand != null && itemInHand.getItem() == Items.BONE && !isAngry())
+        else if (!itemInHand.isEmpty() && itemInHand.getItem() == Items.BONE && !isAngry())
         {
             if (!parPlayer.capabilities.isCreativeMode)
             {
-                itemInHand.setCount(itemInHand.getCount()-1);
+                itemInHand.shrink(1);
             }
 
             if (itemInHand.getCount() <= 0)
             {
-                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
+                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
             }
 
             // Try taming
             if (!world.isRemote)
             {
-                if (rand.nextInt(3) == 0)
+                if (rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, parPlayer))
                 {
-                    setTamed(true);
-                    setPathToEntity((PathEntity)null);
+                    setTamedBy(parPlayer);
+                    navigator.clearPathEntity();
                     setAttackTarget((EntityLivingBase)null);
                     aiSit.setSitting(true);
                     setHealth(TAMED_HEALTH);
-                    setOwner(parPlayer.getUniqueID());
                     playTameEffect(true);
                     world.setEntityState(this, (byte)7);
                     // DEBUG
@@ -587,16 +587,16 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
         
         // grow with meat
-        else if (itemInHand != null && itemInHand.getItem() == Items.BEEF && !isAngry())
+        else if (!itemInHand.isEmpty() && itemInHand.getItem() == Items.BEEF && !isAngry())
         {
             if (!parPlayer.capabilities.isCreativeMode)
             {
-                itemInHand.setCount(itemInHand.getCount()-1);
+                itemInHand.shrink(1);
             }
 
-            if (itemInHand.stackSize <= 0)
+            if (itemInHand.getCount() <= 0)
             {
-                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
+                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
             }
 
             if (!world.isRemote)
@@ -710,7 +710,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	public boolean isBreedingItem(ItemStack par1ItemStack)
     {
-        return par1ItemStack == null ? false : (!(par1ItemStack.getItem() instanceof ItemFood) ? false : ((ItemFood)par1ItemStack.getItem()).isWolfsFavoriteMeat());
+        return par1ItemStack == ItemStack.EMPTY ? false : (!(par1ItemStack.getItem() instanceof ItemFood) ? false : ((ItemFood)par1ItemStack.getItem()).isWolfsFavoriteMeat());
     }
 
     /**

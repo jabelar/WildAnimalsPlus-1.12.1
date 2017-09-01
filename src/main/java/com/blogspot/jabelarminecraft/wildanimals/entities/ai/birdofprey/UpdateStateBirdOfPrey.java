@@ -19,17 +19,18 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey;
 import java.util.Iterator;
 import java.util.List;
 
+import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;
+import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.Vec3;
-
-import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 /**
  * @author jabelar
@@ -38,6 +39,7 @@ import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 public class UpdateStateBirdOfPrey
 {
     public EntityBirdOfPrey theBird;
+    public World theWorld;
     
     // defines area on ground that bird looks for prey in
     // region is double this size as this gives dimensions in each direction
@@ -51,6 +53,7 @@ public class UpdateStateBirdOfPrey
     public UpdateStateBirdOfPrey(EntityBirdOfPrey parBirdOfPrey)
     {
         theBird = parBirdOfPrey;
+        theWorld = theBird.world;
     }
     
     public void updateAIState()
@@ -173,7 +176,7 @@ public class UpdateStateBirdOfPrey
         if (theBird.posY < theBird.getSoarHeight()*0.9D)
         {
             // point towards owner
-            theBird.rotationYaw = Utilities.getYawFromVec(Vec3.createVectorHelper(
+            theBird.rotationYaw = Utilities.getYawFromVec(new Vec3d(
                     theBird.getOwner().posX - theBird.posX,
                     theBird.getOwner().posY - theBird.posY,
                     theBird.getOwner().posZ - theBird.posZ));
@@ -218,7 +221,7 @@ public class UpdateStateBirdOfPrey
         {
             theBird.getAttackTarget().attackEntityFrom(
                     DamageSource.causeMobDamage(theBird), 
-                    (float) theBird.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
+                    (float) theBird.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
             theBird.setState(AIStates.STATE_TAKING_OFF);
         }
     }
@@ -269,11 +272,11 @@ public class UpdateStateBirdOfPrey
 //            System.out.println("Block underneath = "+worldObj.getBlock(MathHelper.floor_double(posX), (int)posY - 1, MathHelper.floor_double(posZ)).getUnlocalizedName());
         // handle case where perch target block might get destroyed before eagle gets to it
         // or might get obstructed.
-//        if (theBird.worldObj.getTopBlock((int)theBird.posX, (int)theBird.posZ) instanceof BlockLeaves
+//        if (theWorldObj.getTopBlock((int)theBird.posX, (int)theBird.posZ) instanceof BlockLeaves
 //                && Utilities.isCourseTraversable(
 //                            theBird,
 //                            theBird.posX, 
-//                            theBird.worldObj.getHeightValue(
+//                            theWorldObj.getHeightValue(
 //                                    (int)theBird.posX, 
 //                                    (int)theBird.posZ), 
 //                            theBird.posZ))
@@ -311,9 +314,9 @@ public class UpdateStateBirdOfPrey
     
     private boolean hasLanded()
     {
-        AxisAlignedBB entityBoundingBox = theBird.boundingBox.copy().offset(0.0D, -0.5D, 0.0D);
+        AxisAlignedBB entityBoundingBox = (Utilities.copyBoundingBox(theBird.getEntityBoundingBox())).offset(0.0D, -0.5D, 0.0D);
 
-        if (!theBird.worldObj.getCollidingBoundingBoxes(theBird, entityBoundingBox).isEmpty())
+        if (!theWorld.getCollisionBoxes(theBird, entityBoundingBox).isEmpty())
         {
             return true;
         }
@@ -405,7 +408,7 @@ public class UpdateStateBirdOfPrey
             }
 
             // entity can get scared if player gets too close
-            EntityPlayer closestPlayer = theBird.worldObj.getClosestPlayerToEntity(theBird, 4.0D);
+            EntityPlayer closestPlayer = theWorld.getClosestPlayerToEntity(theBird, 4.0D);
             if (closestPlayer != null)
             {
                 ItemStack theHeldItemStack = closestPlayer.inventory.getCurrentItem();
@@ -432,12 +435,12 @@ public class UpdateStateBirdOfPrey
             // always try to perch starting at dusk
             if (theBird.getRNG().nextInt(getPerchChance()) == 0)
             {
-                if (theBird.worldObj.getTopBlock((int)theBird.posX, (int)theBird.posZ) instanceof BlockLeaves)
+                if (theWorld.getBlockState(theWorld.getTopSolidOrLiquidBlock(theBird.getPosition())) instanceof BlockLeaves)
                 {
                     if (Utilities.isCourseTraversable(
                             theBird,
                             theBird.posX, 
-                            theBird.worldObj.getHeightValue(
+                            theWorld.getHeight(
                                     (int)theBird.posX, 
                                     (int)theBird.posZ), 
                             theBird.posZ))
@@ -445,7 +448,7 @@ public class UpdateStateBirdOfPrey
                         theBird.setState(AIStates.STATE_DIVING);
                         theBird.setAnchor(
                                 theBird.posX, 
-                                theBird.worldObj.getHeightValue(
+                                theWorld.getHeight(
                                         (int)theBird.posX, 
                                         (int)theBird.posZ), 
                                 theBird.posZ);
@@ -457,14 +460,14 @@ public class UpdateStateBirdOfPrey
     
     public int getPerchChance()
     {
-        if (theBird.worldObj.isRaining())
+        if (theWorld.isRaining())
         {
             return 1;
         }
         
         if (theBird.isNocturnal())
         {
-            if (theBird.worldObj.isDaytime())
+            if (theWorld.isDaytime())
             {
                 return PERCH_CHANCE_BASE;
             }
@@ -475,7 +478,7 @@ public class UpdateStateBirdOfPrey
         }
         else
         {
-            if (theBird.worldObj.isDaytime())
+            if (theWorld.isDaytime())
             {
                 return PERCH_CHANCE_BASE * 10000;
             }
@@ -488,14 +491,14 @@ public class UpdateStateBirdOfPrey
     
     public int getTakeOffChance()
     {
-        if (theBird.worldObj.isRaining())
+        if (theWorld.isRaining())
         {
             return TAKE_OFF_CHANCE_BASE * 1000;
         }
         
         if (theBird.isNocturnal())
         {
-            if (!theBird.worldObj.isDaytime())
+            if (!theWorld.isDaytime())
             {
                 return TAKE_OFF_CHANCE_BASE;
             }
@@ -506,7 +509,7 @@ public class UpdateStateBirdOfPrey
         }
         else
         {
-            if (!theBird.worldObj.isDaytime())
+            if (!theWorld.isDaytime())
             {
                 return TAKE_OFF_CHANCE_BASE * 100;
             }
@@ -540,11 +543,11 @@ public class UpdateStateBirdOfPrey
         }
         
         // check for revenge targets (the getAITarget() method really gives a revenge target)
-        if (theBird.getAttackTarget() == null && theBird.getAITarget() != null)
+        if (theBird.getAttackTarget() == null && theBird.getRevengeTarget() != null)
         {
             // DEBUG
             System.out.println("There is a revenge target");
-            theBird.setAttackTarget(theBird.getAITarget());
+            theBird.setAttackTarget(theBird.getRevengeTarget());
         }
     }
 
@@ -559,19 +562,19 @@ public class UpdateStateBirdOfPrey
         }
         else
         {
-            EntityLivingBase possibleTarget = theOwner.getLastAttacker(); // note the get last attacker actually returns last attacked
+            EntityLivingBase possibleTarget = theOwner.getLastAttackedEntity(); // note the get last attacker actually returns last attacked
             if (Utilities.isSuitableTarget(theOwner, possibleTarget, true) && 
                     Utilities.isCourseTraversable(theBird, possibleTarget.posX, possibleTarget.posY, possibleTarget.posZ))
             {
 //                // attack region on ground
 //                AxisAlignedBB attackRegion = AxisAlignedBB.getBoundingBox(
 //                        theBird.posX - attackRegionSize, 
-//                        theBird.worldObj.getHeightValue((int)theBird.posX, (int)theBird.posZ) - attackRegionSize, 
+//                        theWorldObj.getHeightValue((int)theBird.posX, (int)theBird.posZ) - attackRegionSize, 
 //                        theBird.posZ - attackRegionSize, 
 //                        theBird.posX + attackRegionSize, 
-//                        theBird.worldObj.getHeightValue((int)theBird.posX, (int)theBird.posZ) + attackRegionSize, 
+//                        theWorldObj.getHeightValue((int)theBird.posX, (int)theBird.posZ) + attackRegionSize, 
 //                        theBird.posZ + attackRegionSize);
-//                if (attackRegion.isVecInside(Vec3.createVectorHelper(
+//                if (attackRegion.isVecInside(Vec3d.createVectorHelper(
 //                        possibleTarget.posX,
 //                        possibleTarget.posY,
 //                        possibleTarget.posZ)))
@@ -588,18 +591,20 @@ public class UpdateStateBirdOfPrey
     public void processNaturalAttack()
     {
         // find target on ground
-        AxisAlignedBB attackRegion = AxisAlignedBB.getBoundingBox(
+        AxisAlignedBB attackRegion = new AxisAlignedBB(
                 theBird.posX - attackRegionSize, 
-                theBird.worldObj.getHeightValue((int)theBird.posX, (int)theBird.posZ) - attackRegionSize, 
+                theWorld.getHeight((int)theBird.posX, (int)theBird.posZ) - attackRegionSize, 
                 theBird.posZ - attackRegionSize, 
                 theBird.posX + attackRegionSize, 
-                theBird.worldObj.getHeightValue((int)theBird.posX, (int)theBird.posZ) + attackRegionSize, 
+                theWorld.getHeight((int)theBird.posX, (int)theBird.posZ) + attackRegionSize, 
                 theBird.posZ + attackRegionSize);
 
         for (int i=0; i<theBird.getPreyArray().length; i++)
         {
-            List possibleTargetEntities = theBird.worldObj.getEntitiesWithinAABB(theBird.getPreyArray()[i], attackRegion);
-            Iterator<Object> targetIterator = possibleTargetEntities.iterator();
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+			List possibleTargetEntities = theWorld.getEntitiesWithinAABB(theBird.getPreyArray()[i], attackRegion);
+            @SuppressWarnings("unchecked")
+			Iterator<Object> targetIterator = possibleTargetEntities.iterator();
             while (targetIterator.hasNext())
             {
                 EntityLivingBase possibleTarget = (EntityLivingBase)(targetIterator.next());

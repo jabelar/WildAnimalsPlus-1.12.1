@@ -177,7 +177,7 @@ public class CommonProxy
     // lots of conflicting tutorials on this, currently following: nly register mod id http://www.minecraftforum.net/topic/1417041-mod-entity-problem/page__st__140#entry18822284
     // another tut says to only register global id like http://www.minecraftforge.net/wiki/How_to_register_a_mob_entity#Registering_an_Entity
     // another tut says to use both: http://www.minecraftforum.net/topic/2389683-172-forge-add-new-block-item-entity-ai-creative-tab-language-localization-block-textures-side-textures/
-     public void registerModEntities()
+    public void registerModEntities()
     {    
          // DEBUG
         System.out.println("Registering entities");
@@ -189,38 +189,38 @@ public class CommonProxy
         {
             if (MainMod.configBigCatsAreManEaters)
             {
-                registerModEntityWithEgg(EntityManEatingTiger.class, "Tiger", 0xE18519, 0x000000);
-                registerModEntityWithEgg(EntityManEatingLion.class, "Lion", 0xD9C292, 0xFFFFFF);
-                registerModEntityWithEgg(EntityManEatingLynx.class, "Lynx", 0xD9C292, 0xFFFFFF);
-                registerModEntityWithEgg(EntityManEatingJaguar.class, "Jaguar", 0xF4E003, 0x000000);
+                registerModEntityWithEgg(EntityManEatingTiger.class, "tiger", 0xE18519, 0x000000);
+                registerModEntityWithEgg(EntityManEatingLion.class, "lion", 0xD9C292, 0xFFFFFF);
+                registerModEntityWithEgg(EntityManEatingLynx.class, "lynx", 0xD9C292, 0xFFFFFF);
+                registerModEntityWithEgg(EntityManEatingJaguar.class, "jaguar", 0xF4E003, 0x000000);
             }
             else
             {
-                registerModEntityWithEgg(EntityTiger.class, "Tiger", 0xE18519, 0x000000);
-                registerModEntityWithEgg(EntityLion.class, "Lion", 0xD9C292, 0xFFFFFF);
-                registerModEntityWithEgg(EntityLynx.class, "Lynx", 0xD9C292, 0xFFFFFF);
-                registerModEntityWithEgg(EntityJaguar.class, "Jaguar", 0xF4E003, 0x000000);
+                registerModEntityWithEgg(EntityTiger.class, "tiger", 0xE18519, 0x000000);
+                registerModEntityWithEgg(EntityLion.class, "lion", 0xD9C292, 0xFFFFFF);
+                registerModEntityWithEgg(EntityLynx.class, "lynx", 0xD9C292, 0xFFFFFF);
+                registerModEntityWithEgg(EntityJaguar.class, "jaguar", 0xF4E003, 0x000000);
             }
         }
 
         // Herd animals
         if (MainMod.configIncludeHerdAnimals)
         {
-            registerModEntityWithEgg(EntityElephant.class, "Elephant", 0x888888, 0xAAAAAA);
+            registerModEntityWithEgg(EntityElephant.class, "elephant", 0x888888, 0xAAAAAA);
         }
         
         // Serpents
         if (MainMod.configIncludeSnakes)
         {
-            registerModEntityWithEgg(EntitySerpent.class, "Python", 0x3F5505, 0x4E6414);
+            registerModEntityWithEgg(EntitySerpent.class, "python", 0x3F5505, 0x4E6414);
         }
         
         // Birds of Prey
         if (MainMod.configIncludeBirdsOfPrey)
         {
-            registerModEntityWithEggLongTracking(EntityEagle.class, "Eagle", 0xFFF2E3, 0x7D6C57);
-            registerModEntityWithEggLongTracking(EntityHawk.class, "Hawk", 0x7D6C57, 0xFFF2E3);
-            registerModEntityWithEggLongTracking(EntityOwl.class, "Owl", 0xFFF2E3, 0xFFFFFF);
+            registerModEntityWithEggLongTracking(EntityEagle.class, "eagle", 0xFFF2E3, 0x7D6C57);
+            registerModEntityWithEggLongTracking(EntityHawk.class, "hawk", 0x7D6C57, 0xFFF2E3);
+            registerModEntityWithEggLongTracking(EntityOwl.class, "owl", 0xFFF2E3, 0xFFFFFF);
         }
     }
      

@@ -168,7 +168,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	public boolean attackEntityAsMob(Entity par1Entity)
     {
         setLastAttackedEntity(par1Entity);
-        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue());
+        return false; // serpents don't currently attack par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue());
     }
 
     @Override

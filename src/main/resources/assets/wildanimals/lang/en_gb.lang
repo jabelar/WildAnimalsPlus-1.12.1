@@ -8,6 +8,10 @@ entity.python.name=Python
 
 entity.elephant.name=Elephant
 
+entity.eagle.name=Eagle
+entity.hawk.name=Hawk
+entity.owl.name=Owl
+
 tile.tomatoes.name=Tomatoes
 tile.blueberries.name=Blueberries
 tile.stove.name=Stove

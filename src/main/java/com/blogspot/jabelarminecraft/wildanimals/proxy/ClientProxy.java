@@ -23,6 +23,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityManEatin
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityTiger;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityEagle;
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityHawk;
+import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityOwl;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityElephant;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
 import com.blogspot.jabelarminecraft.wildanimals.models.ModelBigCat;
@@ -32,6 +33,7 @@ import com.blogspot.jabelarminecraft.wildanimals.models.ModelSerpent;
 import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderHerdAnimal;
+import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderSerpent;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -140,9 +142,9 @@ public class ClientProxy extends CommonProxy
 	            		new ModelBigCat(), 
 	            		new ModelBigCat(), 
 	                    0.5F,
-	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger.png"), 
-	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger_tame.png"),
-	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger_angry.png"),
+	                    new ResourceLocation("wildanimals:textures/entity/panther/panther.png"), 
+	                    new ResourceLocation("wildanimals:textures/entity/panther/panther_tame.png"),
+	                    new ResourceLocation("wildanimals:textures/entity/panther/panther_angry.png"),
 	                    new ResourceLocation("wildanimals:textures/entity/tiger/tiger_collar.png")
 	    				)
 	    		);
@@ -171,7 +173,7 @@ public class ClientProxy extends CommonProxy
 	    				)
 	    		);
 	    RenderingRegistry.registerEntityRenderingHandler(
-	    		EntityEagle.class, 
+	    		EntityOwl.class, 
 	    		RenderBirdOfPrey.getRenderFactory(
 	                    new ModelBirdOfPrey(), 
 	                    new ModelBirdOfPrey(), 
@@ -200,9 +202,9 @@ public class ClientProxy extends CommonProxy
 	    
 	    RenderingRegistry.registerEntityRenderingHandler(
 	    		EntitySerpent.class, 
-	    		RenderHerdAnimal.getRenderFactory(
+	    		RenderSerpent.getRenderFactory(
 	                    new ModelSerpent(), 
-	                    0.5F,
+	                    0.0F, // no shadow needed
 	                    new ResourceLocation("wildanimals:textures/entity/serpents/python.png")
 	    				)
 	    		);   

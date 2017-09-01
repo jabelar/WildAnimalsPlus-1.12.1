@@ -23,11 +23,12 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegB
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIFollowBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
-
+import com.google.common.base.Predicate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
@@ -52,6 +53,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
@@ -97,7 +99,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     // good to have instances of AI so task list can be modified, including in sub-classes
     protected EntityAIBase aiSwimming = new EntityAISwimming(this);
     protected EntityAIBase aiLeapAtTarget = new EntityAILeapAtTarget(this, 0.4F);
-    protected EntityAIBase aiAttackOnCollide = new EntityAIAttackOnCollide(this, 1.0D, true);
+    protected EntityAIBase aiAttackOnCollide = new EntityAIAttackMelee(this, 1.0D, true);
     protected EntityAIBase aiFollowOwner = new EntityAIFollowBigCat(this, 1.0D, 10.0F, 2.0F);
     protected EntityAIBase aiMate = new EntityAIMate(this, 1.0D);
     protected EntityAIBase aiWander = new EntityAIWander(this, 1.0D);
@@ -107,11 +109,16 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected EntityAIBase aiOwnerHurtByTarget = new EntityAIOwnerHurtByTarget(this);
     protected EntityAIBase aiOwnerHurtTarget = new EntityAIOwnerHurtTarget(this);
     protected EntityAIBase aiHurtByTarget = new EntityAIHurtByTarget(this, true);
-	protected EntityAIBase aiTargetNonTamedSheep = new EntityAITargetNonTamed(this, EntitySheep.class, 200, false);
-	protected EntityAIBase aiTargetNonTamedCow = new EntityAITargetNonTamed(this, EntityCow.class, 200, false);
-	protected EntityAIBase aiTargetNonTamedPig = new EntityAITargetNonTamed(this, EntityPig.class, 200, false);
-	protected EntityAIBase aiTargetNonTamedChicken = new EntityAITargetNonTamed(this, EntityChicken.class, 200, false);
-	protected EntityAIBase aiTargetNonTamedHerdAnimal = new EntityAITargetNonTamed(this, EntityHerdAnimal.class, 200, false);
+	@SuppressWarnings("unchecked")
+    protected EntityAIBase aiTargetNonTamedSheep = new EntityAITargetNonTamed(this, EntitySheep.class, false, (Predicate)null);
+	@SuppressWarnings("unchecked")
+    protected EntityAIBase aiTargetNonTamedCow = new EntityAITargetNonTamed(this, EntityCow.class, false, (Predicate)null);
+	@SuppressWarnings("unchecked")
+    protected EntityAIBase aiTargetNonTamedPig = new EntityAITargetNonTamed(this, EntityPig.class, false, (Predicate)null);
+	@SuppressWarnings("unchecked")
+    protected EntityAIBase aiTargetNonTamedChicken = new EntityAITargetNonTamed(this, EntityChicken.class, false, (Predicate)null);
+	@SuppressWarnings("unchecked")
+    protected EntityAIBase aiTargetNonTamedHerdAnimal = new EntityAITargetNonTamed(this, EntityHerdAnimal.class, false, (Predicate)null);
 
 	
     public EntityBigCat(World parWorld)
@@ -129,7 +136,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	@Override
 	public void setupAI() 
 	{
-        getNavigator().setAvoidsWater(true);
+        setPathPriority(PathNodeType.WATER, 0.0F);
         clearAITasks(); // clear any tasks assigned in super classes
         tasks.addTask(1, aiSwimming);
         tasks.addTask(2, aiSit);
@@ -219,11 +226,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
 
-    /**
-     * main AI tick function, replaces updateEntityActionState
-     */
-    @Override
-	protected void updateAITick()
+ 	protected void updateAITick()
     {
         // Need to adjust attributes after the save data regarding
         // whether it is tamed is loaded and synced.
@@ -256,12 +259,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
 
     @Override
-    public void writeToNBT(NBTTagCompound parCompound)
+    public NBTTagCompound writeToNBT(NBTTagCompound parCompound)
     {
 //        // DEBUG
 //        System.out.println("Writing NBT");
         super.writeToNBT(parCompound);
         parCompound.setTag("extendedPropsJabelar", syncDataCompound);
+        return parCompound;
     }
 
     @Override
@@ -324,6 +328,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	public void onLivingUpdate()
     {
         super.onLivingUpdate();
+        
+        updateAITick();
 
         if (!world.isRemote && isShaking && !startedShaking && !hasPath() && onGround)
         {
@@ -346,7 +352,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         if (getInterested())
         {
             targetHeadAngle += (1.0F - targetHeadAngle) * 0.4F;
-            numTicksToChaseTarget = 10;
         }
         else
         {
@@ -453,7 +458,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
     {
-        if (isEntityInvulnerable())
+        if (getIsInvulnerable())
         {
             return false;
         }
@@ -499,7 +504,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                     {
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-                            --itemInHand.stackSize;
+                            itemInHand.setCount(itemInHand.getCount()-1);
                         }
 
                         heal(itemfood.getHealAmount(itemInHand));
@@ -519,11 +524,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                     if (i != getCollarColor())
                     {
                         setCollarColor(i);
+                        itemInHand.setCount(itemInHand.getCount()-1);
 
-                        if (!parPlayer.capabilities.isCreativeMode && --itemInHand.stackSize <= 0)
+                        if (!parPlayer.capabilities.isCreativeMode && itemInHand.getCount() <= 0)
                         {
                             parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, (ItemStack)null);
                         }
+                        
 
                         return true;
                     }
@@ -531,23 +538,23 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             }
 
             // toggle sitting
-            if (parPlayer.getCommandSenderEntity().equalsIgnoreCase(getOwnerName()) && !world.isRemote && !isBreedingItem(itemInHand))
+            if (parPlayer.getCommandSenderEntity().equals(getOwner()) && !world.isRemote && !isBreedingItem(itemInHand))
             {
                 setSitting(!isSitting());
                 aiSit.setSitting(isSitting());
                 isJumping = false;
                 setPathToEntity((PathEntity)null);
-                setTarget((Entity)null);
+                setRevengeTarget((Entity)null);
                 setAttackTarget((EntityLivingBase)null);
             }
         }
         
         // tame with bone
-        else if (itemInHand != null && itemInHand.getItem() == Items.bone && !isAngry())
+        else if (itemInHand != null && itemInHand.getItem() == Items.BONE && !isAngry())
         {
             if (!parPlayer.capabilities.isCreativeMode)
             {
-                --itemInHand.stackSize;
+                itemInHand.setCount(itemInHand.getCount()-1);
             }
 
             if (itemInHand.getCount() <= 0)
@@ -584,7 +591,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         {
             if (!parPlayer.capabilities.isCreativeMode)
             {
-                --itemInHand.stackSize;
+                itemInHand.setCount(itemInHand.getCount()-1);
             }
 
             if (itemInHand.stackSize <= 0)
@@ -596,7 +603,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             {
                 if (rand.nextInt(3) == 0)
                 {
-                    setGrowingAge(getAge()+500);
+                    setGrowingAge(getGrowingAge()+500);
                     world.setEntityState(this, (byte)7);
                 }
                 else
@@ -609,7 +616,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return true;
         }
 
-        return super.interact(parPlayer);
+        return super.processInteract(parPlayer, parHand);
     }
 
 

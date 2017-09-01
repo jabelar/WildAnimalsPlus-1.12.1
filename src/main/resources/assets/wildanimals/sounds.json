@@ -4,9 +4,9 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/bark1",
-      "mob/tiger/bark2",
-      "mob/tiger/bark3"
+      "wildanimals:mob/tiger/bark1",
+      "wildanimals:mob/tiger/bark2",
+      "wildanimals:mob/tiger/bark3"
     ]
   },
   "mob.bigCat.death": 
@@ -14,7 +14,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/death"
+      "wildanimals:mob/tiger/death"
     ]
   },
   "mob.bigCat.growl": 
@@ -22,10 +22,10 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/growl1",
-      "mob/tiger/growl2",
-      "mob/tiger/growl3",
-      "mob/tiger/growl4"
+      "wildanimals:mob/tiger/growl1",
+      "wildanimals:mob/tiger/growl2",
+      "wildanimals:mob/tiger/growl3",
+      "wildanimals:mob/tiger/growl4"
     ]
   },
   "mob.bigCat.howl": 
@@ -33,10 +33,10 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/howl1",
-      "mob/tiger/howl2",
-      "mob/tiger/howl3",
-      "mob/tiger/howl4"
+      "wildanimals:mob/tiger/howl1",
+      "wildanimals:mob/tiger/howl2",
+      "wildanimals:mob/tiger/howl3",
+      "wildanimals:mob/tiger/howl4"
     ]
   },
   "mob.bigCat.hurt": 
@@ -44,9 +44,9 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/hurt1",
-      "mob/tiger/hurt2",
-      "mob/tiger/hurt3"
+      "wildanimals:mob/tiger/hurt1",
+      "wildanimals:mob/tiger/hurt2",
+      "wildanimals:mob/tiger/hurt3"
     ]
   },
   "mob.bigCat.panting": 
@@ -54,7 +54,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/panting"
+      "wildanimals:mob/tiger/panting"
     ]
   },
   "mob.bigCat.shake": 
@@ -62,7 +62,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/shake"
+      "wildanimals:mob/tiger/shake"
     ]
   },
   "mob.bigCat.step": 
@@ -70,11 +70,11 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/step1",
-      "mob/tiger/step2",
-      "mob/tiger/step3",
-      "mob/tiger/step4",
-      "mob/tiger/step5"
+      "wildanimals:mob/tiger/step1",
+      "wildanimals:mob/tiger/step2",
+      "wildanimals:mob/tiger/step3",
+      "wildanimals:mob/tiger/step4",
+      "wildanimals:mob/tiger/step5"
     ]
   },
   "mob.bigCat.whine": 
@@ -82,7 +82,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/tiger/whine"
+      "wildanimals:mob/tiger/whine"
     ]
   },
   "mob.elephant.say": 
@@ -90,7 +90,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/elephant/elephant_say"
+      "wildanimals:mob/elephant/elephant_say"
     ]
   },
   "mob.elephant.hurt": 
@@ -98,7 +98,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/elephant/elephant_hurt"
+      "wildanimals:mob/elephant/elephant_hurt"
     ]
   },
   "mob.serpent.hurt": 
@@ -106,7 +106,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/serpent/snake_die"
+      "wildanimals:mob/serpent/snake_die"
     ]
   },
   "mob.serpent.hiss": 
@@ -114,7 +114,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/serpent/snake_hiss"
+      "wildanimals:mob/serpent/snake_hiss"
     ]
   },
   "mob.serpent.death": 
@@ -122,7 +122,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/serpent/snake_die"
+      "wildanimals:mob/serpent/snake_die"
     ]
   },
   "mob.birdsofprey.cry": 
@@ -130,10 +130,10 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/birdsofprey/cry0",
-      "mob/birdsofprey/cry1",
-      "mob/birdsofprey/cry2",
-      "mob/birdsofprey/cry3"
+      "wildanimals:mob/birdsofprey/cry0",
+      "wildanimals:mob/birdsofprey/cry1",
+      "wildanimals:mob/birdsofprey/cry2",
+      "wildanimals:mob/birdsofprey/cry3"
     ]
   },
   "mob.birdsofprey.death": 
@@ -141,7 +141,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/birdsofprey/death"
+      "wildanimals:mob/birdsofprey/death"
     ]
   },
   "mob.birdsofprey.flapping": 
@@ -149,7 +149,7 @@
     "category": "neutral",
     "sounds": 
     [
-      "mob/birdsofprey/flapping"
+      "wildanimals:mob/birdsofprey/flapping"
     ]
   } 
  }

@@ -181,7 +181,7 @@ public class EntityAIFollowBigCat extends EntityAIBase
     protected boolean isTeleportFriendlyBlock(int x, int p_192381_2_, int y, int p_192381_4_, int p_192381_5_)
     {
         BlockPos blockpos = new BlockPos(x + p_192381_4_, y - 1, p_192381_2_ + p_192381_5_);
-        IBlockState iblockstate = this.world.getBlockState(blockpos);
-        return iblockstate.getBlockFaceShape(this.world, blockpos, EnumFacing.DOWN) == BlockFaceShape.SOLID && iblockstate.canEntitySpawn(this.tameable) && this.world.isAirBlock(blockpos.up()) && this.world.isAirBlock(blockpos.up(2));
+        IBlockState iblockstate = theWorld.getBlockState(blockpos);
+        return iblockstate.getBlockFaceShape(theWorld, blockpos, EnumFacing.DOWN) == BlockFaceShape.SOLID && iblockstate.canEntitySpawn(thePet) && theWorld.isAirBlock(blockpos.up()) && theWorld.isAirBlock(blockpos.up(2));
     }
 }

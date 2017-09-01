@@ -56,6 +56,7 @@ public class CommandConjure extends CommandBase
 		return "conjure <text>";
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List getAliases() 
 	{

@@ -28,9 +28,6 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
     private EntityPlayer thePlayer;
     private final World worldObject;
     private final double minPlayerDistance;
-    private int field_75384_e;
-    // private static final String __OBFID = "CL_00001576";
-
     public EntityAISeePlayerBigCat(EntityBigCat par1EntityBigCat, double d)
     {
         this.theBigCat = par1EntityBigCat;
@@ -65,7 +62,6 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
 	public void startExecuting()
     {
         this.theBigCat.setInterested(true);
-        this.field_75384_e = 40 + this.theBigCat.getRNG().nextInt(40);
     	this.theBigCat.setAngry(true);
     	// target the player
         this.theBigCat.setAttackTarget(this.thePlayer);
@@ -91,7 +87,6 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
 	public void updateTask()
     {
         this.theBigCat.getLookHelper().setLookPosition(this.thePlayer.posX, this.thePlayer.posY + this.thePlayer.getEyeHeight(), this.thePlayer.posZ, 10.0F, this.theBigCat.getVerticalFaceSpeed());
-        --this.field_75384_e;
     }
 
 }

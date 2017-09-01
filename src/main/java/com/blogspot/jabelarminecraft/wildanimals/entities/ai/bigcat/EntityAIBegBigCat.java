@@ -95,6 +95,6 @@ public class EntityAIBegBigCat extends EntityAIBase
     private boolean hasPlayerGotBoneInHand(EntityPlayer par1EntityPlayer)
     {
         ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
-        return itemstack == null ? false : (!this.theBigCat.isTamed() && itemstack.getItem() == Items.bone ? true : this.theBigCat.isBreedingItem(itemstack));
+        return itemstack == null ? false : (!this.theBigCat.isTamed() && itemstack.getItem() == Items.BONE ? true : this.theBigCat.isBreedingItem(itemstack));
     }
 }

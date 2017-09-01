@@ -41,7 +41,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
       name = MainMod.MODNAME, 
       version = MainMod.MODVERSION,
       guiFactory = "com.blogspot.jabelarminecraft.wildanimals.gui.WildAnimalsConfigGUIFactory",
-      acceptedMinecraftVersions = "[1.7.10]")
+      acceptedMinecraftVersions = "[1.12.1]")
 public class MainMod
 {
     public static final String MODID = "wildanimals";

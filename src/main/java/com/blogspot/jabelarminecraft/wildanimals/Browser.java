@@ -21,8 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import net.minecraft.client.gui.ScaledResolution;
-
 public class Browser {
 
 	public static void browse(String parUrl) {
@@ -39,7 +37,5 @@ public class Browser {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-	    ScaledResolution sr;
 	}
 }

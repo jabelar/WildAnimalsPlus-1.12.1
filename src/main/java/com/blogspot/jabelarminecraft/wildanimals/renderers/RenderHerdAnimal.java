@@ -19,37 +19,39 @@ package com.blogspot.jabelarminecraft.wildanimals.renderers;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
 
 @SuppressWarnings("rawtypes")
 public class RenderHerdAnimal extends RenderLiving
 {
     protected ResourceLocation herdAnimalTexture;
 
-    public RenderHerdAnimal(RenderManager parRenderManager, ModelBase par1ModelBase, float parShadowSize)
+    public RenderHerdAnimal(
+    		RenderManager parRenderManager, 
+    		ModelBase par1ModelBase, 
+    		float parShadowSize,
+    		ResourceLocation parNormalTexture
+    		)
     {
         super(parRenderManager, par1ModelBase, parShadowSize);
-        setEntityTexture();
-        
+        herdAnimalTexture = parNormalTexture;       
     }
 	
     @Override
-	protected void preRenderCallback(EntityLivingBase entity, float f){
+	protected void preRenderCallback(EntityLivingBase entity, float f)
+    {
     	preRenderCallbackHerdAnimal((EntityHerdAnimal) entity, f);
     }
 
     
 	protected void preRenderCallbackHerdAnimal(EntityHerdAnimal entity, float f)
 	{
-    }
-
-    protected void setEntityTexture()
-    {
-    	herdAnimalTexture = new ResourceLocation("wildanimals:textures/entity/herdanimals/elephant.png");
     }
     
     /**
@@ -68,4 +70,45 @@ public class RenderHerdAnimal extends RenderLiving
     {
         return this.getEntityTexture((EntityHerdAnimal)par1Entity);
     }
+    
+    public static IRenderFactory getRenderFactory(
+	        ModelBase parModelBase1, 
+	        float parShadowSize, 
+	        ResourceLocation parNormalTexture 
+			)
+    {
+    	return new RenderFactory(
+    	        parModelBase1, 
+    	        parShadowSize, 
+    	        parNormalTexture 
+    			);
+    }
+    
+	private static class RenderFactory implements IRenderFactory
+	{
+        ModelBase model1;
+        float shadowSize;
+        ResourceLocation normalTexture; 
+		
+		public RenderFactory(
+	        ModelBase parModelBase1, 
+	        float parShadowSize, 
+	        ResourceLocation parNormalTexture) 
+		{
+			model1 = parModelBase1;
+			shadowSize = parShadowSize;
+			normalTexture = parNormalTexture;
+		}
+
+		@Override
+		public Render createRenderFor(RenderManager manager) 
+		{
+			return new RenderHerdAnimal(
+				manager,
+				model1,
+				shadowSize,
+				normalTexture
+			);
+		}	
+	}
 }

@@ -19,13 +19,13 @@ package com.blogspot.jabelarminecraft.wildanimals.renderers;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
 
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -37,7 +37,7 @@ public class RenderBigCat extends RenderLiving
     protected ResourceLocation tamedTexture ;
     protected ResourceLocation angryTexture ;
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	public RenderBigCat(
     		RenderManager parRenderManager,
             ModelBase parModelBase1, 
@@ -88,19 +88,69 @@ public class RenderBigCat extends RenderLiving
     {
         return parEntityBigCat.isTamed() ? tamedTexture : (parEntityBigCat.isAngry() ? angryTexture : normalTexture);
     }
-
-    /**
-     * Renders the desired {@code T} type Entity.
-     */
-    @SuppressWarnings("unchecked")
-	public void doRender(EntityWolf entity, double x, double y, double z, float entityYaw, float partialTicks)
+    
+    public static IRenderFactory getRenderFactory(
+	        ModelBase parModelBase1, 
+	        ModelBase parModelBase2, 
+	        float parShadowSize, 
+	        ResourceLocation parNormalTexture, 
+	        ResourceLocation parTamedTexture, 
+			ResourceLocation parAngryTexture, 
+			ResourceLocation parCollarTexture
+			)
     {
-        if (entity.isWolfWet())
-        {
-            float f = entity.getBrightness() * entity.getShadingWhileWet(partialTicks);
-            GlStateManager.color(f, f, f);
-        }
-
-        super.doRender(entity, x, y, z, entityYaw, partialTicks);
+    	return new RenderFactory(
+    	        parModelBase1, 
+    	        parModelBase2, 
+    	        parShadowSize, 
+    	        parNormalTexture, 
+    	        parTamedTexture, 
+    			parAngryTexture, 
+    			parCollarTexture
+    			);
     }
+    
+	private static class RenderFactory implements IRenderFactory
+	{
+        ModelBase model1;
+        ModelBase model2; 
+        float shadowSize;
+        ResourceLocation normalTexture; 
+        ResourceLocation tamedTexture;
+		ResourceLocation angryTexture; 
+		ResourceLocation collarTexture;
+		
+		public RenderFactory(
+	        ModelBase parModelBase1, 
+	        ModelBase parModelBase2, 
+	        float parShadowSize, 
+	        ResourceLocation parNormalTexture, 
+	        ResourceLocation parTamedTexture, 
+			ResourceLocation parAngryTexture, 
+			ResourceLocation parCollarTexture)
+		{
+			model1 = parModelBase1;
+			model2 = parModelBase2;
+			shadowSize = parShadowSize;
+			normalTexture = parNormalTexture;
+			tamedTexture = parTamedTexture;
+			angryTexture = parAngryTexture;
+			collarTexture = parCollarTexture;		
+		}
+
+		@Override
+		public Render createRenderFor(RenderManager manager) 
+		{
+			return new RenderBigCat(
+				manager,
+				model1,
+				model2,
+				shadowSize,
+				normalTexture,
+				tamedTexture,
+				angryTexture,
+				collarTexture
+			);
+		}	
+	}
 }

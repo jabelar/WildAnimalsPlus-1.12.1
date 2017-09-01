@@ -437,7 +437,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     {
         return false;
     }
- 
+    
+    @SideOnly(Side.CLIENT)
+    protected <T> boolean canRenderName(T entity)
+    {
+    	return false;
+    }
+
     @Override
     public void setDead()
     {

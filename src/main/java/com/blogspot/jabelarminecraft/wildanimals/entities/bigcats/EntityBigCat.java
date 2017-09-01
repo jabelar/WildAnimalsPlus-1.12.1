@@ -37,6 +37,7 @@ import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
+import net.minecraft.entity.ai.EntityAISit;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAIWander;
@@ -110,7 +111,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected EntityAIBase aiOwnerHurtByTarget = new EntityAIOwnerHurtByTarget(this);
     protected EntityAIBase aiOwnerHurtTarget = new EntityAIOwnerHurtTarget(this);
     protected EntityAIBase aiHurtByTarget = new EntityAIHurtByTarget(this, true);
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected EntityAIBase aiTargetNonTamedSheep = new EntityAITargetNonTamed(this, EntitySheep.class, false, (Predicate)null);
 	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected EntityAIBase aiTargetNonTamedCow = new EntityAITargetNonTamed(this, EntityCow.class, false, (Predicate)null);
@@ -139,6 +140,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	{
         setPathPriority(PathNodeType.WATER, 0.0F);
         clearAITasks(); // clear any tasks assigned in super classes
+        aiSit = new EntityAISit(this);
         tasks.addTask(1, aiSwimming);
         tasks.addTask(2, aiSit);
         tasks.addTask(3, aiLeapAtTarget);
@@ -397,6 +399,12 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                 }
             }
         }
+    }
+    
+    @SideOnly(Side.CLIENT)
+    protected <T> boolean canRenderName(T entity)
+    {
+    	return false;
     }
 
     @SideOnly(Side.CLIENT)

@@ -50,6 +50,8 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 {
@@ -404,6 +406,12 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     public boolean attackEntityAsMob(Entity par1Entity)
     {
         return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue());
+    }
+    
+    @SideOnly(Side.CLIENT)
+    protected <T> boolean canRenderName(T entity)
+    {
+    	return false;
     }
 
     // *****************************************************

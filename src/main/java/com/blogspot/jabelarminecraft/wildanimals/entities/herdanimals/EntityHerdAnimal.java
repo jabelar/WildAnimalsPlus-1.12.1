@@ -19,7 +19,6 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal.EntityAIPanicHerdAnimal;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -54,7 +53,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 {
     protected NBTTagCompound syncDataCompound = new NBTTagCompound();
-    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(Entity.class, DataSerializers.COMPOUND_TAG);
+    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(EntityHerdAnimal.class, DataSerializers.COMPOUND_TAG);
 
     protected static final int REARING_TICKS_MAX = 20;
     

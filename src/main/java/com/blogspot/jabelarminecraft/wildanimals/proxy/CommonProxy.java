@@ -233,21 +233,21 @@ public class CommonProxy
      
      public void registerModEntityLongTracking(Class parClass, String parName)
      {
-            EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID+":"+parName), parClass, parName, ++modEntityID, MainMod.instance, 80000, 3, false);
+            EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80000, 3, false);
          // DEBUG
          System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }
 
      public void registerModEntityWithEgg(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
-         EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID+":"+parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
+         EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
        	 // DEBUG
        	 System.out.println("Registering mod entity "+parName+" with ID ="+modEntityID);
      }
 
      public void registerModEntityWithEggLongTracking(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
-         EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID+":"+parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
+         EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
        	 // DEBUG
        	 System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }
@@ -256,7 +256,7 @@ public class CommonProxy
      // for fast moving entities and projectiles need registration with tracking flag set true
      public void registerModEntityFastTracking(Class parClass, String parName)
      {
-            EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID+":"+parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 10, true);
+            EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 10, true);
           	 // DEBUG
           	 System.out.println("Registering fast tracking mod entity "+parName+" with ID ="+modEntityID);
      }

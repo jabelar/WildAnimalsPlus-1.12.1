@@ -84,7 +84,7 @@ public class CommandConjure extends CommandBase
 			
 		    sender.sendMessage(new TextComponentString("Conjuring: [" + argString[0] + "]"));
 		    
-		    fullEntityName = new ResourceLocation(MainMod.MODID+"."+argString[0]);
+		    fullEntityName = new ResourceLocation(MainMod.MODID, argString[0].toLowerCase());
 		    if (EntityList.getClass(fullEntityName) != null)
 		    {
 	            conjuredEntity = EntityList.createEntityByIDFromName(fullEntityName, world);

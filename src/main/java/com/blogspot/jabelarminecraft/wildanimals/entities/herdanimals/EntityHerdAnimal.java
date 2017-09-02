@@ -82,6 +82,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         syncDataCompound.setFloat("scaleFactor", 1.0F);
         syncDataCompound.setInteger("rearingCounter", 0);
         syncDataCompound.setBoolean("isRearing", false);
+        // DEBUG
+        System.out.println("Is on client = "+(world.isRemote));
+        System.out.println("The data parameter for SYNC_COMPOUND has ID = "+SYNC_COMPOUND.getId());
+        System.out.println("The contents of the data manager entries are:");
+        dataManager.getAll().forEach(System.out::println);
         dataManager.register(SYNC_COMPOUND, syncDataCompound);
     }
     
@@ -246,7 +251,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     public EntityHerdAnimal createChild(EntityAgeable par1EntityAgeable)
     {
-        return new EntityHerdAnimal(world);
+        return null;
     }
     
     /**

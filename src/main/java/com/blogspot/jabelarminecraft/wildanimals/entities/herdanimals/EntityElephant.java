@@ -16,6 +16,7 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -30,7 +31,7 @@ public class EntityElephant extends EntityHerdAnimal
 //		// DEBUG
 //        System.out.println("EntityElephant constructor()");
 
-        initSyncDataCompound();
+    	setScaleFactor(2.0F); // elephants are big
         setSize(width*getScaleFactor(), height*getScaleFactor());
 
         ambientSound = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.say"));
@@ -38,13 +39,6 @@ public class EntityElephant extends EntityHerdAnimal
         deathSound = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.hurt"));
 
 	}
-	
-    @Override
-	public void initSyncDataCompound()
-    {
-    	super.initSyncDataCompound();
-    	syncDataCompound.setFloat("scaleFactor", 2.0F); // elephants are big!
-    }
 
     @Override
 	protected void applyEntityAttributes()
@@ -57,4 +51,11 @@ public class EntityElephant extends EntityHerdAnimal
         getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(1.0D); // can't knockback an elephant
         getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(8.0D);
     }
+
+    @Override
+    public EntityElephant createChild(EntityAgeable par1EntityAgeable)
+    {
+        return new EntityElephant(world);
+    }
+
  }

@@ -191,7 +191,7 @@ public class ClientProxy extends CommonProxy
 	    		EntityElephant.class, 
 	    		RenderHerdAnimal.getRenderFactory(
 	                    new ModelElephant(), 
-	                    0.5F,
+	                    2.0F,
 	                    new ResourceLocation("wildanimals:textures/entity/herdanimals/elephant.png")
 	    				)
 	    		);   

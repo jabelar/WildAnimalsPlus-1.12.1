@@ -18,11 +18,9 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal.EntityAIPanicHerdAnimal;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIFollowParent;
@@ -35,27 +33,28 @@ import net.minecraft.entity.ai.EntityAITempt;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 {
     protected NBTTagCompound syncDataCompound = new NBTTagCompound();
+    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(Entity.class, DataSerializers.COMPOUND_TAG);
 
     protected static final int REARING_TICKS_MAX = 20;
     
@@ -84,6 +83,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         syncDataCompound.setFloat("scaleFactor", 1.0F);
         syncDataCompound.setInteger("rearingCounter", 0);
         syncDataCompound.setBoolean("isRearing", false);
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);
     }
     
     // set up AI tasks
@@ -256,156 +256,8 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     public boolean attackEntityFrom(DamageSource par1DamageSource, float parDamageAmount)
     {
-        // allow event cancellation
-        if (ForgeHooks.onLivingAttack(this, par1DamageSource, parDamageAmount)) return false;
-        
-        if (isEntityInvulnerable(par1DamageSource))
-        {
-            return false; // not really "attacked" if invulnerable
-        }
-        else
-        {
-            if (world.isRemote) // don't process attack on client side
-            {
-                return false; 
-            }
-            else // on server side so process attack
-            {
-                setAttackTarget(null);
-                resetInLove();;
-                growingAge = 0;
-
-                if (getHealth() <= 0.0F) // not really "attacked" if already dead
-                {
-                    return false;
-                }
-                else if (par1DamageSource.isFireDamage() && isPotionActive(MobEffects.FIRE_RESISTANCE)) // fire resistance negates fire attack
-                {
-                    return false;
-                }
-                else
-                {
-
-                    limbSwingAmount = 1.5F;
-                    isHitWithoutResistance = true;
-
-                    // process temporary resistance to damage after last damage
-                    if (hurtResistantTime > maxHurtResistantTime / 2.0F) // more than half of max resistance time left
-                    {
-                        if (parDamageAmount <= lastDamage) // resist damage that is less than the last damage
-                        {
-                            return false;
-                        }
-
-                        // top up the damage to the larger amount during the resistance period
-                        damageEntity(par1DamageSource, parDamageAmount - lastDamage);
-                        lastDamage = parDamageAmount;
-                        isHitWithoutResistance = false;
-                    }
-                    else // no resistance so normal hit
-                    {
-                        lastDamage = parDamageAmount;
-                        hurtResistantTime = maxHurtResistantTime; // start the resistance period
-                        damageEntity(par1DamageSource, parDamageAmount);
-                        hurtTime = maxHurtTime = 10;
-                        setRearing(true);
-                   }
-
-                    // process based on what is attacking
-                    attackedAtYaw = 0.0F;
-                    Entity entity = par1DamageSource.getTrueSource();
-                    if (entity != null)
-                    {
-                        if (entity instanceof EntityLivingBase) // set revenge on any living entity that attacks
-                        {
-                            // DEBUG
-                            System.out.println("Setting revenge target = "+entity.getClass().getSimpleName());
-                            setRevengeTarget((EntityLivingBase)entity);
-                            // DEBUG
-                            System.out.println("Attack target = "+this.getAttackTarget().getClass().getSimpleName());
-                        }
-
-                        if (entity instanceof EntityPlayer) // identify attacking player or wolf with kill time determination
-                        {
-                            recentlyHit = 100;
-                            attackingPlayer = (EntityPlayer)entity;
-                        }
-                        else if (entity instanceof EntityWolf)
-                        {
-                            EntityWolf entitywolf = (EntityWolf)entity;
-
-                            if (entitywolf.isTamed())
-                            {
-                                recentlyHit = 100;
-                                attackingPlayer = null;
-                            }
-                        }
-                    }
-
-                    if (isHitWithoutResistance)
-                    {
-                        world.setEntityState(this, (byte)2);
-
-                        // process knockback
-                        if (par1DamageSource != DamageSource.DROWN)
-                        {
-                            setBeenAttacked(); // checks against knockback resistance, really should be merged into knockback() method
-                        }
-
-                        if (entity != null) // if damage was done by an entity
-                        {
-                            double d1 = entity.posX - posX;
-                            double d0;
-
-                            for (d0 = entity.posZ - posZ; d1 * d1 + d0 * d0 < 1.0E-4D; d0 = (Math.random() - Math.random()) * 0.01D)
-                            {
-                                d1 = (Math.random() - Math.random()) * 0.01D;
-                            }
-
-                            attackedAtYaw = (float)(Math.atan2(d0, d1) * 180.0D / Math.PI) - rotationYaw;
-                            knockBack(entity, parDamageAmount, d1, d0); 
-                        }
-                        else // not an entity that caused damage
-                        {
-                            attackedAtYaw = (int)(Math.random() * 2.0D) * 180;
-                        }
-                    }
-
-                    // play sounds for hurt or death
-                    // isHitWithoutResistance check helps ensure sound is played once and has time to complete
-                    SoundEvent s;
-
-                    if (getHealth() <= 0.0F) // dead
-                    {
-                        s = getDeathSound();
-
-                        if (isHitWithoutResistance && s != null)
-                        {
-                            playSound(s, getSoundVolume(), getSoundPitch());
-                        }
-
-                        onDeath(par1DamageSource);
-                    }
-                    else // hurt
-                    {
-                        s = getHurtSound(par1DamageSource);
-
-                        if (isHitWithoutResistance && s != null)
-                        {
-                            playSound(s, getSoundVolume(), getSoundPitch());
-                        }
-                    }
-
-                    return true;
-                }
-            }            
-        }
-    }
-
-    @Override
-    public boolean attackEntityAsMob(Entity par1Entity)
-    {
-        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue());
+    	setRearing(true);
+    	return super.attackEntityFrom(par1DamageSource, parDamageAmount);
     }
     
     @SideOnly(Side.CLIENT)
@@ -444,7 +296,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     
     public boolean isRearing()
     {
-        return syncDataCompound.getBoolean("isRearing");
+        return dataManager.get(SYNC_COMPOUND).getBoolean("isRearing");
     }
     
     @Override
@@ -459,7 +311,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     public float getScaleFactor()
     {
-        return syncDataCompound.getFloat("scaleFactor");
+        return dataManager.get(SYNC_COMPOUND).getFloat("scaleFactor");
     }
     
     public void setRearingCounter(int parTicks)
@@ -480,18 +332,18 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     
     public int getRearingCounter()
     {
-        return syncDataCompound.getInteger("rearingCounter");
+        return dataManager.get(SYNC_COMPOUND).getInteger("rearingCounter");
     }
 
     public boolean isRearingFirstTick()
     {
-        return (syncDataCompound.getInteger("rearingCounter")==REARING_TICKS_MAX);
+        return (dataManager.get(SYNC_COMPOUND).getInteger("rearingCounter")==REARING_TICKS_MAX);
     }
     
     @Override
     public void sendEntitySyncPacket()
     {
-        Utilities.sendEntitySyncPacketToClient(this);
+        dataManager.set(SYNC_COMPOUND, syncDataCompound);
     }
 
     @Override

@@ -135,11 +135,28 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 //        // DEBUG
 //        System.out.println("EntityBigCat constructor(), "+"on Client="+par1World.isRemote);
 
-        setSize(1.0F, 1.33F);
         initSyncDataCompound();
         dataManager.register(SYNC_COMPOUND, syncDataCompound);       
+        setSize(1.0F, 1.33F);
         setupAI();		
  	}
+
+	@Override
+	public void initSyncDataCompound() 
+	{
+//	    // DEBUG
+//	    System.out.println("Initializing sync data compound");
+	    
+    	syncDataCompound.setFloat("scaleFactor", 1.2F);
+    	syncDataCompound.setBoolean("isInterested", false);
+    	syncDataCompound.setBoolean("isTamed", false);
+    	syncDataCompound.setBoolean("isAngry", false);
+    	syncDataCompound.setBoolean("isSitting", false);
+    	syncDataCompound.setByte("collarColor", (byte) 0);
+    	syncDataCompound.setString("ownerName", "");
+    	syncDataCompound.setLong("ownerUUIDMSB", 0);
+    	syncDataCompound.setLong("ownerUUIDLSB", 0);
+	}
 	
 	@Override
 	public void setupAI() 
@@ -166,23 +183,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         targetTasks.addTask(4, aiTargetNonTamedChicken);
         targetTasks.addTask(4, aiTargetNonTamedHerdAnimal);
     }
-
-	@Override
-	public void initSyncDataCompound() 
-	{
-//	    // DEBUG
-//	    System.out.println("Initializing sync data compound");
-	    
-    	syncDataCompound.setFloat("scaleFactor", 1.2F);
-    	syncDataCompound.setBoolean("isInterested", false);
-    	syncDataCompound.setBoolean("isTamed", false);
-    	syncDataCompound.setBoolean("isAngry", false);
-    	syncDataCompound.setBoolean("isSitting", false);
-    	syncDataCompound.setByte("collarColor", (byte) 0);
-    	syncDataCompound.setString("ownerName", "");
-    	syncDataCompound.setLong("ownerUUIDMSB", 0);
-    	syncDataCompound.setLong("ownerUUIDLSB", 0);
-	}
     
     // use clear tasks for subclasses then build up their ai task list specifically
     @Override
@@ -252,12 +252,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             }
             adjustEntityAttributes();
         }
-    }
- 
-    @Override
-	protected void entityInit()
-    {
-        super.entityInit();
     }
 
 //    @Override

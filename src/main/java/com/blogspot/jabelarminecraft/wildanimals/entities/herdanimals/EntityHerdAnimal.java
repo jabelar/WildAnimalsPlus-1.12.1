@@ -72,8 +72,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 //        // DEBUG
 //        System.out.println("EntityHerdAnimal constructor(), entity.worldObj.isRemote = "+this.worldObj.isRemote);
 
-        setSize(0.9F, 1.3F);
         initSyncDataCompound();
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);       
+        setSize(0.9F, 1.3F);
         setupAI();        
      }
     
@@ -88,7 +89,6 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 //        System.out.println("The data parameter for SYNC_COMPOUND has ID = "+SYNC_COMPOUND.getId());
 //        System.out.println("The contents of the data manager entries are:");
 //        dataManager.getAll().forEach(System.out::println);
-        dataManager.register(SYNC_COMPOUND, syncDataCompound);
     }
     
     // set up AI tasks

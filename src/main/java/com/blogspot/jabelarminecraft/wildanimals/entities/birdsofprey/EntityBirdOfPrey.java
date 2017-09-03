@@ -32,6 +32,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -83,14 +84,14 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         System.out.println("EntityBirdOfPrey constructor(), "+"on Client="
                 +parWorld.isRemote+", EntityID = "+getEntityId()+", ModEntityID = "+entityUniqueID);
 
+        initSyncDataCompound();
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);       
         setSize(1.0F, 1.0F);
         randFactor = rand.nextInt(10);
         // DEBUG
         System.out.println("randFactor = "+randFactor);
         setupAI();
-        
-        initSyncDataCompound();
-     }
+    }
         
     @Override
     public void initSyncDataCompound()
@@ -262,25 +263,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
 
-    @Override
-    protected void entityInit()
-    {
-        super.entityInit();
-    }
-    
-    @Override
-    public int getTalkInterval()
-    {
-        return 400;
-    }
-
-//    @Override
-//    // play step sound
-//    protected void func_145780_a(int p_145780_1_, int p_145780_2_, int p_145780_3_, Block p_145780_4_)
-//    {
-//        // birds are silent when moving
-//    }
-
     /**
      * Returns the sound this mob makes while it's alive.
      */
@@ -319,41 +301,45 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         syncOwner();
     }
 
-    /**
-     * Called to update the entity's position/logic.
-     */
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-    }
+
     /**
      * Called when the entity is attacked.
      */
     @Override
-    public boolean attackEntityFrom(DamageSource parDamageSource, float parDamageAmount)
+	public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (this.getIsInvulnerable())
+        if (this.isEntityInvulnerable(source))
         {
             return false;
         }
         else
         {
-            boolean result = super.attackEntityFrom(parDamageSource, parDamageAmount);
-            if (parDamageSource.getTrueSource() instanceof EntityLivingBase)
+            Entity entity = source.getTrueSource();
+
+            if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
             {
-                setRevengeTarget((EntityLivingBase) parDamageSource.getTrueSource());
+                amount = (amount + 1.0F) / 2.0F;
             }
+            
             // DEBUG
-            System.out.println("Eagle has been attacked by "+parDamageSource.getImmediateSource()+" with source = "+parDamageSource.getTrueSource()+" and revenge target set to "+getRevengeTarget());
-            return result;
+            System.out.println("Eagle has been attacked by "+source.getImmediateSource()+" with source = "+source.getTrueSource()+" and revenge target set to "+getRevengeTarget());
+
+            return super.attackEntityFrom(source, amount);
         }
     }
 
+
     @Override
-    public boolean attackEntityAsMob(Entity parEntity)
+	public boolean attackEntityAsMob(Entity entityIn)
     {
-        return parEntity.attackEntityFrom(DamageSource.causeMobDamage(this), (float)getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+        boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), ((int)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue()));
+
+        if (flag)
+        {
+            this.applyEnchantments(this, entityIn);
+        }
+
+        return flag;
     }
     
     /**

@@ -76,8 +76,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         System.out.println("EntitySerpent constructor(), "+"on Client="
         		+par1World.isRemote+", EntityID = "+getEntityId()+", ModEntityID = "+entityUniqueID);
 
-        setSize(1.0F, 0.25F);
         initSyncDataCompound();
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);       
+        setSize(1.0F, 0.25F);
         setupAI();		
  	}
     
@@ -234,7 +235,5 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     public void initSyncDataCompound()
     {
         syncDataCompound.setFloat("scaleFactor", 1.0F);        
-        dataManager.register(SYNC_COMPOUND, syncDataCompound);
-   }
-    
+    } 
 }

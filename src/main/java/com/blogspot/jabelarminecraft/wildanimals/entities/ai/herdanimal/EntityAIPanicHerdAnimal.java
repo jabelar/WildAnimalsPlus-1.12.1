@@ -72,7 +72,6 @@ public class EntityAIPanicHerdAnimal extends EntityAIBase
     @Override
     public boolean shouldContinueExecuting()
     {
-        theEntity.decrementRearingCounter();;
         Boolean continueExecuting = theEntity.getRearingCounter()>0; 
         if (!continueExecuting)
         {

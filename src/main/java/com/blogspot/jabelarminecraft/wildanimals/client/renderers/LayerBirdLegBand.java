@@ -1,4 +1,4 @@
-package com.blogspot.jabelarminecraft.wildanimals.renderers;
+package com.blogspot.jabelarminecraft.wildanimals.client.renderers;
 
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;

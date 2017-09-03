@@ -14,7 +14,7 @@
     For a copy of the GNU General Public License see <http://www.gnu.org/licenses/>.
 */
 
- package com.blogspot.jabelarminecraft.wildanimals.models;
+ package com.blogspot.jabelarminecraft.wildanimals.client.models;
 
 import org.lwjgl.opengl.GL11;
 
@@ -334,6 +334,8 @@ public class ModelElephant extends ModelWildAnimals
         if (parEntity.isRearing())
         {
         	int rearingCounter = parEntity.getRearingCounter();
+        	// DEBUG
+        	System.out.println("ModelElephant entity is rearing with rearing counter = "+rearingCounter);
         	
         	// move retain connection between body parts, hind legs stay where they were
         	head.setRotationPoint(headRotPointXDefault, headRotPointYDefault+rearingOffsetCycle[rearingCounter][0], headRotPointZDefault+rearingOffsetCycle[rearingCounter][1]);

@@ -14,7 +14,7 @@
     For a copy of the GNU General Public License see <http://www.gnu.org/licenses/>.
 */
 
-package com.blogspot.jabelarminecraft.wildanimals.models;
+package com.blogspot.jabelarminecraft.wildanimals.client.models;
 
 import org.lwjgl.opengl.GL11;
 

@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2015 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -14,41 +14,21 @@
     For a copy of the GNU General Public License see <http://www.gnu.org/licenses/>.
 */
 
-package com.blogspot.jabelarminecraft.wildanimals.guis;
+package com.blogspot.jabelarminecraft.wildanimals.client.models;
 
-import java.util.Set;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.client.IModGuiFactory;
 
 /**
  * @author jabelar
  *
  */
-public class GuiFactory implements IModGuiFactory 
+public class ModelOwl extends ModelBirdOfPrey
 {
-    @Override
-    public void initialize(Minecraft minecraftInstance) 
+    public ModelOwl()
     {
- 
+        super();
+        head.cubeList.clear();
+        head.addBox(-6F, -6F, -7F, 12, 12, 8);
+        head.setRotationPoint(0F, -1F, -9F);
     }
- 
-    @Override
-    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() 
-    {
-        return null;
-    }
- 
-	@Override
-	public boolean hasConfigGui() 
-	{
-		return true;
-	}
-
-	@Override
-	public GuiScreen createConfigGui(GuiScreen parentScreen) 
-	{
-		return new GuiConfig(parentScreen);
-	}
+    
 }

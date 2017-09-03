@@ -14,7 +14,7 @@
     For a copy of the GNU General Public License see <http://www.gnu.org/licenses/>.
 */
 
-package com.blogspot.jabelarminecraft.wildanimals.guis;
+package com.blogspot.jabelarminecraft.wildanimals.client.guis;
 
 import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;

@@ -16,6 +16,14 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.proxy;
 
+import com.blogspot.jabelarminecraft.wildanimals.client.models.ModelBigCat;
+import com.blogspot.jabelarminecraft.wildanimals.client.models.ModelBirdOfPrey;
+import com.blogspot.jabelarminecraft.wildanimals.client.models.ModelElephant;
+import com.blogspot.jabelarminecraft.wildanimals.client.models.ModelSerpent;
+import com.blogspot.jabelarminecraft.wildanimals.client.renderers.RenderBigCat;
+import com.blogspot.jabelarminecraft.wildanimals.client.renderers.RenderBirdOfPrey;
+import com.blogspot.jabelarminecraft.wildanimals.client.renderers.RenderHerdAnimal;
+import com.blogspot.jabelarminecraft.wildanimals.client.renderers.RenderSerpent;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLion;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLynx;
@@ -26,14 +34,6 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityHawk
 import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityOwl;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityElephant;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
-import com.blogspot.jabelarminecraft.wildanimals.models.ModelBigCat;
-import com.blogspot.jabelarminecraft.wildanimals.models.ModelBirdOfPrey;
-import com.blogspot.jabelarminecraft.wildanimals.models.ModelElephant;
-import com.blogspot.jabelarminecraft.wildanimals.models.ModelSerpent;
-import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderBigCat;
-import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderBirdOfPrey;
-import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderHerdAnimal;
-import com.blogspot.jabelarminecraft.wildanimals.renderers.RenderSerpent;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;

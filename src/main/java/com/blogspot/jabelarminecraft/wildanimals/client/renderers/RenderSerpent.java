@@ -14,7 +14,7 @@
     For a copy of the GNU General Public License see <http://www.gnu.org/licenses/>.
 */
 
-package com.blogspot.jabelarminecraft.wildanimals.renderers;
+package com.blogspot.jabelarminecraft.wildanimals.client.renderers;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
 

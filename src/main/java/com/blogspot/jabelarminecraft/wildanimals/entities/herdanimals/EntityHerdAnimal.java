@@ -175,12 +175,6 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     {
         return 0.4F;
     }
-
-    @Override
-    public void onUpdate()
-    {
-        super.onUpdate();
-    }
     
     @Override
     protected Item getDropItem()
@@ -216,6 +210,16 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
                 dropItem(Items.BEEF, 1);
             }
         }
+    }
+    
+    @Override
+	public void onLivingUpdate()
+    {
+    	super.onLivingUpdate();
+    	if (isRearing())
+    	{
+    		decrementRearingCounter();
+    	}
     }
 
     /**
@@ -343,6 +347,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     public void decrementRearingCounter()
     {
         syncDataCompound.setInteger("rearingCounter", getRearingCounter()-1);
+        if (syncDataCompound.getInteger("rearingCounter") < 0)
+        {
+            syncDataCompound.setInteger("rearingCounter", 0);
+            setRearing(false);
+        }
            
         // don't forget to sync client and server
         sendEntitySyncPacket();

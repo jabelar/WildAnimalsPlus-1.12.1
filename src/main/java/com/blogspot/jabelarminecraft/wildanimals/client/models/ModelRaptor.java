@@ -14,7 +14,7 @@
     For a copy of the GNU General Public License see <http://www.gnu.org/licenses/>.
 */
 
-package com.blogspot.jabelarminecraft.wildanimals.models;
+package com.blogspot.jabelarminecraft.wildanimals.client.models;
 
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;

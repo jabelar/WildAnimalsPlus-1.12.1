@@ -19,6 +19,7 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal.EntityAIPanicHerdAnimal;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
@@ -82,11 +83,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         syncDataCompound.setFloat("scaleFactor", 1.0F);
         syncDataCompound.setInteger("rearingCounter", 0);
         syncDataCompound.setBoolean("isRearing", false);
-        // DEBUG
-        System.out.println("Is on client = "+(world.isRemote));
-        System.out.println("The data parameter for SYNC_COMPOUND has ID = "+SYNC_COMPOUND.getId());
-        System.out.println("The contents of the data manager entries are:");
-        dataManager.getAll().forEach(System.out::println);
+//        // DEBUG
+//        System.out.println("Is on client = "+(world.isRemote));
+//        System.out.println("The data parameter for SYNC_COMPOUND has ID = "+SYNC_COMPOUND.getId());
+//        System.out.println("The contents of the data manager entries are:");
+//        dataManager.getAll().forEach(System.out::println);
         dataManager.register(SYNC_COMPOUND, syncDataCompound);
     }
     
@@ -268,6 +269,19 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     protected <T> boolean canRenderName(T entity)
     {
     	return false;
+    }
+
+    @Override
+	public boolean attackEntityAsMob(Entity entityIn)
+    {
+        boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), ((int)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue()));
+
+        if (flag)
+        {
+            this.applyEnchantments(this, entityIn);
+        }
+
+        return flag;
     }
 
     // *****************************************************

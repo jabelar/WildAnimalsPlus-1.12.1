@@ -22,7 +22,6 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIFollowBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 import com.google.common.base.Predicate;
 
 import net.minecraft.entity.Entity;
@@ -48,13 +47,18 @@ import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
@@ -69,6 +73,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class EntityBigCat extends EntityTameable implements IModEntity
 {
     protected NBTTagCompound syncDataCompound = new NBTTagCompound();
+    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(EntityBigCat.class, DataSerializers.COMPOUND_TAG);
     
     protected SoundEvent soundAmbientGrowl = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.growl"));
     protected SoundEvent soundAmbientWhine = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.whine"));
@@ -132,6 +137,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
         setSize(1.0F, 1.33F);
         initSyncDataCompound();
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);       
         setupAI();		
  	}
 	
@@ -236,7 +242,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         if (ticksExisted == 10)
         {
             // note that the setTamed also forces a full NBT sync to client
-            if (syncDataCompound.getBoolean("isTamed"))
+            if (dataManager.get(SYNC_COMPOUND).getBoolean("isTamed"))
             {
                 setTamed(true);
             }
@@ -465,28 +471,42 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      * Called when the entity is attacked.
      */
     @Override
-	public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
+	public boolean attackEntityFrom(DamageSource source, float amount)
     {
-        if (getIsInvulnerable())
+        if (this.isEntityInvulnerable(source))
         {
             return false;
         }
         else
         {
-            aiSit.setSitting(false);
+            Entity entity = source.getTrueSource();
 
-            return super.attackEntityFrom(par1DamageSource, par2);
+            if (this.aiSit != null)
+            {
+                this.aiSit.setSitting(false);
+            }
+
+            if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
+            {
+                amount = (amount + 1.0F) / 2.0F;
+            }
+
+            return super.attackEntityFrom(source, amount);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see net.minecraft.entity.EntityLivingBase#attackEntityAsMob(net.minecraft.entity.Entity)
-     */
+
     @Override
-	public boolean attackEntityAsMob(Entity par1Entity)
+	public boolean attackEntityAsMob(Entity entityIn)
     {
-        return par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+        boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), ((int)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue()));
+
+        if (flag)
+        {
+            this.applyEnchantments(this, entityIn);
+        }
+
+        return flag;
     }
 
     /**
@@ -631,7 +651,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
     public boolean isTamed()
     {
-        boolean isTamed = syncDataCompound.getBoolean("isTamed");
+        boolean isTamed = dataManager.get(SYNC_COMPOUND).getBoolean("isTamed");
         return isTamed;
     }
 
@@ -656,7 +676,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
     public boolean isSitting()
     {
-        return syncDataCompound.getBoolean("isSitting");
+        return dataManager.get(SYNC_COMPOUND).getBoolean("isSitting");
     }
 
     @Override
@@ -685,7 +705,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
     public EntityLivingBase getOwner()
     {
-        UUID uuid = new UUID(syncDataCompound.getLong("ownerUUIDMSB"), syncDataCompound.getLong("ownerUUIDLSB"));
+        UUID uuid = new UUID(dataManager.get(SYNC_COMPOUND).getLong("ownerUUIDMSB"), dataManager.get(SYNC_COMPOUND).getLong("ownerUUIDLSB"));
         return world.getPlayerEntityByUUID(uuid); 
     }
 
@@ -735,7 +755,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      */
     public boolean isAngry()
     {
-        return syncDataCompound.getBoolean("isAngry");
+        return dataManager.get(SYNC_COMPOUND).getBoolean("isAngry");
     }
 
     /**
@@ -754,7 +774,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      */
     public EnumDyeColor getCollarColor()
     {
-        return EnumDyeColor.byMetadata(syncDataCompound.getByte("collarColor"));
+        return EnumDyeColor.byMetadata(dataManager.get(SYNC_COMPOUND).getByte("collarColor"));
     }
 
     /**
@@ -768,6 +788,20 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         sendEntitySyncPacket();
     }
 
+    public EntityWolf cxreateChild(EntityAgeable ageable)
+    {
+        EntityWolf entitywolf = new EntityWolf(this.world);
+        UUID uuid = this.getOwnerId();
+
+        if (uuid != null)
+        {
+            entitywolf.setOwnerId(uuid);
+            entitywolf.setTamed(true);
+        }
+
+        return entitywolf;
+    }
+
     @Override
 	public EntityBigCat createChild(EntityAgeable par1EntityAgeable)
     {
@@ -776,10 +810,11 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         System.out.println("EntityBigCat createChild()");
  
         EntityBigCat entityBigCat = new EntityBigCat(world);
-        UUID s = entityBigCat.getOwnerId(); // used to be getOwnerName();
+        UUID uuid = entityBigCat.getOwnerId(); // used to be getOwnerName();
 
-        if (s != null)
+        if (uuid != null)
         {
+        	entityBigCat.setOwner(uuid);
             entityBigCat.setTamed(true);
         }
 
@@ -796,7 +831,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     public boolean getInterested()
     {
-        return syncDataCompound.getBoolean("isInterested");
+        return dataManager.get(SYNC_COMPOUND).getBoolean("isInterested");
     }
     
     /**
@@ -824,15 +859,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             System.out.println("Found mate = "+entitybigCat);
             return !entitybigCat.isTamed() ? false : (entitybigCat.isSitting() ? false : isInLove() && entitybigCat.isInLove());
         }
-    }
-
-    /**
-     * Determines if an entity can be despawned, used on idle far away entities
-     */
-    @Override
-	protected boolean canDespawn()
-    {
-        return !isTamed() && ticksExisted > 2400;
     }
 
 //    /*
@@ -879,13 +905,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	public float getScaleFactor()
     {
-    	return syncDataCompound.getFloat("scaleFactor");
+    	return dataManager.get(SYNC_COMPOUND).getFloat("scaleFactor");
     }
     
     @Override
     public void sendEntitySyncPacket()
     {
-        Utilities.sendEntitySyncPacketToClient(this);
+        dataManager.set(SYNC_COMPOUND, syncDataCompound);
     }
 
     @Override

@@ -17,7 +17,6 @@
 package com.blogspot.jabelarminecraft.wildanimals.entities.serpents;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -38,6 +37,9 @@ import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
@@ -47,6 +49,7 @@ import net.minecraft.world.World;
 public class EntitySerpent extends EntityAnimal implements IModEntity
 {
     private NBTTagCompound syncDataCompound = new NBTTagCompound();
+    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(EntitySerpent.class, DataSerializers.COMPOUND_TAG);
 
 	// good to have instances of AI so task list can be modified, including in sub-classes
     protected EntityAIBase aiSwimming = new EntityAISwimming(this);
@@ -202,14 +205,14 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	public float getScaleFactor()
     {
-    	return syncDataCompound.getFloat("scaleFactor");
+    	return dataManager.get(SYNC_COMPOUND).getFloat("scaleFactor");
     }
 
     
     @Override
     public void sendEntitySyncPacket()
     {
-        Utilities.sendEntitySyncPacketToClient(this);
+        dataManager.set(SYNC_COMPOUND, syncDataCompound);
     }
 
     @Override
@@ -231,6 +234,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     public void initSyncDataCompound()
     {
         syncDataCompound.setFloat("scaleFactor", 1.0F);        
-    }
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);
+   }
     
 }

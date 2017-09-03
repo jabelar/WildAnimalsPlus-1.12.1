@@ -23,7 +23,6 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.AIStates
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.UpdateStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
-import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -38,6 +37,9 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.datasync.DataParameter;
+import net.minecraft.network.datasync.DataSerializers;
+import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
@@ -53,6 +55,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 {
     protected NBTTagCompound syncDataCompound = new NBTTagCompound();
+    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(EntityBirdOfPrey.class, DataSerializers.COMPOUND_TAG);
 
     public ProcessStateBirdOfPrey aiHelper;
     public UpdateStateBirdOfPrey aiUpdateState;
@@ -103,6 +106,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         syncDataCompound.setDouble("anchorZ", posZ);
         syncDataCompound.setString("ownerUUIDString", "");
         syncDataCompound.setInteger("legBandColor", 0);
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);
     }
     
     // use clear tasks then build up their custom ai task list specifically
@@ -143,7 +147,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         if (ticksExisted == 10)
         {
             // note that the setTamed also forces a full NBT sync to client
-            String ownerUUIDString = syncDataCompound.getString("ownerUUIDString");
+            String ownerUUIDString = dataManager.get(SYNC_COMPOUND).getString("ownerUUIDString");
             if (ownerUUIDString != "")
             {
                 setOwnerUUIDString(ownerUUIDString);
@@ -577,7 +581,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public float getScaleFactor()
     {
-        return syncDataCompound.getFloat("scaleFactor");
+        return dataManager.get(SYNC_COMPOUND).getFloat("scaleFactor");
     }
     
     public void setOwnerUUIDString(String parOwnerUUIDString)
@@ -592,7 +596,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     
     public String getOwnerUUIDString()
     {
-        return syncDataCompound.getString("ownerUUIDString");
+        return dataManager.get(SYNC_COMPOUND).getString("ownerUUIDString");
     }
 
     public void setState(int parState)
@@ -608,7 +612,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public int getState() 
     {
-        return syncDataCompound.getInteger("state");
+        return dataManager.get(SYNC_COMPOUND).getInteger("state");
     } 
 
     public void setStateCounter(int parCount)
@@ -621,7 +625,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public void decrementStateCounter()
     {
-        syncDataCompound.setInteger("stateCounter", syncDataCompound.getInteger("stateCounter")-1);
+        syncDataCompound.setInteger("stateCounter", dataManager.get(SYNC_COMPOUND).getInteger("stateCounter")-1);
         
         // don't forget to sync client and server
         sendEntitySyncPacket();
@@ -629,7 +633,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public int getStateCounter() 
     {
-        return syncDataCompound.getInteger("stateCounter");
+        return dataManager.get(SYNC_COMPOUND).getInteger("stateCounter");
     } 
 
     public void setAnchor(double parX, double parY, double parZ)
@@ -644,17 +648,17 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public double getAnchorX() 
     {
-        return syncDataCompound.getDouble("anchorX");
+        return dataManager.get(SYNC_COMPOUND).getDouble("anchorX");
     } 
 
     public double getAnchorY() 
     {
-        return syncDataCompound.getDouble("anchorY");
+        return dataManager.get(SYNC_COMPOUND).getDouble("anchorY");
     } 
 
     public double getAnchorZ() 
     {
-        return syncDataCompound.getDouble("anchorZ");
+        return dataManager.get(SYNC_COMPOUND).getDouble("anchorZ");
     } 
 
     public EntityPlayer getOwner()
@@ -703,7 +707,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public void sendEntitySyncPacket()
     {
-        Utilities.sendEntitySyncPacketToClient(this);
+        dataManager.set(SYNC_COMPOUND, syncDataCompound);
     }
     
     public void setSoarClockwise(boolean parClockwise)
@@ -716,7 +720,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     
     public boolean getSoarClockwise()
     {
-        return syncDataCompound.getBoolean("soarClockwise");
+        return dataManager.get(SYNC_COMPOUND).getBoolean("soarClockwise");
     }
     
     public void setSoarHeight(double parHeight)
@@ -729,7 +733,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     
     public double getSoarHeight()
     {
-        return syncDataCompound.getInteger("soarHeight");
+        return dataManager.get(SYNC_COMPOUND).getInteger("soarHeight");
     }
 
     @Override
@@ -763,7 +767,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public EnumDyeColor getLegBandColor()
     {
-        return EnumDyeColor.byMetadata(syncDataCompound.getByte("legBandColor"));
+        return EnumDyeColor.byMetadata(dataManager.get(SYNC_COMPOUND).getByte("legBandColor"));
     }
 
     public void setLegBandColor(EnumDyeColor parLegBandColor)

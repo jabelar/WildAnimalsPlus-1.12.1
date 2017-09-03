@@ -40,7 +40,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
@@ -93,7 +92,6 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	@Override
 	public void setupAI() 
 	{
-    	setPathPriority(PathNodeType.WATER, 0.0F);
         clearAITasks(); // clear any tasks assigned in super classes
         tasks.addTask(1, aiSwimming);
         tasks.addTask(2, aiPanic);

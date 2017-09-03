@@ -334,8 +334,8 @@ public class ModelElephant extends ModelWildAnimals
         if (parEntity.isRearing())
         {
         	int rearingCounter = parEntity.getRearingCounter();
-        	// DEBUG
-        	System.out.println("ModelElephant entity is rearing with rearing counter = "+rearingCounter);
+//        	// DEBUG
+//        	System.out.println("ModelElephant entity is rearing with rearing counter = "+rearingCounter);
         	
         	// move retain connection between body parts, hind legs stay where they were
         	head.setRotationPoint(headRotPointXDefault, headRotPointYDefault+rearingOffsetCycle[rearingCounter][0], headRotPointZDefault+rearingOffsetCycle[rearingCounter][1]);

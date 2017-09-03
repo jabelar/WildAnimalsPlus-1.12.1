@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIFollowBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
 import com.google.common.base.Predicate;
 
@@ -30,6 +29,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
 import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAIFollow;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
@@ -45,6 +45,7 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityPig;
+import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityWolf;
@@ -59,7 +60,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
@@ -107,7 +107,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected EntityAIBase aiSwimming = new EntityAISwimming(this);
     protected EntityAIBase aiLeapAtTarget = new EntityAILeapAtTarget(this, 0.4F);
     protected EntityAIBase aiAttackOnCollide = new EntityAIAttackMelee(this, 1.0D, true);
-    protected EntityAIBase aiFollowOwner = new EntityAIFollowBigCat(this, 1.0D, 10.0F, 2.0F);
+    protected EntityAIBase aiFollowOwner = new EntityAIFollow(this, 1.0D, 10.0F, 2.0F);
     protected EntityAIBase aiMate = new EntityAIMate(this, 1.0D);
     protected EntityAIBase aiWander = new EntityAIWander(this, 1.0D);
     protected EntityAIBase aiBeg = new EntityAIBegBigCat(this, 8.0F); // in vanilla begging is only for wolf
@@ -126,6 +126,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected EntityAIBase aiTargetNonTamedChicken = new EntityAITargetNonTamed(this, EntityChicken.class, false, (Predicate)null);
 	@SuppressWarnings({ "unchecked", "rawtypes" })
     protected EntityAIBase aiTargetNonTamedHerdAnimal = new EntityAITargetNonTamed(this, EntityHerdAnimal.class, false, (Predicate)null);
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+    protected EntityAIBase aiTargetNonTamedRabbit = new EntityAITargetNonTamed(this, EntityRabbit.class, false, (Predicate)null);
 
 	
     public EntityBigCat(World parWorld)
@@ -161,7 +163,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	@Override
 	public void setupAI() 
 	{
-        setPathPriority(PathNodeType.WATER, 0.0F);
         clearAITasks(); // clear any tasks assigned in super classes
         aiSit = new EntityAISit(this);
         tasks.addTask(1, aiSwimming);

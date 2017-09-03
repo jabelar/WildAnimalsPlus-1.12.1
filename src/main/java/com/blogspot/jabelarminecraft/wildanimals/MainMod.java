@@ -40,7 +40,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 @Mod( modid = MainMod.MODID, 
       name = MainMod.MODNAME, 
       version = MainMod.MODVERSION,
-      guiFactory = "com.blogspot.jabelarminecraft.wildanimals.guis.GuiFactory",
+      guiFactory = "com.blogspot.jabelarminecraft.wildanimals.client.guis.GuiFactory",
       acceptedMinecraftVersions = "[1.12.1]")
 public class MainMod
 {

@@ -247,7 +247,7 @@ public class CommonProxy
 
      public void registerModEntityWithEggLongTracking(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
-         EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
+         EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80000, 3, false, parEggColor, parEggSpotsColor);
        	 // DEBUG
        	 System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }

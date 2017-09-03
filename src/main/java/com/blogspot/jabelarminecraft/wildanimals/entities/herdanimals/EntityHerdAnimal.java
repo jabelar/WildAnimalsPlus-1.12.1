@@ -17,7 +17,6 @@
 package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.entities.ai.herdanimal.EntityAIPanicHerdAnimal;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -42,7 +41,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
@@ -95,10 +93,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     public void setupAI()
     {
-    	setPathPriority(PathNodeType.WATER, 0.0F);
         clearAITasks(); // clear any tasks assigned in super classes
         tasks.addTask(0, new EntityAISwimming(this));
-        tasks.addTask(1, new EntityAIPanicHerdAnimal(this));
+//        tasks.addTask(1, new EntityAIPanicHerdAnimal(this));
         // the leap and the collide together form an actual attack
         tasks.addTask(2, new EntityAILeapAtTarget(this, 0.4F));
         tasks.addTask(3, new EntityAIAttackMelee(this, 1.0D, true));
@@ -350,7 +347,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         if (syncDataCompound.getInteger("rearingCounter") < 0)
         {
             syncDataCompound.setInteger("rearingCounter", 0);
-            setRearing(false);
+            syncDataCompound.setBoolean("isRearing", false);
         }
            
         // don't forget to sync client and server

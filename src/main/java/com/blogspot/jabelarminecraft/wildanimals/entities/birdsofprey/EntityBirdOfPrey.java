@@ -31,6 +31,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
+import net.minecraft.entity.passive.EntityParrot;
+import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
@@ -41,7 +43,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.pathfinding.PathNodeType;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
@@ -55,8 +56,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 {
-    protected NBTTagCompound syncDataCompound = new NBTTagCompound();
-    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(EntityBirdOfPrey.class, DataSerializers.COMPOUND_TAG);
+    protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(Entity.class, DataSerializers.FLOAT);
+    protected static final DataParameter<Integer> STATE = EntityDataManager.<Integer>createKey(Entity.class, DataSerializers.VARINT);
+    protected static final DataParameter<Boolean> SOAR_CLOCKWISE = EntityDataManager.<Boolean>createKey(Entity.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<Float> SOAR_HEIGHT = EntityDataManager.<Float>createKey(Entity.class, DataSerializers.FLOAT);
+    protected static final DataParameter<BlockPos> ANCHOR_POS = EntityDataManager.<BlockPos>createKey(Entity.class, DataSerializers.BLOCK_POS);
+    protected static final DataParameter<String> OWNER_UUID = EntityDataManager.<String>createKey(Entity.class, DataSerializers.STRING);
+    protected static final DataParameter<Integer> LEG_BAND_COLOR = EntityDataManager.<Integer>createKey(Entity.class, DataSerializers.VARINT);
 
     public ProcessStateBirdOfPrey aiHelper;
     public UpdateStateBirdOfPrey aiUpdateState;
@@ -72,7 +78,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     protected int randFactor;
     
     @SuppressWarnings("rawtypes")
-	private Class[] preyArray = new Class[] {EntityChicken.class, EntityBat.class, EntitySerpent.class};
+	private Class[] preyArray = new Class[] {EntityChicken.class, EntityBat.class, EntitySerpent.class, EntityRabbit.class, EntityParrot.class};
 
     private final double TAMED_HEALTH = 30.0D;
     
@@ -84,30 +90,25 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         System.out.println("EntityBirdOfPrey constructor(), "+"on Client="
                 +parWorld.isRemote+", EntityID = "+getEntityId()+", ModEntityID = "+entityUniqueID);
 
-        initSyncDataCompound();
-        dataManager.register(SYNC_COMPOUND, syncDataCompound);       
-        setSize(1.0F, 1.0F);
         randFactor = rand.nextInt(10);
         // DEBUG
         System.out.println("randFactor = "+randFactor);
+
+        dataManager.register(SCALE_FACTOR, 1.0F);
+        dataManager.register(STATE, AIStates.STATE_TAKING_OFF);
+        dataManager.register(SOAR_CLOCKWISE, world.rand.nextBoolean());
+        dataManager.register(SOAR_HEIGHT, (float)(126-randFactor));
+        dataManager.register(ANCHOR_POS, new BlockPos(posX, posY, posZ));
+        dataManager.register(OWNER_UUID, "");
+        dataManager.register(LEG_BAND_COLOR, 0);
+        
+        setSize(1.0F, 1.0F);
         setupAI();
     }
         
     @Override
-    public void initSyncDataCompound()
+    public void entityInit()
     {
-        syncDataCompound.setFloat("scaleFactor", 1.0F);
-        syncDataCompound.setInteger("state", AIStates.STATE_TAKING_OFF);
-        syncDataCompound.setInteger("stateCounter", 0);
-        syncDataCompound.setBoolean("soarClockwise", world.rand.nextBoolean());
-        syncDataCompound.setDouble("soarHeight", 126-randFactor);
-        syncDataCompound.setInteger("stateCounter", 0);
-        syncDataCompound.setDouble("anchorX", posX);
-        syncDataCompound.setDouble("anchorY", posY);
-        syncDataCompound.setDouble("anchorZ", posZ);
-        syncDataCompound.setString("ownerUUIDString", "");
-        syncDataCompound.setInteger("legBandColor", 0);
-        dataManager.register(SYNC_COMPOUND, syncDataCompound);
     }
     
     // use clear tasks then build up their custom ai task list specifically
@@ -121,7 +122,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public void setupAI() 
     {
-    	setPathPriority(PathNodeType.WATER, 0.0F);
     	clearAITasks(); // clear any tasks assigned in super classes
         aiHelper = new ProcessStateBirdOfPrey(this);
         aiUpdateState = new UpdateStateBirdOfPrey(this);
@@ -148,7 +148,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         if (ticksExisted == 10)
         {
             // note that the setTamed also forces a full NBT sync to client
-            String ownerUUIDString = dataManager.get(SYNC_COMPOUND).getString("ownerUUIDString");
+            String ownerUUIDString = dataManager.get(OWNER_UUID);
             if (ownerUUIDString != "")
             {
                 setOwnerUUIDString(ownerUUIDString);
@@ -298,7 +298,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     public void onLivingUpdate()
     {
         super.onLivingUpdate();
-        syncOwner();
+        
+        // DEBUG
+        if (ticksExisted%20 == 0)
+        {
+        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the state is "+dataManager.get(STATE)+" and soaring height = "+dataManager.get(SOAR_HEIGHT));
+        }
+        // syncOwner();
     }
 
 
@@ -322,7 +328,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             }
             
             // DEBUG
-            System.out.println("Eagle has been attacked by "+source.getImmediateSource()+" with source = "+source.getTrueSource()+" and revenge target set to "+getRevengeTarget());
+            System.out.println("Bird of prey has been attacked by "+source.getImmediateSource()+" with source = "+source.getTrueSource()+" and revenge target set to "+getRevengeTarget()+" for entity id = "+getEntityId());
 
             return super.attackEntityFrom(source, amount);
         }
@@ -528,28 +534,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return (getOwner() != null);
     }
 
-    @Override
-    public NBTTagCompound writeToNBT(NBTTagCompound parCompound)
-    {
-//        // DEBUG
-//        System.out.println("Writing NBT");
-        super.writeToNBT(parCompound);
-        parCompound.setTag("extendedPropsJabelar", syncDataCompound);
-        return parCompound;
-    }
-
-    @Override
-    public void readFromNBT(NBTTagCompound parCompound)
-    {
-        // DEBUG
-        System.out.println("Reading NBT");
-        super.readFromNBT(parCompound);
-        syncDataCompound = (NBTTagCompound) parCompound.getTag("extendedPropsJabelar");
-        // DEBUG
-        System.out.println("State = "+getState());
-        sendEntitySyncPacket();
-    }
-
     // *****************************************************
     // ENCAPSULATION SETTER AND GETTER METHODS
     // Don't forget to send sync packets in setters
@@ -558,31 +542,25 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
     public void setScaleFactor(float parScaleFactor)
     {
-        syncDataCompound.setFloat("scaleFactor", Math.abs(parScaleFactor));
-       
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(SCALE_FACTOR, Math.abs(parScaleFactor));
     }
     
     @Override
     public float getScaleFactor()
     {
-        return dataManager.get(SYNC_COMPOUND).getFloat("scaleFactor");
+        return dataManager.get(SCALE_FACTOR);
     }
     
     public void setOwnerUUIDString(String parOwnerUUIDString)
     {
         // DEBUG
         System.out.println("Setting new owner with UUID ="+parOwnerUUIDString);
-        syncDataCompound.setString("ownerUUIDString", parOwnerUUIDString);
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(OWNER_UUID, parOwnerUUIDString);
     }
     
     public String getOwnerUUIDString()
     {
-        return dataManager.get(SYNC_COMPOUND).getString("ownerUUIDString");
+        return dataManager.get(OWNER_UUID);
     }
 
     public void setState(int parState)
@@ -590,61 +568,22 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         // DEBUG
         System.out.println("EntityBirdOfPrey setState() state changed to "+parState);
 
-        syncDataCompound.setInteger("state", parState);
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(STATE, parState);
     }
 
     public int getState() 
     {
-        return dataManager.get(SYNC_COMPOUND).getInteger("state");
+        return dataManager.get(STATE);
     } 
 
-    public void setStateCounter(int parCount)
+    public void setAnchor(BlockPos parPos)
     {
-        syncDataCompound.setInteger("stateCounter", parCount);
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(ANCHOR_POS, parPos);
     }
 
-    public void decrementStateCounter()
+    public BlockPos getAnchor() 
     {
-        syncDataCompound.setInteger("stateCounter", dataManager.get(SYNC_COMPOUND).getInteger("stateCounter")-1);
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
-    }
-
-    public int getStateCounter() 
-    {
-        return dataManager.get(SYNC_COMPOUND).getInteger("stateCounter");
-    } 
-
-    public void setAnchor(double parX, double parY, double parZ)
-    {
-        syncDataCompound.setDouble("anchorX", parX);
-        syncDataCompound.setDouble("anchorY", parY);
-        syncDataCompound.setDouble("anchorZ", parZ);
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
-    }
-
-    public double getAnchorX() 
-    {
-        return dataManager.get(SYNC_COMPOUND).getDouble("anchorX");
-    } 
-
-    public double getAnchorY() 
-    {
-        return dataManager.get(SYNC_COMPOUND).getDouble("anchorY");
-    } 
-
-    public double getAnchorZ() 
-    {
-        return dataManager.get(SYNC_COMPOUND).getDouble("anchorZ");
+        return dataManager.get(ANCHOR_POS);
     } 
 
     public EntityPlayer getOwner()
@@ -688,51 +627,26 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     {
         return parEntity == getOwner();
     }
-
-    
-    @Override
-    public void sendEntitySyncPacket()
-    {
-        dataManager.set(SYNC_COMPOUND, syncDataCompound);
-    }
     
     public void setSoarClockwise(boolean parClockwise)
     {
-        syncDataCompound.setBoolean("soarClockwise", parClockwise);
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(SOAR_CLOCKWISE, parClockwise);
     }
     
     public boolean getSoarClockwise()
     {
-        return dataManager.get(SYNC_COMPOUND).getBoolean("soarClockwise");
+        return dataManager.get(SOAR_CLOCKWISE);
     }
     
-    public void setSoarHeight(double parHeight)
+    public void setSoarHeight(float parHeight)
     {
-        syncDataCompound.setDouble("soarHeight", parHeight);
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(SOAR_HEIGHT, parHeight);
     }
     
-    public double getSoarHeight()
+    public float getSoarHeight()
     {
-        return dataManager.get(SYNC_COMPOUND).getInteger("soarHeight");
+        return dataManager.get(SOAR_HEIGHT);
     }
-
-    @Override
-    public NBTTagCompound getSyncDataCompound()
-    {
-        return syncDataCompound;
-    }
-    
-    @Override
-    public void setSyncDataCompound(NBTTagCompound parCompound)
-    {
-        syncDataCompound = parCompound;
-    }    
     
     public int getRandFactor()
     {
@@ -753,15 +667,36 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public EnumDyeColor getLegBandColor()
     {
-        return EnumDyeColor.byMetadata(dataManager.get(SYNC_COMPOUND).getByte("legBandColor"));
+        return EnumDyeColor.byMetadata(dataManager.get(LEG_BAND_COLOR));
     }
 
     public void setLegBandColor(EnumDyeColor parLegBandColor)
     {
-        syncDataCompound.setByte("legBandColor", (byte) parLegBandColor.getMetadata());
-        
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(LEG_BAND_COLOR, parLegBandColor.getMetadata());
     }
+
+	@Override
+	public void initSyncDataCompound() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void sendEntitySyncPacket() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public NBTTagCompound getSyncDataCompound() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSyncDataCompound(NBTTagCompound parCompound) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

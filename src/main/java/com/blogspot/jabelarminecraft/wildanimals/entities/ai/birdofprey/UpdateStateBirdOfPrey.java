@@ -29,6 +29,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
@@ -58,7 +59,13 @@ public class UpdateStateBirdOfPrey
     
     public void updateAIState()
     {
-        switch (theBird.getState())
+    	// DEBUG
+    	if (theBird.ticksExisted%20 == 0)
+    	{
+    		System.out.println("update ai state where state = "+theBird.getState()+" for entity id = "+theBird.getEntityId());
+    	}
+    	
+    	switch (theBird.getState())
         {
             case AIStates.STATE_PERCHED:
             {
@@ -254,7 +261,8 @@ public class UpdateStateBirdOfPrey
         if (hasLanded())
         {
             // DEBUG
-            System.out.println("Made it to perch");
+            System.out.println("Made it to perch"+" for entity id = "+theBird.getEntityId());
+            
             if (theBird.isTamed())
             {
                 theBird.setState(AIStates.STATE_PERCHED_TAMED);
@@ -282,10 +290,12 @@ public class UpdateStateBirdOfPrey
 //                            theBird.posZ))
 //        {
         // check if should start landing
+    	BlockPos anchorPos = theBird.getAnchor();
+    	
         if (theBird.getDistanceSq(
-                theBird.getAnchorX(), 
-                theBird.getAnchorY(),
-                theBird.getAnchorZ())<25)
+                anchorPos.getX(), 
+                anchorPos.getY(),
+                anchorPos.getZ())<25)
         {
             theBird.setState(AIStates.STATE_LANDING);
         }
@@ -335,6 +345,12 @@ public class UpdateStateBirdOfPrey
 
     private void updateStateSoaring()
     {
+    	// DEBUG
+    	if (theBird.ticksExisted%20==0)
+    	{
+    		System.out.println("update state soaring for entity id = "+theBird.getEntityId());
+    	}
+    	
         if (theBird.isTamed())
         {
             theBird.setState(AIStates.STATE_SOARING_TAMED);
@@ -365,7 +381,13 @@ public class UpdateStateBirdOfPrey
      */
     private void updateStateTakingOff()
     {
-        if (theBird.posY >= theBird.getSoarHeight())
+    	// DEBUG
+    	if (theBird.ticksExisted%20 == 0)
+    	{
+    		System.out.println("update state taking off, the bird pos = "+theBird.posY+" and soaring height = "+theBird.getSoarHeight()+" for entity id = "+theBird.getEntityId());
+    	}
+    	
+    	if (theBird.posY >= theBird.getSoarHeight())
         {
             
             if (theBird.isTamed())
@@ -389,7 +411,8 @@ public class UpdateStateBirdOfPrey
 //            System.out.println("Block underneath = "+worldObj.getBlock(MathHelper.floor_double(posX), (int)posY - 1, MathHelper.floor_double(posZ)).getUnlocalizedName());
 
         // DEBUG
-        System.out.println("Tamed = "+theBird.isTamed());
+        System.out.println("Tamed = "+theBird.isTamed()+" for entity id = "+theBird.getEntityId());
+        
         if (theBird.isTamed())
         {
             theBird.setState(AIStates.STATE_PERCHED_TAMED);
@@ -446,12 +469,12 @@ public class UpdateStateBirdOfPrey
                             theBird.posZ))
                     {
                         theBird.setState(AIStates.STATE_DIVING);
-                        theBird.setAnchor(
+                        theBird.setAnchor(new BlockPos(
                                 theBird.posX, 
                                 theWorld.getHeight(
                                         (int)theBird.posX, 
                                         (int)theBird.posZ), 
-                                theBird.posZ);
+                                theBird.posZ));
                     }
                 }
             }

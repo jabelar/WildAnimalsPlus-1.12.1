@@ -260,6 +260,7 @@ public class ModelBirdOfPrey extends ModelWildAnimals
             {
                 GL11.glTranslatef(0F, 0.2F*parBird.getScaleFactor(), 0F);
             }
+        
     	GL11.glScalef(parBird.getScaleFactor(), parBird.getScaleFactor(), parBird.getScaleFactor());
 
 		// should only need to render body because all rest are children
@@ -280,13 +281,19 @@ public class ModelBirdOfPrey extends ModelWildAnimals
  
 	public void setRotationAngles(EntityBirdOfPrey parEntity)
 	{
+		// DEBUG
+		if (parEntity.ticksExisted%20==0)
+		{
+			System.out.println("Set rotation angles sees entity state = "+parEntity.getState()+" for entity id = "+parEntity.getEntityId());
+		}
+		
 		// by using the getEntityID in the cycle index calculation
 		// it helps provide "randomness" so that
 		// all entities of same type aren't at same point in animation
 		// because ticksExisted gets reset when world is loaded
 		// so initial randomness due to when entity was spawned will be reset
 		if (parEntity.getState() == AIStates.STATE_TAKING_OFF)
-		{
+		{			
 			doAnimate(parEntity, takingOffCycle);
 		}
 		else if (parEntity.getState() == AIStates.STATE_DIVING)

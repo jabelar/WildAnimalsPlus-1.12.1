@@ -115,8 +115,8 @@ public class ProcessStateBirdOfPrey
     protected void processLanding() 
     {
         updatePitch(Math.max(0.0F, theBird.rotationPitch-pitchChangeRate*3));
-        theBird.motionX = theBird.getAnchorX() - theBird.posX;
-        theBird.motionZ = theBird.getAnchorZ() - theBird.posZ;
+        theBird.motionX = theBird.getAnchor().getX() - theBird.posX;
+        theBird.motionZ = theBird.getAnchor().getZ() - theBird.posZ;
         theBird.motionY = Math.min(-0.2F, theBird.motionY+0.2);
     }
 
@@ -126,8 +126,8 @@ public class ProcessStateBirdOfPrey
     protected void processDiving() 
     {
         updatePitch(90.0F);
-        theBird.motionX = theBird.getAnchorX() - theBird.posX;
-        theBird.motionZ = theBird.getAnchorZ() - theBird.posZ;
+        theBird.motionX = theBird.getAnchor().getX() - theBird.posX;
+        theBird.motionZ = theBird.getAnchor().getZ() - theBird.posZ;
         theBird.motionY = -1.0D;
     }
 

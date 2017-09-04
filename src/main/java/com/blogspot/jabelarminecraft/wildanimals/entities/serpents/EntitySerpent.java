@@ -47,8 +47,7 @@ import net.minecraft.world.World;
 
 public class EntitySerpent extends EntityAnimal implements IModEntity
 {
-    private NBTTagCompound syncDataCompound = new NBTTagCompound();
-    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(EntitySerpent.class, DataSerializers.COMPOUND_TAG);
+    protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntitySerpent.class, DataSerializers.FLOAT);
 
 	// good to have instances of AI so task list can be modified, including in sub-classes
     protected EntityAIBase aiSwimming = new EntityAISwimming(this);
@@ -75,11 +74,16 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         System.out.println("EntitySerpent constructor(), "+"on Client="
         		+par1World.isRemote+", EntityID = "+getEntityId()+", ModEntityID = "+entityUniqueID);
 
-        initSyncDataCompound();
-        dataManager.register(SYNC_COMPOUND, syncDataCompound);       
         setSize(1.0F, 0.25F);
         setupAI();		
  	}
+	
+	@Override
+	public void entityInit()
+	{
+		super.entityInit();
+		dataManager.register(SCALE_FACTOR, 1.0F);
+	}
     
     // use clear tasks for subclasses then build up their ai task list specifically
     @Override
@@ -195,35 +199,30 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	public void setScaleFactor(float parScaleFactor)
     {
-    	syncDataCompound.setFloat("scaleFactor", Math.abs(parScaleFactor));
-   	
-    	// don't forget to sync client and server
-    	sendEntitySyncPacket();
+    	dataManager.set(SCALE_FACTOR, Math.abs(parScaleFactor));
     }
     
     @Override
 	public float getScaleFactor()
     {
-    	return dataManager.get(SYNC_COMPOUND).getFloat("scaleFactor");
+    	return dataManager.get(SCALE_FACTOR);
     }
 
     
     @Override
     public void sendEntitySyncPacket()
     {
-        dataManager.set(SYNC_COMPOUND, syncDataCompound);
     }
 
     @Override
     public NBTTagCompound getSyncDataCompound()
     {
-        return syncDataCompound;
+        return null;
     }
     
     @Override
     public void setSyncDataCompound(NBTTagCompound parCompound)
     {
-        syncDataCompound = parCompound;
     }
 
     /* (non-Javadoc)
@@ -232,6 +231,5 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
     public void initSyncDataCompound()
     {
-        syncDataCompound.setFloat("scaleFactor", 1.0F);        
     } 
 }

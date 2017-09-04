@@ -51,8 +51,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 {
-    protected NBTTagCompound syncDataCompound = new NBTTagCompound();
-    protected static final DataParameter<NBTTagCompound> SYNC_COMPOUND = EntityDataManager.<NBTTagCompound>createKey(EntityHerdAnimal.class, DataSerializers.COMPOUND_TAG);
+    protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntityHerdAnimal.class, DataSerializers.FLOAT);
+    protected static final DataParameter<Integer> REARING_COUNTER = EntityDataManager.<Integer>createKey(EntityHerdAnimal.class, DataSerializers.VARINT);
+    protected static final DataParameter<Boolean> IS_REARING = EntityDataManager.<Boolean>createKey(EntityHerdAnimal.class, DataSerializers.BOOLEAN);
 
     protected static final int REARING_TICKS_MAX = 20;
     
@@ -70,8 +71,6 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 //        // DEBUG
 //        System.out.println("EntityHerdAnimal constructor(), entity.worldObj.isRemote = "+this.worldObj.isRemote);
 
-    	initSyncDataCompound();
-        dataManager.register(SYNC_COMPOUND, syncDataCompound);           	
         setSize(0.9F, 1.3F);
         setupAI();        
      }
@@ -80,20 +79,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 	public void entityInit()
     {
     	super.entityInit();
+    	dataManager.register(SCALE_FACTOR, 1.0F);
+    	dataManager.register(REARING_COUNTER, 0);
+    	dataManager.register(IS_REARING, false);
     }
-    
-    @Override
-    public void initSyncDataCompound()
-    {
-        syncDataCompound.setFloat("scaleFactor", 1.0F);
-        syncDataCompound.setInteger("rearingCounter", 0);
-        syncDataCompound.setBoolean("isRearing", false);
-//        // DEBUG
-//        System.out.println("Is on client = "+(world.isRemote));
-//        System.out.println("The data parameter for SYNC_COMPOUND has ID = "+SYNC_COMPOUND.getId());
-//        System.out.println("The contents of the data manager entries are:");
-//        dataManager.getAll().forEach(System.out::println);
-    }
+ 
     
     // set up AI tasks
     @Override
@@ -229,12 +219,12 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 //        {
 //        	if (!world.isRemote)
 //        	{
-//        		setHealth(getHealth()+1);
+//        		setHealth(getHealth()-1);
 //        		setRearingCounter(getRearingCounter()+1);
 //        	}
 //        	List<DataEntry<?>> entryList = dataManager.getAll();
-//        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the data manager entry list is: ");
-//        	entryList.forEach(entry -> System.out.println("key = "+entry.getKey()+" value = "+entry.getValue()+" isDirty = "+entry.isDirty()));
+//        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" health = "+entryList.get(7).getValue()+" rearing counter = "+entryList.get(14).getValue());
+////        	entryList.forEach(entry -> System.out.println("key = "+entry.getKey()+" value = "+entry.getValue()+" isDirty = "+entry.isDirty()));
 //        }
     }
 
@@ -320,7 +310,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         if (parSetRearing && getAttackTarget()==null) // don't rear if already has target
         {
             setRearingCounter(REARING_TICKS_MAX);
-            syncDataCompound.setBoolean("isRearing", true);
+            setRearing(true);
             // DEBUG
             System.out.println("Rearing instead of fleeing");
             System.out.println("rearingCounter = "+getRearingCounter());
@@ -328,82 +318,77 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         else
         {
             setRearingCounter(0);
-            syncDataCompound.setBoolean("isRearing", false);
+            setRearing(false);
             // DEBUG
             System.out.println("Finished Rearing");
             System.out.println("rearingCounter = "+getRearingCounter());
            }
-        
-         // don't forget to sync client and server
-        sendEntitySyncPacket();
     }
     
     public boolean isRearing()
     {
-        return dataManager.get(SYNC_COMPOUND).getBoolean("isRearing");
+        return dataManager.get(IS_REARING);
     }
     
     @Override
     public void setScaleFactor(float parScaleFactor)
     {
-        syncDataCompound.setFloat("scaleFactor", Math.abs(parScaleFactor));
-       
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        dataManager.set(SCALE_FACTOR, Math.abs(parScaleFactor));
     }
     
     @Override
     public float getScaleFactor()
     {
-        return dataManager.get(SYNC_COMPOUND).getFloat("scaleFactor");
+        return dataManager.get(SCALE_FACTOR);
     }
     
     public void setRearingCounter(int parTicks)
     {
-        syncDataCompound.setInteger("rearingCounter", parTicks);
-           
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
-    }
+    	if (parTicks < 0)
+    	{
+    		dataManager.set(REARING_COUNTER, 0);
+    		dataManager.set(IS_REARING, false);
+    	}
+    	else
+    	{
+    		dataManager.set(REARING_COUNTER, parTicks);
+    	}
+     }
     
     public void decrementRearingCounter()
     {
-        syncDataCompound.setInteger("rearingCounter", getRearingCounter()-1);
-        if (syncDataCompound.getInteger("rearingCounter") < 0)
-        {
-            syncDataCompound.setInteger("rearingCounter", 0);
-            syncDataCompound.setBoolean("isRearing", false);
-        }
-           
-        // don't forget to sync client and server
-        sendEntitySyncPacket();
+        setRearingCounter(getRearingCounter()-1);
     }
     
     public int getRearingCounter()
     {
-        return dataManager.get(SYNC_COMPOUND).getInteger("rearingCounter");
+        return dataManager.get(REARING_COUNTER);
     }
 
     public boolean isRearingFirstTick()
     {
-        return (dataManager.get(SYNC_COMPOUND).getInteger("rearingCounter")==REARING_TICKS_MAX);
+        return (getRearingCounter()==REARING_TICKS_MAX);
     }
     
     @Override
     public void sendEntitySyncPacket()
     {
-        dataManager.set(SYNC_COMPOUND, syncDataCompound);
     }
 
     @Override
     public NBTTagCompound getSyncDataCompound()
     {
-        return syncDataCompound;
+        return null;
     }
     
     @Override
     public void setSyncDataCompound(NBTTagCompound parCompound)
     {
-        syncDataCompound = parCompound;
     }
+
+	@Override
+	public void initSyncDataCompound() {
+		// TODO Auto-generated method stub
+		
+	}
 }

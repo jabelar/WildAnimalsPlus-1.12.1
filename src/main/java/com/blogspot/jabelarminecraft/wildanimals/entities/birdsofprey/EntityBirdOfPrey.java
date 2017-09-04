@@ -94,6 +94,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         // DEBUG
         System.out.println("randFactor = "+randFactor);
 
+        setSize(1.0F, 1.0F);
         setupAI();
     }
         
@@ -107,9 +108,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         dataManager.register(SOAR_HEIGHT, (float)(126-randFactor));
         dataManager.register(ANCHOR_POS, new BlockPos(posX, posY, posZ));
         dataManager.register(OWNER_UUID, "");
-        dataManager.register(LEG_BAND_COLOR, 0);
-        
-        setSize(1.0F, 1.0F);
+        dataManager.register(LEG_BAND_COLOR, 0);       
     }
     
     // use clear tasks then build up their custom ai task list specifically

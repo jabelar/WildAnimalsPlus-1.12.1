@@ -310,7 +310,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         if (parSetRearing && getAttackTarget()==null) // don't rear if already has target
         {
             setRearingCounter(REARING_TICKS_MAX);
-            setRearing(true);
+            dataManager.set(IS_REARING, true);
             // DEBUG
             System.out.println("Rearing instead of fleeing");
             System.out.println("rearingCounter = "+getRearingCounter());
@@ -318,7 +318,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         else
         {
             setRearingCounter(0);
-            setRearing(false);
+            dataManager.set(IS_REARING, false);
             // DEBUG
             System.out.println("Finished Rearing");
             System.out.println("rearingCounter = "+getRearingCounter());

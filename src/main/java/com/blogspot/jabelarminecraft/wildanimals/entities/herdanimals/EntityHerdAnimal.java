@@ -70,11 +70,17 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 //        // DEBUG
 //        System.out.println("EntityHerdAnimal constructor(), entity.worldObj.isRemote = "+this.worldObj.isRemote);
 
-        initSyncDataCompound();
-        dataManager.register(SYNC_COMPOUND, syncDataCompound);       
+    	initSyncDataCompound();
+        dataManager.register(SYNC_COMPOUND, syncDataCompound);           	
         setSize(0.9F, 1.3F);
         setupAI();        
      }
+    
+    @Override
+	public void entityInit()
+    {
+    	super.entityInit();
+    }
     
     @Override
     public void initSyncDataCompound()
@@ -217,6 +223,19 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     	{
     		decrementRearingCounter();
     	}
+        
+//        // DEBUG
+//        if (ticksExisted%20 == 0)
+//        {
+//        	if (!world.isRemote)
+//        	{
+//        		setHealth(getHealth()+1);
+//        		setRearingCounter(getRearingCounter()+1);
+//        	}
+//        	List<DataEntry<?>> entryList = dataManager.getAll();
+//        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the data manager entry list is: ");
+//        	entryList.forEach(entry -> System.out.println("key = "+entry.getKey()+" value = "+entry.getValue()+" isDirty = "+entry.isDirty()));
+//        }
     }
 
     /**
@@ -262,7 +281,13 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     public boolean attackEntityFrom(DamageSource par1DamageSource, float parDamageAmount)
     {
-    	setRearing(true);
+    	// DEBUG
+    	System.out.println("EntityHerdAnimal attackEntityFrom on client = "+world.isRemote);
+    	
+    	if (!world.isRemote)
+    	{
+    		setRearing(true);
+    	}
     	return super.attackEntityFrom(par1DamageSource, parDamageAmount);
     }
     

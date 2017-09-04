@@ -23,14 +23,18 @@ import net.minecraft.world.World;
  * 
  */
 public class EntityOwl extends EntityBirdOfPrey
-{
-    protected final static float SCALE_FACTOR = 0.7F;
-    
+{    
     public EntityOwl(World parWorld)
     {
         super(parWorld);
-        setScaleFactor(SCALE_FACTOR);
-        setSize(width*SCALE_FACTOR, height*SCALE_FACTOR);
+    }
+    
+    @Override
+	public void entityInit()
+    {
+    	super.entityInit();
+        setScaleFactor(dataManager.get(SCALE_FACTOR));
+        setSize(width*dataManager.get(SCALE_FACTOR), height*dataManager.get(SCALE_FACTOR));
     }
     
     @Override

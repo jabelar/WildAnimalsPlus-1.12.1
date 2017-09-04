@@ -56,13 +56,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 {
-    protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(Entity.class, DataSerializers.FLOAT);
-    protected static final DataParameter<Integer> STATE = EntityDataManager.<Integer>createKey(Entity.class, DataSerializers.VARINT);
-    protected static final DataParameter<Boolean> SOAR_CLOCKWISE = EntityDataManager.<Boolean>createKey(Entity.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<Float> SOAR_HEIGHT = EntityDataManager.<Float>createKey(Entity.class, DataSerializers.FLOAT);
-    protected static final DataParameter<BlockPos> ANCHOR_POS = EntityDataManager.<BlockPos>createKey(Entity.class, DataSerializers.BLOCK_POS);
-    protected static final DataParameter<String> OWNER_UUID = EntityDataManager.<String>createKey(Entity.class, DataSerializers.STRING);
-    protected static final DataParameter<Integer> LEG_BAND_COLOR = EntityDataManager.<Integer>createKey(Entity.class, DataSerializers.VARINT);
+    protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntityBirdOfPrey.class, DataSerializers.FLOAT);
+    protected static final DataParameter<Integer> STATE = EntityDataManager.<Integer>createKey(EntityBirdOfPrey.class, DataSerializers.VARINT);
+    protected static final DataParameter<Boolean> SOAR_CLOCKWISE = EntityDataManager.<Boolean>createKey(EntityBirdOfPrey.class, DataSerializers.BOOLEAN);
+    protected static final DataParameter<Float> SOAR_HEIGHT = EntityDataManager.<Float>createKey(EntityBirdOfPrey.class, DataSerializers.FLOAT);
+    protected static final DataParameter<BlockPos> ANCHOR_POS = EntityDataManager.<BlockPos>createKey(EntityBirdOfPrey.class, DataSerializers.BLOCK_POS);
+    protected static final DataParameter<String> OWNER_UUID = EntityDataManager.<String>createKey(EntityBirdOfPrey.class, DataSerializers.STRING);
+    protected static final DataParameter<Integer> LEG_BAND_COLOR = EntityDataManager.<Integer>createKey(EntityBirdOfPrey.class, DataSerializers.VARINT);
 
     public ProcessStateBirdOfPrey aiHelper;
     public UpdateStateBirdOfPrey aiUpdateState;
@@ -94,6 +94,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         // DEBUG
         System.out.println("randFactor = "+randFactor);
 
+        setupAI();
+    }
+        
+    @Override
+    public void entityInit()
+    {
+    	super.entityInit();
         dataManager.register(SCALE_FACTOR, 1.0F);
         dataManager.register(STATE, AIStates.STATE_TAKING_OFF);
         dataManager.register(SOAR_CLOCKWISE, world.rand.nextBoolean());
@@ -103,12 +110,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         dataManager.register(LEG_BAND_COLOR, 0);
         
         setSize(1.0F, 1.0F);
-        setupAI();
-    }
-        
-    @Override
-    public void entityInit()
-    {
     }
     
     // use clear tasks then build up their custom ai task list specifically
@@ -299,11 +300,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     {
         super.onLivingUpdate();
         
-        // DEBUG
-        if (ticksExisted%20 == 0)
-        {
-        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the state is "+dataManager.get(STATE)+" and soaring height = "+dataManager.get(SOAR_HEIGHT));
-        }
+//        // DEBUG
+//        if (ticksExisted%20 == 0)
+//        {
+//        	List<DataEntry<?>> entryList = dataManager.getAll();
+////        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the state is "+dataManager.get(STATE)+" and soaring height = "+dataManager.get(SOAR_HEIGHT));
+//        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the data manager entry list is: "+entryList);
+//        }
         // syncOwner();
     }
 

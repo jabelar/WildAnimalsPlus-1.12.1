@@ -137,18 +137,23 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 //        // DEBUG
 //        System.out.println("EntityBigCat constructor(), "+"on Client="+par1World.isRemote);
 
+        setupAI();		
+ 	}
+	
+	@Override
+	public void entityInit()
+	{
+		super.entityInit();
         initSyncDataCompound();
         dataManager.register(SYNC_COMPOUND, syncDataCompound);       
         setSize(1.0F, 1.33F);
-        setupAI();		
- 	}
+	}
 
 	@Override
 	public void initSyncDataCompound() 
 	{
 //	    // DEBUG
 //	    System.out.println("Initializing sync data compound");
-	    
     	syncDataCompound.setFloat("scaleFactor", 1.2F);
     	syncDataCompound.setBoolean("isInterested", false);
     	syncDataCompound.setBoolean("isTamed", false);

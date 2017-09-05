@@ -191,6 +191,20 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         return entitySerpent;
     }
 
+    @Override
+    public void writeEntityToNBT(NBTTagCompound compound)
+	{
+	    super.writeEntityToNBT(compound);
+	    compound.setFloat("scaleFactor", getScaleFactor());
+ }
+
+    @Override
+ 	public void readEntityFromNBT(NBTTagCompound compound)
+    {
+        super.readEntityFromNBT(compound);
+        setScaleFactor(compound.getFloat("scaleFactor"));
+    }
+    
     // *****************************************************
     // ENCAPSULATION SETTER AND GETTER METHODS
     // Don't forget to send sync packets in setters
@@ -207,29 +221,4 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     {
     	return dataManager.get(SCALE_FACTOR);
     }
-
-    
-    @Override
-    public void sendEntitySyncPacket()
-    {
-    }
-
-    @Override
-    public NBTTagCompound getSyncDataCompound()
-    {
-        return null;
-    }
-    
-    @Override
-    public void setSyncDataCompound(NBTTagCompound parCompound)
-    {
-    }
-
-    /* (non-Javadoc)
-     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#initSyncDataCompound()
-     */
-    @Override
-    public void initSyncDataCompound()
-    {
-    } 
 }

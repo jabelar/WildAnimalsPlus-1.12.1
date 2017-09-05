@@ -23,6 +23,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.AIStates
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.UpdateStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
+import com.google.common.base.Optional;
 
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -61,10 +62,10 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     protected static final DataParameter<Boolean> SOAR_CLOCKWISE = EntityDataManager.<Boolean>createKey(EntityBirdOfPrey.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Float> SOAR_HEIGHT = EntityDataManager.<Float>createKey(EntityBirdOfPrey.class, DataSerializers.FLOAT);
     protected static final DataParameter<BlockPos> ANCHOR_POS = EntityDataManager.<BlockPos>createKey(EntityBirdOfPrey.class, DataSerializers.BLOCK_POS);
-    protected static final DataParameter<String> OWNER_UUID = EntityDataManager.<String>createKey(EntityBirdOfPrey.class, DataSerializers.STRING);
+    protected static final DataParameter<Optional<UUID>> OWNER_UUID = EntityDataManager.<Optional<UUID>>createKey(EntityBirdOfPrey.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     protected static final DataParameter<Integer> LEG_BAND_COLOR = EntityDataManager.<Integer>createKey(EntityBirdOfPrey.class, DataSerializers.VARINT);
 
-    public ProcessStateBirdOfPrey aiHelper;
+    public ProcessStateBirdOfPrey aiProcessState;
     public UpdateStateBirdOfPrey aiUpdateState;
     
     // use fields for sounds to allow easy changes in child classes
@@ -107,8 +108,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         dataManager.register(SOAR_CLOCKWISE, world.rand.nextBoolean());
         dataManager.register(SOAR_HEIGHT, (float)(126-randFactor));
         dataManager.register(ANCHOR_POS, new BlockPos(posX, posY, posZ));
-        dataManager.register(OWNER_UUID, "");
-        dataManager.register(LEG_BAND_COLOR, 0);       
+        dataManager.register(OWNER_UUID, Optional.absent());
+        dataManager.register(LEG_BAND_COLOR, Integer.valueOf(EnumDyeColor.RED.getDyeDamage()));       
     }
     
     // use clear tasks then build up their custom ai task list specifically
@@ -123,7 +124,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     public void setupAI() 
     {
     	clearAITasks(); // clear any tasks assigned in super classes
-        aiHelper = new ProcessStateBirdOfPrey(this);
+        aiProcessState = new ProcessStateBirdOfPrey(this);
         aiUpdateState = new UpdateStateBirdOfPrey(this);
     }
 
@@ -139,29 +140,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(3.0D);
     }
 
-
-    /**
-     * This process the current state.
-     */
-    protected void syncOwner()
-    { 
-        if (ticksExisted == 10)
-        {
-            // note that the setTamed also forces a full NBT sync to client
-            String ownerUUIDString = dataManager.get(OWNER_UUID);
-            if (ownerUUIDString != "")
-            {
-                setOwnerUUIDString(ownerUUIDString);
-            }
-            else
-            {
-                setOwnerUUIDString("");
-            }
-        }
-        
-        aiHelper.updateAITick();
-    }
-
 	/**
      * This checks whether state should change
      */
@@ -170,6 +148,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     {
         super.updateAITasks();
         
+        aiProcessState.updateAITick();
         aiUpdateState.updateAIState();
         
     }
@@ -291,26 +270,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
     /**
-     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
-     * use this to react to sunlight and start to burn.
-     */
-    @Override
-    public void onLivingUpdate()
-    {
-        super.onLivingUpdate();
-        
-//        // DEBUG
-//        if (ticksExisted%20 == 0)
-//        {
-//        	List<DataEntry<?>> entryList = dataManager.getAll();
-////        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the state is "+dataManager.get(STATE)+" and soaring height = "+dataManager.get(SOAR_HEIGHT));
-//        	System.out.println("On client = "+world.isRemote+" the entity ID "+getEntityId()+" the data manager entry list is: "+entryList);
-//        }
-        // syncOwner();
-    }
-
-
-    /**
      * Called when the entity is attacked.
      */
     @Override
@@ -393,7 +352,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
                 
                 if (rand.nextInt(3) == 0)
                 {
-                    setTamed(parPlayer);
+                    setTamedBy(parPlayer);
     
                     // DEBUG
                     System.out.println("It likes the raw salmon");
@@ -553,16 +512,16 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return dataManager.get(SCALE_FACTOR);
     }
     
-    public void setOwnerUUIDString(String parOwnerUUIDString)
+    public void setOwnerId(UUID parUUID)
     {
         // DEBUG
-        System.out.println("Setting new owner with UUID ="+parOwnerUUIDString);
-        dataManager.set(OWNER_UUID, parOwnerUUIDString);
+        System.out.println("Setting new owner with UUID ="+parUUID);
+        dataManager.set(OWNER_UUID, Optional.fromNullable(parUUID));
     }
     
-    public String getOwnerUUIDString()
+    public UUID getOwnerId()
     {
-        return dataManager.get(OWNER_UUID);
+        return this.dataManager.get(OWNER_UUID).orNull();
     }
 
     public void setState(int parState)
@@ -590,18 +549,14 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public EntityPlayer getOwner()
     {
-        try
-        {
-            UUID uuid = UUID.fromString(getOwnerUUIDString());
-            return uuid == null ? null : world.getPlayerEntityByUUID(uuid);
-        }
-        catch (IllegalArgumentException illegalargumentexception)
-        {
-            return null;
-        }
+    	if (getOwnerId() == null)
+    	{
+    		return null;
+    	}
+        return world.getPlayerEntityByUUID(getOwnerId());
     }
     
-    public boolean setTamed(EntityLivingBase parNewOwner)
+    public boolean setTamedBy(EntityLivingBase parNewOwner)
     {
         if (getOwner() != null)
         {
@@ -612,7 +567,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         else if (parNewOwner == null)
         {
             // DEBUG
-            System.out.println("Trying to assign a null owner");
+            System.out.println("Setting owner to null");
+            setOwnerId(null);
             return false;
         }
         else
@@ -620,7 +576,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             spawnTamingParticles(true);
             setAttackTarget(null);
             getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
-            setOwnerUUIDString(parNewOwner.getUniqueID().toString());
+            setOwnerId(parNewOwner.getUniqueID());
             return true;
         }
     }
@@ -677,28 +633,57 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         dataManager.set(LEG_BAND_COLOR, parLegBandColor.getMetadata());
     }
 
-	@Override
-	public void initSyncDataCompound() {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void writeEntityToNBT(NBTTagCompound compound)
+    {
+    	super.writeEntityToNBT(compound);
+        compound.setFloat("scaleFactor", getScaleFactor());
+        compound.setInteger("state", getState());
+        compound.setBoolean("soaringClockwise", getSoarClockwise());
+        compound.setFloat("soarHeight", getSoarHeight());
+        compound.setDouble("anchorX", getAnchor().getX());
+        compound.setDouble("anchorY", getAnchor().getY());
+        compound.setDouble("anchorZ", getAnchor().getZ());
+        if (this.getOwnerId() == null)
+        {
+            compound.setString("OwnerUUID", "");
+        }
+        else
+        {
+            compound.setString("OwnerUUID", this.getOwnerId().toString());
+        }
+        compound.setInteger("legBandColor", getLegBandColor().getColorValue());
+    }
 
-	@Override
-	public void sendEntitySyncPacket() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public NBTTagCompound getSyncDataCompound() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setSyncDataCompound(NBTTagCompound parCompound) {
-		// TODO Auto-generated method stub
-		
-	}
-
+    @Override
+ 	public void readEntityFromNBT(NBTTagCompound compound)
+    {
+        super.readEntityFromNBT(compound);
+        setScaleFactor(compound.getFloat("scaleFactor"));
+        setState(compound.getInteger("state"));
+        setSoarClockwise(compound.getBoolean("soaringClockwise"));
+        setSoarHeight(compound.getFloat("soarHeight"));
+        setAnchor(new BlockPos(
+        		compound.getDouble("anchorX"), 
+        		compound.getDouble("anchorY"), 
+        		compound.getDouble("anchorZ")
+        		));
+        String s = compound.getString("OwnerUUID");
+        if (!s.isEmpty())
+        {
+            try
+            {
+                setOwnerId(UUID.fromString(s));
+            }
+            catch (Throwable var4)
+            {
+                setOwnerId(null);
+            }
+        }
+        else
+        {
+        	setOwnerId(null);
+        }
+        setLegBandColor(EnumDyeColor.byMetadata(compound.getInteger("legBandColor")));
+    }
 }

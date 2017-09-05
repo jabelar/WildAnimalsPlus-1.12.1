@@ -16,6 +16,9 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
+import java.util.UUID;
+
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.world.World;
 
 public class EntityLynx extends EntityBigCat
@@ -29,4 +32,20 @@ public class EntityLynx extends EntityBigCat
         System.out.println("EntityLynx constructor()");
         
 	}
+
+    @Override
+	public EntityLynx createChild(EntityAgeable par1EntityAgeable)
+    {
+        EntityLynx entityChild = new EntityLynx(world);
+        UUID uuid = getOwnerId(); 
+
+        if (uuid != null)
+        {
+        	entityChild.setOwnerId(uuid);
+            entityChild.setTamed(true);
+        }
+    	
+    	return entityChild;
+    }
+
 }

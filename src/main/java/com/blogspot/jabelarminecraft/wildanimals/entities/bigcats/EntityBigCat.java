@@ -16,8 +16,6 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
-import java.util.UUID;
-
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
@@ -48,7 +46,6 @@ import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityTameable;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
@@ -74,11 +71,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 {
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntityBigCat.class, DataSerializers.FLOAT);
     protected static final DataParameter<Boolean> IS_INTERESTED = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<Boolean>  IS_TAMED = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Boolean>  IS_ANGRY = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Boolean>  IS_SITTING = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Integer> COLLAR_COLOR = EntityDataManager.<Integer>createKey(EntityBigCat.class, DataSerializers.VARINT);
-    protected static final DataParameter<String> OWNER_UUID = EntityDataManager.<String>createKey(EntityBigCat.class, DataSerializers.STRING);
     
     protected SoundEvent soundAmbientGrowl = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.growl"));
     protected SoundEvent soundAmbientWhine = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.whine"));
@@ -151,11 +146,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	super.entityInit();
     	dataManager.register(SCALE_FACTOR, 1.2F);
     	dataManager.register(IS_INTERESTED, false);
-    	dataManager.register(IS_TAMED, false);
     	dataManager.register(IS_ANGRY, false);
     	dataManager.register(IS_SITTING, false);
-    	dataManager.register(COLLAR_COLOR, 0);
-    	dataManager.register(OWNER_UUID, "");
+    	dataManager.register(COLLAR_COLOR, Integer.valueOf(EnumDyeColor.RED.getDyeDamage()));
 	}
 	
 	@Override
@@ -234,31 +227,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
 
- 	protected void updateAITick()
-    {
-//        // Need to adjust attributes after the save data regarding
-//        // whether it is tamed is loaded and synced.
-//        if (ticksExisted == 10)
-//        {
-//            // note that the setTamed also forces a full NBT sync to client
-//            if (isTamed())
-//            {
-//                setTamed(true);
-//            }
-//            else
-//            {
-//                setTamed(false);
-//            }
-//            adjustEntityAttributes();
-//        }
-    }
-
-//    @Override
-//	protected void func_145780_a(int p_145780_1_, int p_145780_2_, int p_145780_3_, Block p_145780_4_)
-//    {
-//        playSound("wildanimals:mob.bigCat.step", 0.15F, 1.0F); // this is randomized from 1 to 5
-//    }
-
     /**
      * Returns the sound this mob makes while it's alive.
      */
@@ -309,9 +277,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	public void onLivingUpdate()
     {
         super.onLivingUpdate();
-        
-        updateAITick();
-
+ 
         if (!world.isRemote && isShaking && !startedShaking && !hasPath() && onGround)
         {
             startedShaking = true;
@@ -330,7 +296,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         super.onUpdate();
         prevHeadAngle = targetHeadAngle;
 
-        if (getInterested())
+        if (isInterested())
         {
             targetHeadAngle += (1.0F - targetHeadAngle) * 0.4F;
         }
@@ -377,12 +343,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                 }
             }
         }
-    }
-    
-    @SideOnly(Side.CLIENT)
-    protected <T> boolean canRenderName(T entity)
-    {
-    	return false;
     }
 
     @SideOnly(Side.CLIENT)
@@ -619,18 +579,10 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return super.processInteract(parPlayer, parHand);
     }
 
-
-    @Override
-    public boolean isTamed()
-    {
-        boolean isTamed = dataManager.get(IS_TAMED);
-        return isTamed;
-    }
-
     @Override
     public void setTamed(boolean parTamed)
     {
-        dataManager.set(IS_TAMED, parTamed);
+        super.setTamed(parTamed);
 
         if (parTamed)
         {
@@ -652,18 +604,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     public void setSitting(boolean parIsSitting)
     {
         dataManager.set(IS_SITTING, parIsSitting);
-    }
-
-    public void setOwner(UUID parOwnerUUID)
-    {
-        dataManager.set(OWNER_UUID, parOwnerUUID.toString());
-    }
-    
-    @Override
-    public EntityLivingBase getOwner()
-    {
-        UUID uuid = UUID.fromString(dataManager.get(OWNER_UUID));
-        return world.getPlayerEntityByUUID(uuid); 
     }
 
 //    @Override
@@ -739,37 +679,29 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         dataManager.set(COLLAR_COLOR, parCollarColor.getMetadata());
     }
 
-    public EntityWolf cxreateChild(EntityAgeable ageable)
-    {
-        EntityWolf entitywolf = new EntityWolf(this.world);
-        UUID uuid = this.getOwnerId();
-
-        if (uuid != null)
-        {
-            entitywolf.setOwnerId(uuid);
-            entitywolf.setTamed(true);
-        }
-
-        return entitywolf;
-    }
-
     @Override
 	public EntityBigCat createChild(EntityAgeable par1EntityAgeable)
     {
-        
-        // DEBUG
-        System.out.println("EntityBigCat createChild()");
- 
-        EntityBigCat entityBigCat = new EntityBigCat(world);
-        UUID uuid = entityBigCat.getOwnerId(); // used to be getOwnerName();
+        /*
+         * Must @Override in classes extending this using code similar
+         * to commented code below
+         */
+    	
+//        // DEBUG
+//        System.out.println("EntityBigCat createChild()");
+// 
+//        EntityBigCat entityBigCat = new EntityBigCat(world);
+//        UUID uuid = getOwnerId(); 
+//
+//        if (uuid != null)
+//        {
+//        	entityBigCat.setOwnerId(uuid);
+//            entityBigCat.setTamed(true);
+//        }
+//    	
+//    	  return entityBigCat;
 
-        if (uuid != null)
-        {
-        	entityBigCat.setOwner(uuid);
-            entityBigCat.setTamed(true);
-        }
-
-        return entityBigCat;
+        return null;
     }
 
     public void setInterested(boolean parIsInterested)
@@ -777,7 +709,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         dataManager.set(IS_INTERESTED, parIsInterested);
     }
 
-    public boolean getInterested()
+    public boolean isInterested()
     {
         return dataManager.get(IS_INTERESTED);
     }
@@ -808,33 +740,29 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             return !entitybigCat.isTamed() ? false : (entitybigCat.isSitting() ? false : isInLove() && entitybigCat.isInLove());
         }
     }
+ 
+    @Override
+    public void writeEntityToNBT(NBTTagCompound compound)
+    {
+    	super.writeEntityToNBT(compound);
+        compound.setFloat("scaleFactor", getScaleFactor());
+        compound.setBoolean("isInterested", isInterested());
+        compound.setBoolean("isAngry", isAngry());
+        compound.setBoolean("isSitting", isSitting());
+        compound.setInteger("collarColor", getCollarColor().getColorValue());
+    }
 
-//    /*
-//     * Used by the EntityAIOwnerHurt target and EntityAIOwnerHurtByTarget classes to identity 
-//     * suitable attack targets
-//     */
-//    @Override
-//	public boolean func_142018_a(EntityLivingBase par1EntityLivingBase, EntityLivingBase par2EntityLivingBase)
-//    {
-//        if (!(par1EntityLivingBase instanceof EntityCreeper) && !(par1EntityLivingBase instanceof EntityGhast))
-//        {
-//            if (par1EntityLivingBase instanceof EntityBigCat)
-//            {
-//                EntityBigCat entitybigCat = (EntityBigCat)par1EntityLivingBase;
-//
-//                if (entitybigCat.isTamed() && entitybigCat.getOwner() == par2EntityLivingBase)
-//                {
-//                    return false;
-//                }
-//            }
-//
-//            return par1EntityLivingBase instanceof EntityPlayer && par2EntityLivingBase instanceof EntityPlayer && !((EntityPlayer)par2EntityLivingBase).canAttackPlayer((EntityPlayer)par1EntityLivingBase) ? false : !(par1EntityLivingBase instanceof EntityHorse) || !((EntityHorse)par1EntityLivingBase).isTame();
-//        }
-//        else
-//        {
-//            return false;
-//        }
-//    }
+    @Override
+ 	public void readEntityFromNBT(NBTTagCompound compound)
+    {
+        super.readEntityFromNBT(compound);
+        setScaleFactor(compound.getFloat("scaleFactor"));
+        setInterested(compound.getBoolean("isInterested"));
+        setAngry(compound.getBoolean("isAngry"));
+        setSitting(compound.getBoolean("isSitting"));
+        setCollarColor(EnumDyeColor.byMetadata(compound.getInteger("collarColor")));
+    }
+
 
     // *****************************************************
     // ENCAPSULATION SETTER AND GETTER METHODS
@@ -852,26 +780,4 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     {
     	return dataManager.get(SCALE_FACTOR);
     }
-    
-    @Override
-    public void sendEntitySyncPacket()
-    {
-    }
-
-    @Override
-    public NBTTagCompound getSyncDataCompound()
-    {
-        return null;
-    }
-    
-    @Override
-    public void setSyncDataCompound(NBTTagCompound parCompound)
-    {
-    }
-
-	@Override
-	public void initSyncDataCompound() {
-		// TODO Auto-generated method stub
-		
-	}    
 }

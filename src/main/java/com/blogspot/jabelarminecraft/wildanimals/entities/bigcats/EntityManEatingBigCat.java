@@ -25,7 +25,7 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public class EntityManEatingBigCat extends EntityJaguar
+public class EntityManEatingBigCat extends EntityBigCat
 {
 	protected final EntityAIBase aiSeePlayer = new EntityAISeePlayerBigCat(this, 32.0D);
 	@SuppressWarnings({ "unchecked", "rawtypes" })

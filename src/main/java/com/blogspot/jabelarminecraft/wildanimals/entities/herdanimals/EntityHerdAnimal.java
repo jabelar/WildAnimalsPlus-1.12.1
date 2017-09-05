@@ -369,26 +369,23 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     {
         return (getRearingCounter()==REARING_TICKS_MAX);
     }
-    
-    @Override
-    public void sendEntitySyncPacket()
+
+   @Override
+   public void writeEntityToNBT(NBTTagCompound compound)
     {
+        super.writeEntityToNBT(compound);
+        compound.setFloat("scaleFactor", getScaleFactor());
+        compound.setInteger("rearingCounter", getRearingCounter());
+        compound.setBoolean("isRearing", isRearing());
     }
 
     @Override
-    public NBTTagCompound getSyncDataCompound()
+	public void readEntityFromNBT(NBTTagCompound compound)
     {
-        return null;
-    }
-    
-    @Override
-    public void setSyncDataCompound(NBTTagCompound parCompound)
-    {
+        super.readEntityFromNBT(compound);
+        setScaleFactor(compound.getFloat("scaleFactor"));
+        setRearingCounter(compound.getInteger("rearingCounter"));
+        setRearing(compound.getBoolean("isRearing"));
     }
 
-	@Override
-	public void initSyncDataCompound() {
-		// TODO Auto-generated method stub
-		
-	}
 }

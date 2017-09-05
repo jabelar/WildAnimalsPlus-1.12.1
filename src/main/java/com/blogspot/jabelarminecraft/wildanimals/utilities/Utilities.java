@@ -16,10 +16,7 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.utilities;
 
-import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToClient;
-import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToServer;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -221,7 +218,7 @@ public class Utilities
         {
 //        	// DEBUG
 //        	System.out.println("sendEntitySyncPacket from server");
-            MainMod.network.sendToAll(new MessageSyncEntityToClient(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
+//            MainMod.network.sendToAll(new MessageSyncEntityToClient(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
         }
     }
 
@@ -232,7 +229,7 @@ public class Utilities
         {
         	// DEBUG
         	System.out.println("sendEntitySyncPacket from client");
-            MainMod.network.sendToServer(new MessageSyncEntityToServer(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
+//            MainMod.network.sendToServer(new MessageSyncEntityToServer(theEntity.getEntityId(), parEntity.getSyncDataCompound()));           
         }
     }
     

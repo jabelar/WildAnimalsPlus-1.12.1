@@ -16,6 +16,9 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
+import java.util.UUID;
+
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.world.World;
 
 public class EntityJaguar extends EntityBigCat
@@ -29,4 +32,19 @@ public class EntityJaguar extends EntityBigCat
         System.out.println("EntityJaguar constructor()");
         
 	}
+
+    @Override
+	public EntityJaguar createChild(EntityAgeable par1EntityAgeable)
+    {
+        EntityJaguar entityBigCat = new EntityJaguar(world);
+        UUID uuid = getOwnerId(); 
+
+        if (uuid != null)
+        {
+        	entityBigCat.setOwnerId(uuid);
+            entityBigCat.setTamed(true);
+        }
+    	
+    	return entityBigCat;
+    }
 }

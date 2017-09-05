@@ -16,6 +16,9 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
+import java.util.UUID;
+
+import net.minecraft.entity.EntityAgeable;
 import net.minecraft.world.World;
 
 public class EntityTiger extends EntityBigCat
@@ -29,4 +32,20 @@ public class EntityTiger extends EntityBigCat
         System.out.println("EntityTiger constructor()");
         
 	}
+
+    @Override
+	public EntityTiger createChild(EntityAgeable par1EntityAgeable)
+    {
+        EntityTiger entityChild = new EntityTiger(world);
+        UUID uuid = getOwnerId(); 
+
+        if (uuid != null)
+        {
+        	entityChild.setOwnerId(uuid);
+            entityChild.setTamed(true);
+        }
+    	
+    	return entityChild;
+    }
+
 }

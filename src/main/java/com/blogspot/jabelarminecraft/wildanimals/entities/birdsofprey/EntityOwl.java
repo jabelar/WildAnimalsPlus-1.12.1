@@ -33,8 +33,9 @@ public class EntityOwl extends EntityBirdOfPrey
 	public void entityInit()
     {
     	super.entityInit();
-        setScaleFactor(dataManager.get(SCALE_FACTOR));
-        setSize(width*dataManager.get(SCALE_FACTOR), height*dataManager.get(SCALE_FACTOR));
+    	float scaleFactor = 0.7F;
+        setScaleFactor(scaleFactor);
+        setSize(width*scaleFactor, height*scaleFactor);
     }
     
     @Override

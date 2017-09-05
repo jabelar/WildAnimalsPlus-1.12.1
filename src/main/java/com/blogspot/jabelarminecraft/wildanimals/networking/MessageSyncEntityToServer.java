@@ -77,7 +77,7 @@ public class MessageSyncEntityToServer implements IMessage
         	IModEntity theEntity = (IModEntity)thePlayer.world.getEntityByID(message.entityId);
         	if (theEntity != null)
         	{
-        		theEntity.setSyncDataCompound(message.entitySyncDataCompound);
+//        		theEntity.setSyncDataCompound(message.entitySyncDataCompound);
         		// DEBUG
         		System.out.println("MessageSyncEnitityToClient onMessage(), entity ID = "+message.entityId);
         	}

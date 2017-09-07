@@ -325,7 +325,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             {
                 if (itemInHand.getItem() == Items.DYE)
                 {
-                    EnumDyeColor i = EnumDyeColor.byMetadata(itemInHand.getMetadata());
+                    EnumDyeColor i = EnumDyeColor.byDyeDamage(itemInHand.getMetadata());
 
                     if (i != getLegBandColor())
                     {

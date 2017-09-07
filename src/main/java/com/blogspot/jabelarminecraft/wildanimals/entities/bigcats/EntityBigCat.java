@@ -71,7 +71,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntityBigCat.class, DataSerializers.FLOAT);
     protected static final DataParameter<Boolean> IS_INTERESTED = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Boolean>  IS_ANGRY = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
-    protected static final DataParameter<Boolean>  IS_SITTING = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Integer> COLLAR_COLOR = EntityDataManager.<Integer>createKey(EntityBigCat.class, DataSerializers.VARINT);
     
     protected SoundEvent soundAmbientGrowl = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.growl"));
@@ -124,7 +123,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	dataManager.register(SCALE_FACTOR, 1.2F);
     	dataManager.register(IS_INTERESTED, false);
     	dataManager.register(IS_ANGRY, false);
-    	dataManager.register(IS_SITTING, false);
     	dataManager.register(COLLAR_COLOR, Integer.valueOf(EnumDyeColor.RED.getDyeDamage()));
 	}
 	
@@ -472,7 +470,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             		// DEBUG
             		System.out.println("Interacting with dye");
             		
-                    EnumDyeColor dyeColor = EnumDyeColor.byMetadata(itemStackInHand.getMetadata());
+                    EnumDyeColor dyeColor = EnumDyeColor.byDyeDamage(itemStackInHand.getMetadata());
 
                     if (dyeColor != getCollarColor())
                     {
@@ -486,6 +484,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
 	                        }
                         }
+                        
+                        // DEBUG
+                        System.out.println("EntityBigCat collar color now "+getCollarColor());
                         
                         return true;
                     }
@@ -608,22 +609,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
         
         
-    }
-
-    @Override
-    public void setSitting(boolean parIsSitting)
-    {
-//        super.setSitting(parIsSitting);
-    	// DEBUG
-    	System.out.println("EntityBigCat set sitting to "+parIsSitting);
-    	
-    	dataManager.set(IS_SITTING, parIsSitting);
-    }
-    
-    @Override
-	public boolean isSitting()
-    {
-    	return dataManager.get(IS_SITTING);
     }
 
 //    @Override

@@ -155,6 +155,10 @@ public void renderBigCat(EntityBigCat entity, float f, float f1, float f2, float
 
       if (entityBigCat.isSitting())
       {
+//    	  // DEBUG
+//    	  if (entityBigCat.ticksExisted)
+//    	  System.out.println("ModelBigCAt the cat is sitting");
+    	  
           body.setRotationPoint(0.0F, 18.0F, 0.0F);
           body.rotateAngleX = ((float)Math.PI / 4F);
           tail.setRotationPoint(-1.0F, 21.0F, 6.0F);
@@ -169,7 +173,10 @@ public void renderBigCat(EntityBigCat entity, float f, float f1, float f2, float
       }
       else
       {
-          body.setRotationPoint(0.0F, 14.0F, 2.0F);
+//    	  // DEBUG
+//    	  System.out.println("ModelBigCAt the cat is not sitting");
+    	  
+           body.setRotationPoint(0.0F, 14.0F, 2.0F);
           body.rotateAngleX = ((float)Math.PI / 2F);
           tail.setRotationPoint(-1.0F, 12.0F, 8.0F);
           leg1.setRotationPoint(-2.5F, 16.0F, 7.0F);

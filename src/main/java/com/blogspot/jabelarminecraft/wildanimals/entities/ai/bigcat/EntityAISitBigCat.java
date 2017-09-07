@@ -56,7 +56,6 @@ public class EntityAISitBigCat extends EntityAIBase
 	public void startExecuting()
     {
         this.entityBigCat.getNavigator().clearPathEntity();
-        this.entityBigCat.setSitting(true);
     }
 
     /**

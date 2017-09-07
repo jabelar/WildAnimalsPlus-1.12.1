@@ -422,15 +422,20 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	public boolean processInteract(EntityPlayer parPlayer, EnumHand parHand)
     {
         // DEBUG
-        System.out.println("EntityBigCat interact()");
+        System.out.println("EntityBigCat interact() for hand = "+parHand);
+        
+        if (parHand == EnumHand.OFF_HAND)
+        {
+        	return super.processInteract(parPlayer, parHand);
+        }
  
-        ItemStack itemStackInHand = parPlayer.getHeldItem(EnumHand.MAIN_HAND);
+        ItemStack itemStackInHand = parPlayer.getHeldItem(parHand);
 
         // heal tamed with food
         if (isTamed())
         {
         	// DEBUG
-        	System.out.println("Interacting with tamed big cat");
+        	System.out.println("Interacting with tamed big cat for hand = "+parHand);
         	
             if (!itemStackInHand.isEmpty())
             {
@@ -524,8 +529,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
             {
             	// DEBUG
             	System.out.println("Interacting with nothing in hand");
-            	
-            	System.out.println("Owner is player "+isOwner(parPlayer));
+               	System.out.println("Owner is player "+isOwner(parPlayer));
+               	
 	            // toggle sitting
 	            if (isOwner(parPlayer) && !world.isRemote && !isBreedingItem(itemStackInHand))
 	            {
@@ -608,7 +613,17 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
     public void setSitting(boolean parIsSitting)
     {
-        super.setSitting(parIsSitting);
+//        super.setSitting(parIsSitting);
+    	// DEBUG
+    	System.out.println("EntityBigCat set sitting to "+parIsSitting);
+    	
+    	dataManager.set(IS_SITTING, parIsSitting);
+    }
+    
+    @Override
+	public boolean isSitting()
+    {
+    	return dataManager.get(IS_SITTING);
     }
 
 //    @Override

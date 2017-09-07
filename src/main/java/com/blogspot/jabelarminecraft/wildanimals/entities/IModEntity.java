@@ -18,9 +18,6 @@ package com.blogspot.jabelarminecraft.wildanimals.entities;
 
 public interface IModEntity 
 {
-    // set up AI tasks
-    void setupAI();
-    
     // use clear tasks for subclasses then build up their ai task list specifically
     void clearAITasks();
 

@@ -62,9 +62,8 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
 	public void startExecuting()
     {
         this.theBigCat.setInterested(true);
-    	this.theBigCat.setAngry(true);
     	// target the player
-        this.theBigCat.setAttackTarget(this.thePlayer);
+//        this.theBigCat.setAttackTarget(this.thePlayer);
         // look at player
     }
 
@@ -75,7 +74,6 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
 	public void resetTask()
     {
         this.theBigCat.setInterested(false);
-        this.theBigCat.setAngry(false);
         this.theBigCat.setAttackTarget(null);
         this.thePlayer = null;
     }

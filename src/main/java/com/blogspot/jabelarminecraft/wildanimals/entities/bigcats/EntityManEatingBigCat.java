@@ -21,39 +21,32 @@ import com.google.common.base.Predicate;
 
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
-import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class EntityManEatingBigCat extends EntityBigCat
 {
 	protected final EntityAIBase aiSeePlayer = new EntityAISeePlayerBigCat(this, 32.0D);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected final EntityAIBase aiTargetNonTamedAnimal = new EntityAITargetNonTamed(this, EntityAnimal.class, false, (Predicate)null);
+	protected final EntityAIBase aiTargetPlayers = new EntityAITargetNonTamed<EntityPlayer>(this, EntityPlayer.class, false, (Predicate<? super EntityPlayer>)null);
+	protected final EntityAIBase aiTargetVillagers = new EntityAITargetNonTamed<EntityVillager>(this, EntityVillager.class, false, (Predicate<? super EntityVillager>)null);
 	
     public EntityManEatingBigCat(World par1World)
     {
         super(par1World);
         
         // DEBUG
-        System.out.println("EntityManEatingJaguar constructor()");
-     
-        setSize(0.6F, 0.8F);
-                
-        // rebuild AI task list specific to this sub-class
-        clearAITasks();
-        tasks.addTask(1, aiSwimming);
-        tasks.addTask(2, aiLeapAtTarget);
-        tasks.addTask(3, aiAttackOnCollide);
-        tasks.addTask(4, aiSeePlayer);
-        tasks.addTask(5, aiWander);
-        tasks.addTask(6, aiWatchClosest);
-        tasks.addTask(7, aiLookIdle);
-        targetTasks.addTask(1, aiHurtByTarget);
-        targetTasks.addTask(2, aiTargetNonTamedAnimal);
+        System.out.println("EntityManEatingBigCat constructor()");
         
-        setTamed(false);
-
+        setAngry(true);
+    }
+    
+    @Override
+	public void initEntityAI()
+    {        
+		targetTasks.addTask(3, aiTargetPlayers);
+		targetTasks.addTask(3, aiTargetVillagers); 	
     }
  
     @Override
@@ -62,6 +55,11 @@ public class EntityManEatingBigCat extends EntityBigCat
     	// man-eating jaguar can't be tamed
     }
 
+    @Override
+	public boolean isAngry()
+    {
+    	return true; // always angry
+    }
  
     /**
      * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on

@@ -75,7 +75,6 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         		+par1World.isRemote+", EntityID = "+getEntityId()+", ModEntityID = "+entityUniqueID);
 
         setSize(1.0F, 0.25F);
-        setupAI();		
  	}
 	
 	@Override
@@ -94,7 +93,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     }
 
 	@Override
-	public void setupAI() 
+	public void initEntityAI() 
 	{
         clearAITasks(); // clear any tasks assigned in super classes
         tasks.addTask(1, aiSwimming);

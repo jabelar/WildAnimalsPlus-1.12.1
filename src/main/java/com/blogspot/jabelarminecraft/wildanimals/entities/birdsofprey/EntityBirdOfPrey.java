@@ -96,7 +96,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         System.out.println("randFactor = "+randFactor);
 
         setSize(1.0F, 1.0F);
-        setupAI();
     }
         
     @Override
@@ -121,7 +120,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
     @Override
-    public void setupAI() 
+    public void initEntityAI() 
     {
     	clearAITasks(); // clear any tasks assigned in super classes
         aiProcessState = new ProcessStateBirdOfPrey(this);

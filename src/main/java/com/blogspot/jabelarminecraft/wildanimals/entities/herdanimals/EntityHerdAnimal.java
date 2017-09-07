@@ -72,7 +72,6 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 //        System.out.println("EntityHerdAnimal constructor(), entity.worldObj.isRemote = "+this.worldObj.isRemote);
 
         setSize(0.9F, 1.3F);
-        setupAI();        
      }
     
     @Override
@@ -87,7 +86,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     
     // set up AI tasks
     @Override
-    public void setupAI()
+    public void initEntityAI()
     {
         clearAITasks(); // clear any tasks assigned in super classes
         tasks.addTask(0, new EntityAISwimming(this));

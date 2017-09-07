@@ -18,6 +18,7 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAISitBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
 import com.google.common.base.Predicate;
 
@@ -26,18 +27,16 @@ import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIFollow;
+import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
 import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
-import net.minecraft.entity.ai.EntityAISit;
 import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
-import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
@@ -103,47 +102,25 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected float timeBigCatIsShaking;
     protected float prevTimeBigCatIsShaking;
  
-    // good to have instances of AI so task list can be modified, including in sub-classes
-    protected EntityAIBase aiSwimming = new EntityAISwimming(this);
-    protected EntityAIBase aiLeapAtTarget = new EntityAILeapAtTarget(this, 0.4F);
-    protected EntityAIBase aiAttackOnCollide = new EntityAIAttackMelee(this, 1.0D, true);
-    protected EntityAIBase aiFollowOwner = new EntityAIFollow(this, 1.0D, 10.0F, 2.0F);
-    protected EntityAIBase aiMate = new EntityAIMate(this, 1.0D);
-    protected EntityAIBase aiWander = new EntityAIWander(this, 1.0D);
-    protected EntityAIBase aiBeg = new EntityAIBegBigCat(this, 8.0F); // in vanilla begging is only for wolf
-    protected EntityAIBase aiWatchClosest = new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F);
-    protected EntityAIBase aiLookIdle = new EntityAILookIdle(this);
-    protected EntityAIBase aiOwnerHurtByTarget = new EntityAIOwnerHurtByTarget(this);
-    protected EntityAIBase aiOwnerHurtTarget = new EntityAIOwnerHurtTarget(this);
-    protected EntityAIBase aiHurtByTarget = new EntityAIHurtByTarget(this, true);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    protected EntityAIBase aiTargetNonTamedSheep = new EntityAITargetNonTamed(this, EntitySheep.class, false, (Predicate)null);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    protected EntityAIBase aiTargetNonTamedCow = new EntityAITargetNonTamed(this, EntityCow.class, false, (Predicate)null);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    protected EntityAIBase aiTargetNonTamedPig = new EntityAITargetNonTamed(this, EntityPig.class, false, (Predicate)null);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    protected EntityAIBase aiTargetNonTamedChicken = new EntityAITargetNonTamed(this, EntityChicken.class, false, (Predicate)null);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    protected EntityAIBase aiTargetNonTamedHerdAnimal = new EntityAITargetNonTamed(this, EntityHerdAnimal.class, false, (Predicate)null);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-    protected EntityAIBase aiTargetNonTamedRabbit = new EntityAITargetNonTamed(this, EntityRabbit.class, false, (Predicate)null);
-
 	
     public EntityBigCat(World parWorld)
     {
         super(parWorld);
         
-//        // DEBUG
-//        System.out.println("EntityBigCat constructor(), "+"on Client="+par1World.isRemote);
+        // DEBUG
+        System.out.println("EntityBigCat constructor(), "+"on Client="+parWorld.isRemote);
+
         setSize(1.0F, 1.33F);
-        setupAI();		
  	}
     
     @Override
 	public void entityInit()
     {
     	super.entityInit();
+    	
+    	// DEBUG
+    	System.out.println("Entity Big Cat entityInit");
+    	
     	dataManager.register(SCALE_FACTOR, 1.2F);
     	dataManager.register(IS_INTERESTED, false);
     	dataManager.register(IS_ANGRY, false);
@@ -152,28 +129,34 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	}
 	
 	@Override
-	public void setupAI() 
+	public void initEntityAI() 
 	{
+		// DEBUG
+		System.out.println("initEntityAI");
+		
         clearAITasks(); // clear any tasks assigned in super classes
-        aiSit = new EntityAISit(this);
-        tasks.addTask(1, aiSwimming);
-        tasks.addTask(2, aiSit);
-        tasks.addTask(3, aiLeapAtTarget);
-        tasks.addTask(4, aiAttackOnCollide);
-        tasks.addTask(5, aiFollowOwner);
-        tasks.addTask(6, aiMate);
-        tasks.addTask(7, aiWander);
-        tasks.addTask(8, aiBeg); // in vanilla begging is only for wolf
-        tasks.addTask(9, aiWatchClosest);
-        tasks.addTask(10, aiLookIdle);
-        targetTasks.addTask(1, aiOwnerHurtByTarget);
-        targetTasks.addTask(2, aiOwnerHurtTarget);
-        targetTasks.addTask(3, aiHurtByTarget);
-        targetTasks.addTask(4, aiTargetNonTamedSheep);
-        targetTasks.addTask(4, aiTargetNonTamedCow);
-        targetTasks.addTask(4, aiTargetNonTamedPig);
-        targetTasks.addTask(4, aiTargetNonTamedChicken);
-        targetTasks.addTask(4, aiTargetNonTamedHerdAnimal);
+        tasks.addTask(1, new EntityAISwimming(this));
+        tasks.addTask(2, new EntityAISitBigCat(this));
+        tasks.addTask(3, new EntityAILeapAtTarget(this, 0.4F));
+        tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, true));
+        tasks.addTask(5, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
+        tasks.addTask(6, new EntityAIMate(this, 1.0D));
+        tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
+        tasks.addTask(8, new EntityAIBegBigCat(this, 8.0F)); 
+        tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        tasks.addTask(10, new EntityAILookIdle(this));
+        targetTasks.addTask(1, new EntityAIOwnerHurtByTarget(this));
+        targetTasks.addTask(2, new EntityAIOwnerHurtTarget(this));
+        targetTasks.addTask(3, new EntityAIHurtByTarget(this, true));
+        targetTasks.addTask(4, new EntityAITargetNonTamed<EntitySheep>(this, EntitySheep.class, true, (Predicate<? super EntitySheep>)null));
+        targetTasks.addTask(4, new EntityAITargetNonTamed<EntityCow>(this, EntityCow.class, true, (Predicate<? super EntityCow>)null));
+        targetTasks.addTask(4, new EntityAITargetNonTamed<EntityPig>(this, EntityPig.class, true, (Predicate<? super EntityPig>)null));
+        targetTasks.addTask(4, new EntityAITargetNonTamed<EntityChicken>(this, EntityChicken.class, true, (Predicate<? super EntityChicken>)null));
+        targetTasks.addTask(4, new EntityAITargetNonTamed<EntityHerdAnimal>(this, EntityHerdAnimal.class, true, (Predicate<? super EntityHerdAnimal>)null));
+        targetTasks.addTask(4, new EntityAITargetNonTamed<EntityRabbit>(this, EntityRabbit.class, true, (Predicate<EntityRabbit>)null));
+        
+        // DEBUG
+        System.out.println("Finished EntityBigCat initEntityAI");
     }
     
     // use clear tasks for subclasses then build up their ai task list specifically
@@ -199,15 +182,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
         getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
-    
-    public void adjustEntityAttributes()
-    {
-        if (isTamed())
-        {
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
-        }
-    }
-
  
     /**
      * Sets the active target the Task system uses for tracking
@@ -450,36 +424,50 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         // DEBUG
         System.out.println("EntityBigCat interact()");
  
-        ItemStack itemInHand = parPlayer.getHeldItem(parHand);
+        ItemStack itemStackInHand = parPlayer.getHeldItem(EnumHand.MAIN_HAND);
 
         // heal tamed with food
         if (isTamed())
         {
-            if (!itemInHand.isEmpty())
+        	// DEBUG
+        	System.out.println("Interacting with tamed big cat");
+        	
+            if (!itemStackInHand.isEmpty())
             {
-                if (itemInHand.getItem() instanceof ItemFood)
-                {
-                    ItemFood itemfood = (ItemFood)itemInHand.getItem();
+            	// DEBUG
+            	System.out.println("Interacting with something in hand = "+itemStackInHand+" item = "+itemStackInHand.getItem());
+            	
+                if (itemStackInHand.getItem() instanceof ItemFood)
+                {                	
+                	// DEBUG
+                	System.out.println("Interacting with food");         	
+
+                    ItemFood itemfood = (ItemFood)itemStackInHand.getItem();
 
                     if (itemfood.isWolfsFavoriteMeat() && getHealth() < TAMED_HEALTH)
                     {
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-                            itemInHand.shrink(1);
+                            itemStackInHand.shrink(1);
                         }
 
-                        if (itemInHand.getCount() <= 0)
+                        if (itemStackInHand.getCount() <= 0)
                         {
                             parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
                         }
 
-                        heal(itemfood.getHealAmount(itemInHand));
+                        heal(itemfood.getHealAmount(itemStackInHand));
                         return true;
                     }
                 }
-                else if (itemInHand.getItem() == Items.DYE)
+                    
+
+            	if (itemStackInHand.getItem() == Items.DYE)
                 {
-                    EnumDyeColor dyeColor = EnumDyeColor.byMetadata(itemInHand.getMetadata());
+            		// DEBUG
+            		System.out.println("Interacting with dye");
+            		
+                    EnumDyeColor dyeColor = EnumDyeColor.byMetadata(itemStackInHand.getMetadata());
 
                     if (dyeColor != getCollarColor())
                     {
@@ -487,8 +475,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                         
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-	                        itemInHand.shrink(1);
-	                        if (!parPlayer.capabilities.isCreativeMode && itemInHand.getCount() <= 0)
+	                        itemStackInHand.shrink(1);
+	                        if (!parPlayer.capabilities.isCreativeMode && itemStackInHand.getCount() <= 0)
 	                        {
 	                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
 	                        }
@@ -497,87 +485,108 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                         return true;
                     }
                 }
-            }
+                    
+                    
+                // grow with meat
+                if (itemStackInHand.getItem() == Items.BEEF && !isAngry())
+                {
+                	// DEBUG
+                	System.out.println("Interacting with beef in hand, should grow");
+                	
+                    if (!parPlayer.capabilities.isCreativeMode)
+                    {
+                        itemStackInHand.shrink(1);
+                    }
 
-            // toggle sitting
-            if (isOwner(parPlayer) && !world.isRemote && !isBreedingItem(itemInHand))
+                    if (itemStackInHand.getCount() <= 0)
+                    {
+                        parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+                    }
+
+                    if (!world.isRemote)
+                    {
+                        if (rand.nextInt(3) == 0)
+                        {
+                            setGrowingAge(getGrowingAge()+500);
+                            world.setEntityState(this, (byte)7);
+                        }
+                        else
+                        {
+                            playTameEffect(false);
+                            world.setEntityState(this, (byte)6);
+                        }
+                    }
+
+                    return true;
+                }
+            }
+            else
             {
-                setSitting(!isSitting());
-                aiSit.setSitting(isSitting());
-                isJumping = false;
-                navigator.clearPathEntity();
-                setAttackTarget((EntityLivingBase)null);
+            	// DEBUG
+            	System.out.println("Interacting with nothing in hand");
+            	
+            	System.out.println("Owner is player "+isOwner(parPlayer));
+	            // toggle sitting
+	            if (isOwner(parPlayer) && !world.isRemote && !isBreedingItem(itemStackInHand))
+	            {
+	            	// DEBUG
+	            	System.out.println("EntityBigCat toggle sitting");
+	            	
+	                setSitting(!isSitting());
+	                isJumping = false;
+	                navigator.clearPathEntity();
+	                setAttackTarget((EntityLivingBase)null);
+	            }
+	            else
+	            {
+	            	// breeding items are handled in the super method
+	            }
             }
         }
-        
-        // tame with bone
-        else if (!itemInHand.isEmpty() && itemInHand.getItem() == Items.BONE && !isAngry())
+        else
         {
-            if (!parPlayer.capabilities.isCreativeMode)
-            {
-                itemInHand.shrink(1);
-            }
+        	// DEBUG
+        	System.out.println("Interacting with untamed big cat");
 
-            if (itemInHand.getCount() <= 0)
-            {
-                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
-            }
-
-            // Try taming
-            if (!world.isRemote)
-            {
-                if (rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, parPlayer))
-                {
-                    setTamedBy(parPlayer);
-                    navigator.clearPathEntity();
-                    setAttackTarget((EntityLivingBase)null);
-                    aiSit.setSitting(true);
-                    setHealth(TAMED_HEALTH);
-                    playTameEffect(true);
-                    world.setEntityState(this, (byte)7);
-                    // DEBUG
-                    System.out.println("Taming successful for owner = "+parPlayer.getCommandSenderEntity());
-                }
-                else
-                {
-                    playTameEffect(false);
-                    world.setEntityState(this, (byte)6);
-                }
-            }
-        }
-        
-        // grow with meat
-        else if (!itemInHand.isEmpty() && itemInHand.getItem() == Items.BEEF && !isAngry())
-        {
-            if (!parPlayer.capabilities.isCreativeMode)
-            {
-                itemInHand.shrink(1);
-            }
-
-            if (itemInHand.getCount() <= 0)
-            {
-                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
-            }
-
-            if (!world.isRemote)
-            {
-                if (rand.nextInt(3) == 0)
-                {
-                    setGrowingAge(getGrowingAge()+500);
-                    world.setEntityState(this, (byte)7);
-                }
-                else
-                {
-                    playTameEffect(false);
-                    world.setEntityState(this, (byte)6);
-                }
-            }
-
-        return true;
-        }
-
+	        // tame with bone
+	        if (!itemStackInHand.isEmpty() && itemStackInHand.getItem() == Items.BONE && !isAngry())
+	        {
+	            if (!parPlayer.capabilities.isCreativeMode)
+	            {
+	                itemStackInHand.shrink(1);
+	            }
+	
+	            if (itemStackInHand.getCount() <= 0)
+	            {
+	                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+	            }
+	
+	            // Try taming
+	            if (!world.isRemote)
+	            {
+	                if (rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, parPlayer))
+	                {
+	                    setTamedBy(parPlayer);
+	                    navigator.clearPathEntity();
+	                    setAttackTarget((EntityLivingBase)null);
+	                    aiSit.setSitting(true);
+	                    getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
+	                    playTameEffect(true);
+	                    world.setEntityState(this, (byte)7);
+	                    // DEBUG
+	                    System.out.println("Taming successful for owner = "+parPlayer.getCommandSenderEntity());
+	                }
+	                else
+	                {
+	                    playTameEffect(false);
+	                    world.setEntityState(this, (byte)6);
+	                }
+	            }
+	        }
+        }      
         return super.processInteract(parPlayer, parHand);
     }
+    
 
     @Override
     public void setTamed(boolean parTamed)
@@ -592,18 +601,14 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         {
             getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
         }
-    }
-
-    @Override
-    public boolean isSitting()
-    {
-        return dataManager.get(IS_SITTING);
+        
+        
     }
 
     @Override
     public void setSitting(boolean parIsSitting)
     {
-        dataManager.set(IS_SITTING, parIsSitting);
+        super.setSitting(parIsSitting);
     }
 
 //    @Override

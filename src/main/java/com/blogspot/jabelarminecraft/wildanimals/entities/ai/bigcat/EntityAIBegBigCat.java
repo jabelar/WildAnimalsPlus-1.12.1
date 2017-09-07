@@ -30,7 +30,7 @@ public class EntityAIBegBigCat extends EntityAIBase
     private EntityPlayer thePlayer;
     private final World worldObject;
     private final float minPlayerDistance;
-    private int field_75384_e;
+    private int timeTillDisinterested;
 
     public EntityAIBegBigCat(EntityBigCat par1EntityBigCat, float par2)
     {
@@ -56,7 +56,7 @@ public class EntityAIBegBigCat extends EntityAIBase
     @Override
 	public boolean shouldContinueExecuting()
     {
-        return !this.thePlayer.isEntityAlive() ? false : (this.theBigCat.getDistanceSqToEntity(this.thePlayer) > this.minPlayerDistance * this.minPlayerDistance ? false : this.field_75384_e > 0 && this.hasPlayerGotBoneInHand(this.thePlayer));
+        return !this.thePlayer.isEntityAlive() ? false : (this.theBigCat.getDistanceSqToEntity(this.thePlayer) > this.minPlayerDistance * this.minPlayerDistance ? false : this.timeTillDisinterested > 0 && this.hasPlayerGotBoneInHand(this.thePlayer));
     }
 
     /**
@@ -66,7 +66,7 @@ public class EntityAIBegBigCat extends EntityAIBase
 	public void startExecuting()
     {
         this.theBigCat.setInterested(true);
-        this.field_75384_e = 40 + this.theBigCat.getRNG().nextInt(40);
+        this.timeTillDisinterested = 40 + this.theBigCat.getRNG().nextInt(40);
     }
 
     /**
@@ -86,7 +86,7 @@ public class EntityAIBegBigCat extends EntityAIBase
 	public void updateTask()
     {
         this.theBigCat.getLookHelper().setLookPosition(this.thePlayer.posX, this.thePlayer.posY + this.thePlayer.getEyeHeight(), this.thePlayer.posZ, 10.0F, this.theBigCat.getVerticalFaceSpeed());
-        --this.field_75384_e;
+        --this.timeTillDisinterested;
     }
 
     /**

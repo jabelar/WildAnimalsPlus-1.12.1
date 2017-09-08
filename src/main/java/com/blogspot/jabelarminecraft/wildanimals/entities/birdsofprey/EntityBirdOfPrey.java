@@ -23,6 +23,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.AIStates
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.UpdateStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
+import com.blogspot.jabelarminecraft.wildanimals.events.BirdTameEvent;
 import com.google.common.base.Optional;
 
 import net.minecraft.block.state.IBlockState;
@@ -52,6 +53,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -343,9 +345,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
  
         ItemStack itemStackInHand = parPlayer.getHeldItem(parHand);
         
-        if (isTamed())
+        if (!itemStackInHand.isEmpty()) // something in hand
         {
-            if (!itemStackInHand.isEmpty())
+            if (isTamed())
             {
                 if (itemStackInHand.getItem() == Items.DYE)
                 {
@@ -368,34 +370,58 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
                     }
                 }
             }
-        }
-        else if (itemStackInHand != null)
-        {
-            // check if raw salmon
-            if (isTamingFood(itemStackInHand))
+            else // not tamed
             {
-                // DEBUG
-                System.out.println("Trying taming food");
-                
-                if (rand.nextInt(3) == 0)
+                // check if raw salmon
+                if (isTamingFood(itemStackInHand))
                 {
-                    setTamedBy(parPlayer);
-    
                     // DEBUG
-                    System.out.println("It likes the raw salmon");
-                    if (!parPlayer.capabilities.isCreativeMode)
+                    System.out.println("Trying taming food");
+                    
+    	            if (!parPlayer.capabilities.isCreativeMode)
+    	            {
+    	                itemStackInHand.shrink(1);
+    	            }	
+    	            if (itemStackInHand.getCount() <= 0)
+    	            {
+    	                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+    	            }
+    	
+    	            // Try taming
+                    if (!world.isRemote)
                     {
-                        itemStackInHand.setCount(itemStackInHand.getCount()-1);
-                    }
-                }
-                else
-                {
-                    spawnTamingParticles(false);
+	                    if (rand.nextInt(3) == 0 && onAnimalTame(this, parPlayer))
+	                    {
+	                        setTamedBy(parPlayer);
+	                        setAttackTarget((EntityLivingBase)null);
+		                    getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
+		                    playTameEffect(true);
+		                    world.setEntityState(this, (byte)7);
+     
+	                        // DEBUG
+	                        System.out.println("It likes the raw salmon");
+	                    }
+	                    else
+	                    {
+	                        playTameEffect(false);
+		                    world.setEntityState(this, (byte)6);
+	                    }
+                    }                   
                 }
             }
         }
+        else // nothing in hand
+        {
+        	// do nothing
+        }
 
         return super.processInteract(parPlayer, parHand);
+    }
+    
+
+    public static boolean onAnimalTame(EntityBirdOfPrey animal, EntityPlayer tamer)
+    {
+        return MinecraftForge.EVENT_BUS.post(new BirdTameEvent(animal, tamer));
     }
     
     public boolean isTamingFood(ItemStack parItemStack)
@@ -403,7 +429,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         // check for raw salmon
         return (parItemStack.getItem() == Items.FISH && parItemStack.getMetadata() == 1);
     }
-    
+
     /**
      * Will return how many at most can spawn in a chunk at once.
      */
@@ -477,7 +503,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     /**
      * Play the taming effect, will either be hearts or smoke depending on status
      */
-    protected void spawnTamingParticles(boolean shouldSpawnHearts)
+    protected void playTameEffect(boolean shouldSpawnHearts)
     {
         if (world.isRemote)
         {
@@ -548,7 +574,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     
     public UUID getOwnerId()
     {
-        return this.dataManager.get(OWNER_UUID).orNull();
+        return dataManager.get(OWNER_UUID).orNull();
     }
 
     public void setState(int parState)
@@ -576,11 +602,15 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     public EntityPlayer getOwner()
     {
-    	if (getOwnerId() == null)
-    	{
-    		return null;
-    	}
-        return world.getPlayerEntityByUUID(getOwnerId());
+        try
+        {
+            UUID uuid = getOwnerId();
+            return uuid == null ? null : world.getPlayerEntityByUUID(uuid);
+        }
+        catch (IllegalArgumentException parIAE)
+        {
+            return null;
+        }
     }
     
     public boolean setTamedBy(EntityLivingBase parNewOwner)
@@ -600,7 +630,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         }
         else
         {
-            spawnTamingParticles(true);
+            playTameEffect(true);
             setAttackTarget(null);
             getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
             setOwnerId(parNewOwner.getUniqueID());

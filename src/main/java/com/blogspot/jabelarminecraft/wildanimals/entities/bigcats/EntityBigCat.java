@@ -16,6 +16,8 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
+import java.util.UUID;
+
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAISitBigCat;
@@ -557,8 +559,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	            if (!parPlayer.capabilities.isCreativeMode)
 	            {
 	                itemStackInHand.shrink(1);
-	            }
-	
+	            }	
 	            if (itemStackInHand.getCount() <= 0)
 	            {
 	                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
@@ -573,9 +574,10 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	                    navigator.clearPathEntity();
 	                    setAttackTarget((EntityLivingBase)null);
 	                    aiSit.setSitting(true);
-	                    getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20.0D);
+	                    getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
 	                    playTameEffect(true);
 	                    world.setEntityState(this, (byte)7);
+	                    
 	                    // DEBUG
 	                    System.out.println("Taming successful for owner = "+parPlayer.getCommandSenderEntity());
 	                }
@@ -588,24 +590,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	        }
         }      
         return super.processInteract(parPlayer, parHand);
-    }
-    
-
-    @Override
-    public void setTamed(boolean parTamed)
-    {
-        super.setTamed(parTamed);
-
-        if (parTamed)
-        {
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
-        }
-        else
-        {
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
-        }
-        
-        
     }
 
 //    @Override
@@ -637,7 +621,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	public boolean isBreedingItem(ItemStack par1ItemStack)
     {
-        return par1ItemStack == ItemStack.EMPTY ? false : (!(par1ItemStack.getItem() instanceof ItemFood) ? false : ((ItemFood)par1ItemStack.getItem()).isWolfsFavoriteMeat());
+        return par1ItemStack.getItem() == Items.CHICKEN;
     }
 
     /**
@@ -647,38 +631,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	public int getMaxSpawnedInChunk()
     {
         return 8;
-    }
-
-    /**
-     * Determines whether this bigCat is angry or not.
-     */
-    public boolean isAngry()
-    {
-        return dataManager.get(IS_ANGRY);
-    }
-
-    /**
-     * Sets whether this bigCat is angry or not.
-     */
-    public void setAngry(boolean parIsAngry)
-    {
-        dataManager.set(IS_ANGRY, parIsAngry);
-    }
-
-    /**
-     * Return this bigCat's collar color.
-     */
-    public EnumDyeColor getCollarColor()
-    {
-        return EnumDyeColor.byMetadata(dataManager.get(COLLAR_COLOR));
-    }
-
-    /**
-     * Set this bigCat's collar color.
-     */
-    public void setCollarColor(EnumDyeColor parCollarColor)
-    {
-        dataManager.set(COLLAR_COLOR, parCollarColor.getMetadata());
     }
 
     @Override
@@ -691,29 +643,17 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	
 //        // DEBUG
 //        System.out.println("EntityBigCat createChild()");
-// 
-//        EntityBigCat entityBigCat = new EntityBigCat(world);
-//        UUID uuid = getOwnerId(); 
-//
-//        if (uuid != null)
-//        {
-//        	entityBigCat.setOwnerId(uuid);
-//            entityBigCat.setTamed(true);
-//        }
-//    	
-//    	  return entityBigCat;
+ 
+        EntityBigCat entityBigCat = new EntityBigCat(world);
+        UUID uuid = getOwnerId(); 
 
-        return null;
-    }
-
-    public void setInterested(boolean parIsInterested)
-    {
-        dataManager.set(IS_INTERESTED, parIsInterested);
-    }
-
-    public boolean isInterested()
-    {
-        return dataManager.get(IS_INTERESTED);
+        if (uuid != null)
+        {
+        	entityBigCat.setOwnerId(uuid);
+            entityBigCat.setTamed(true);
+        }
+    	
+    	  return entityBigCat;
     }
     
     /**
@@ -781,5 +721,63 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	public float getScaleFactor()
     {
     	return dataManager.get(SCALE_FACTOR);
+    }
+
+    /**
+     * Determines whether this bigCat is angry or not.
+     */
+    public boolean isAngry()
+    {
+        return dataManager.get(IS_ANGRY);
+    }
+
+    /**
+     * Sets whether this bigCat is angry or not.
+     */
+    public void setAngry(boolean parIsAngry)
+    {
+        dataManager.set(IS_ANGRY, parIsAngry);
+    }
+
+    /**
+     * Return this bigCat's collar color.
+     */
+    public EnumDyeColor getCollarColor()
+    {
+        return EnumDyeColor.byMetadata(dataManager.get(COLLAR_COLOR));
+    }
+
+    /**
+     * Set this bigCat's collar color.
+     */
+    public void setCollarColor(EnumDyeColor parCollarColor)
+    {
+        dataManager.set(COLLAR_COLOR, parCollarColor.getMetadata());
+    }
+
+    public void setInterested(boolean parIsInterested)
+    {
+        dataManager.set(IS_INTERESTED, parIsInterested);
+    }
+
+    public boolean isInterested()
+    {
+        return dataManager.get(IS_INTERESTED);
+    }
+    
+
+    @Override
+    public void setTamed(boolean parTamed)
+    {
+        super.setTamed(parTamed);
+
+        if (parTamed)
+        {
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
+        }
+        else
+        {
+            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
+        }      
     }
 }

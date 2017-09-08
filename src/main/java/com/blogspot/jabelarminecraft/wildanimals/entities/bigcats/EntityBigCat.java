@@ -385,11 +385,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         {
             Entity entity = source.getTrueSource();
 
-            if (this.aiSit != null)
-            {
-                this.aiSit.setSitting(false);
-            }
-
+            setSitting(false);
+            
             if (entity != null && !(entity instanceof EntityPlayer) && !(entity instanceof EntityArrow))
             {
                 amount = (amount + 1.0F) / 2.0F;

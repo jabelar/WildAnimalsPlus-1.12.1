@@ -258,6 +258,24 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
 
+    /**
+     * Returns the sound this mob makes when it is hurt.
+     */
+    @Override
+	protected SoundEvent getHurtSound(DamageSource parSource)
+    {
+        return soundHurt; 
+    }
+
+    /**
+     * Returns the sound this mob makes on death.
+     */
+    @Override
+	protected SoundEvent getDeathSound()
+    {
+        return soundDeath;
+    }
+
 
     /**
      * Returns the volume for the sounds this mob makes.
@@ -318,33 +336,43 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         // DEBUG
         System.out.println("EntityBirdOfPrey interact()");
         
-        ItemStack itemInHand = parPlayer.inventory.getCurrentItem();
+        if (parHand == EnumHand.OFF_HAND)
+        {
+        	return super.processInteract(parPlayer, parHand);
+        }
+ 
+        ItemStack itemStackInHand = parPlayer.getHeldItem(parHand);
+        
         if (isTamed())
         {
-            if (itemInHand != null)
+            if (!itemStackInHand.isEmpty())
             {
-                if (itemInHand.getItem() == Items.DYE)
+                if (itemStackInHand.getItem() == Items.DYE)
                 {
-                    EnumDyeColor i = EnumDyeColor.byDyeDamage(itemInHand.getMetadata());
+                    EnumDyeColor dyeColor = EnumDyeColor.byDyeDamage(itemStackInHand.getMetadata());
 
-                    if (i != getLegBandColor())
+                    if (dyeColor != getLegBandColor())
                     {
-                        setLegBandColor(i);
-
+                        setLegBandColor(dyeColor);
+                        
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-                            itemInHand.setCount(itemInHand.getCount()-1);
+	                        itemStackInHand.shrink(1);
+	                        if (!parPlayer.capabilities.isCreativeMode && itemStackInHand.getCount() <= 0)
+	                        {
+	                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+	                        }
                         }
-
+ 
                         return true;
                     }
                 }
             }
         }
-        else if (itemInHand != null)
+        else if (itemStackInHand != null)
         {
             // check if raw salmon
-            if (isTamingFood(itemInHand))
+            if (isTamingFood(itemStackInHand))
             {
                 // DEBUG
                 System.out.println("Trying taming food");
@@ -357,7 +385,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
                     System.out.println("It likes the raw salmon");
                     if (!parPlayer.capabilities.isCreativeMode)
                     {
-                        itemInHand.setCount(itemInHand.getCount()-1);
+                        itemStackInHand.setCount(itemStackInHand.getCount()-1);
                     }
                 }
                 else

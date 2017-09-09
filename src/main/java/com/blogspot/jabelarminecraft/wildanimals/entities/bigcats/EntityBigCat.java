@@ -519,12 +519,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                     {
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-                            itemStackInHand.shrink(1);
-                        }
-
-                        if (itemStackInHand.getCount() <= 0)
-                        {
-                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+        	            	decrementStackInHand(parPlayer, itemStackInHand);
                         }
 
                         heal(itemfood.getHealAmount(itemStackInHand));
@@ -546,11 +541,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                         
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
-	                        itemStackInHand.shrink(1);
-	                        if (!parPlayer.capabilities.isCreativeMode && itemStackInHand.getCount() <= 0)
-	                        {
-	                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
-	                        }
+        	            	decrementStackInHand(parPlayer, itemStackInHand);
                         }
                         
                         // DEBUG
@@ -569,12 +560,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                 	
                     if (!parPlayer.capabilities.isCreativeMode)
                     {
-                        itemStackInHand.shrink(1);
-                    }
-
-                    if (itemStackInHand.getCount() <= 0)
-                    {
-                        parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+    	            	decrementStackInHand(parPlayer, itemStackInHand);
                     }
 
                     if (!world.isRemote)
@@ -594,7 +580,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                     return true;
                 }
             }
-            else
+            else // nothing in hand
             {
             	// DEBUG
             	System.out.println("Interacting with nothing in hand");
@@ -627,12 +613,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	        {
 	            if (!parPlayer.capabilities.isCreativeMode)
 	            {
-	                itemStackInHand.shrink(1);
+	            	decrementStackInHand(parPlayer, itemStackInHand);
 	            }	
-	            if (itemStackInHand.getCount() <= 0)
-	            {
-	                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
-	            }
 	
 	            // Try taming
 	            if (!world.isRemote)
@@ -642,7 +624,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	                    setTamedBy(parPlayer);
 	                    navigator.clearPathEntity();
 	                    setAttackTarget((EntityLivingBase)null);
-	                    aiSit.setSitting(true);
+	                    setSitting(true);
 	                    getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
 	                    playTameEffect(true);
 	                    world.setEntityState(this, (byte)7);
@@ -659,6 +641,21 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	        }
         }      
         return super.processInteract(parPlayer, parHand);
+    }
+    
+    /**
+     * Decrement stack in hand.
+     *
+     * @param parPlayer the par player
+     * @param itemStackInHand the item stack in hand
+     */
+    protected void decrementStackInHand(EntityPlayer parPlayer, ItemStack itemStackInHand)
+    {
+        itemStackInHand.shrink(1);
+        if (!parPlayer.capabilities.isCreativeMode && itemStackInHand.getCount() <= 0)
+        {
+            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+        }
     }
 
 //    @Override

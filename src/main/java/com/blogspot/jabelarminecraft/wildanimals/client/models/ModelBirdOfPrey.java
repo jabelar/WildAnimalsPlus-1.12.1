@@ -299,11 +299,11 @@ public class ModelBirdOfPrey extends ModelWildAnimals
 	 */
 	public void setRotationAngles(EntityBirdOfPrey parEntity)
 	{
-		// DEBUG
-		if (parEntity.ticksExisted%20==0)
-		{
-			System.out.println("Set rotation angles sees entity state = "+parEntity.getState()+" for entity id = "+parEntity.getEntityId());
-		}
+//		// DEBUG
+//		if (parEntity.ticksExisted%20==0)
+//		{
+//			System.out.println("Set rotation angles sees entity state = "+parEntity.getState()+" for entity id = "+parEntity.getEntityId());
+//		}
 		
 		// by using the getEntityID in the cycle index calculation
 		// it helps provide "randomness" so that

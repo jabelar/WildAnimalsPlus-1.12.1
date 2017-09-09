@@ -18,6 +18,7 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey;
 
 import java.util.UUID;
 
+import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.AIStates;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessStateBirdOfPrey;
@@ -36,10 +37,12 @@ import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityParrot;
 import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
@@ -416,24 +419,49 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         
         if (!itemStackInHand.isEmpty()) // something in hand
         {
+            // DEBUG
+            System.out.println("Interacting with something in hand = "+itemStackInHand);
+
             if (isTamed())
             {
+                // DEBUG
+                System.out.println("Intereacting with already tamed");
+                
+            	
+                if (itemStackInHand.getItem() instanceof ItemFood)
+                {                	
+                	// DEBUG
+                	System.out.println("Interacting with food");         	
+
+                    ItemFood itemfood = (ItemFood)itemStackInHand.getItem();
+
+                    if (itemfood == Items.FISH && getHealth() < getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getBaseValue());
+                    {
+        	            if (!parPlayer.capabilities.isCreativeMode)
+        	            {
+        	            	decrementStackInHand(parPlayer, itemStackInHand);
+        	            }
+
+                        heal(itemfood.getHealAmount(itemStackInHand));
+                        return true;
+                    }
+                }
+                    
                 if (itemStackInHand.getItem() == Items.DYE)
                 {
+                    // DEBUG
+                    System.out.println("Interacting with dye");
+                    
                     EnumDyeColor dyeColor = EnumDyeColor.byDyeDamage(itemStackInHand.getMetadata());
 
                     if (dyeColor != getLegBandColor())
                     {
                         setLegBandColor(dyeColor);
                         
-                        if (!parPlayer.capabilities.isCreativeMode)
-                        {
-	                        itemStackInHand.shrink(1);
-	                        if (!parPlayer.capabilities.isCreativeMode && itemStackInHand.getCount() <= 0)
-	                        {
-	                            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
-	                        }
-                        }
+        	            if (!parPlayer.capabilities.isCreativeMode)
+        	            {
+        	            	decrementStackInHand(parPlayer, itemStackInHand);
+        	            }
  
                         return true;
                     }
@@ -441,7 +469,13 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             }
             else // not tamed
             {
+                // DEBUG
+                System.out.println("Interacting with untamed");
+
                 // check if raw salmon
+                // DEBUG
+                System.out.println("Is taming food = "+isTamingFood(itemStackInHand));
+                
                 if (isTamingFood(itemStackInHand))
                 {
                     // DEBUG
@@ -449,19 +483,19 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
                     
     	            if (!parPlayer.capabilities.isCreativeMode)
     	            {
-    	                itemStackInHand.shrink(1);
-    	            }	
-    	            if (itemStackInHand.getCount() <= 0)
-    	            {
-    	                parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+    	            	decrementStackInHand(parPlayer, itemStackInHand);
     	            }
     	
     	            // Try taming
                     if (!world.isRemote)
                     {
-	                    if (rand.nextInt(3) == 0 && onAnimalTame(this, parPlayer))
-	                    {
+	                    if (rand.nextInt(3) == 0) // && onAnimalTame(this, parPlayer))
+	                    {                
+	                    	// DEBUG
+	                        System.out.println("Taming successful");
+
 	                        setTamedBy(parPlayer);
+		                    navigator.clearPathEntity();
 	                        setAttackTarget((EntityLivingBase)null);
 		                    getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
 		                    playTameEffect(true);
@@ -472,6 +506,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 	                    }
 	                    else
 	                    {
+	                    	// DEBUG
+	                        System.out.println("Taming failed");
+
 	                        playTameEffect(false);
 		                    world.setEntityState(this, (byte)6);
 	                    }
@@ -482,11 +519,29 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         else // nothing in hand
         {
         	// do nothing
+        	// DEBUG
+            System.out.println("Interacting with nothing in hand");
+
+
         }
 
         return super.processInteract(parPlayer, parHand);
     }
     
+    /**
+     * Decrement stack in hand.
+     *
+     * @param parPlayer the par player
+     * @param itemStackInHand the item stack in hand
+     */
+    protected void decrementStackInHand(EntityPlayer parPlayer, ItemStack itemStackInHand)
+    {
+        itemStackInHand.shrink(1);
+        if (!parPlayer.capabilities.isCreativeMode && itemStackInHand.getCount() <= 0)
+        {
+            parPlayer.inventory.setInventorySlotContents(parPlayer.inventory.currentItem, ItemStack.EMPTY);
+        }
+    }
 
     /**
      * On animal tame.
@@ -497,7 +552,12 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
      */
     public static boolean onAnimalTame(EntityBirdOfPrey animal, EntityPlayer tamer)
     {
-        return MinecraftForge.EVENT_BUS.post(new BirdTameEvent(animal, tamer));
+    	boolean success = MinecraftForge.EVENT_BUS.post(new BirdTameEvent(animal, tamer));
+    	
+    	// DEBUG
+    	System.out.println("Posting tame event to bus success ="+success);
+    	
+        return success;
     }
     
     /**
@@ -719,8 +779,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
      */
     public void setState(int parState)
     {
-        // DEBUG
-        System.out.println("EntityBirdOfPrey setState() state changed to "+parState);
+//        // DEBUG
+//        System.out.println("EntityBirdOfPrey setState() state changed to "+parState);
 
         dataManager.set(STATE, parState);
     }
@@ -785,6 +845,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         {
             // DEBUG
             System.out.println("There is already an owner");
+            
             return false;
         }
         else if (parNewOwner == null)
@@ -796,10 +857,14 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         }
         else
         {
-            playTameEffect(true);
             setAttackTarget(null);
             getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
             setOwnerId(parNewOwner.getUniqueID());
+
+            if (parNewOwner instanceof EntityPlayerMP)
+            {
+                Triggers.TAME_BIRD.trigger((EntityPlayerMP)parNewOwner, this);
+            }
             return true;
         }
     }

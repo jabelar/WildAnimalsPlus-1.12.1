@@ -68,11 +68,11 @@ public class UpdateStateBirdOfPrey
      */
     public void updateAIState()
     {
-    	// DEBUG
-    	if (theBird.ticksExisted%20 == 0)
-    	{
-    		System.out.println("update ai state where state = "+theBird.getState()+" for entity id = "+theBird.getEntityId());
-    	}
+//    	// DEBUG
+//    	if (theBird.ticksExisted%20 == 0)
+//    	{
+//    		System.out.println("update ai state where state = "+theBird.getState()+" for entity id = "+theBird.getEntityId());
+//    	}
     	
     	switch (theBird.getState())
         {
@@ -357,11 +357,11 @@ public class UpdateStateBirdOfPrey
 
     private void updateStateSoaring()
     {
-    	// DEBUG
-    	if (theBird.ticksExisted%20==0)
-    	{
-    		System.out.println("update state soaring for entity id = "+theBird.getEntityId());
-    	}
+//    	// DEBUG
+//    	if (theBird.ticksExisted%20==0)
+//    	{
+//    		System.out.println("update state soaring for entity id = "+theBird.getEntityId());
+//    	}
     	
         if (theBird.isTamed())
         {
@@ -393,11 +393,11 @@ public class UpdateStateBirdOfPrey
      */
     private void updateStateTakingOff()
     {
-    	// DEBUG
-    	if (theBird.ticksExisted%20 == 0)
-    	{
-    		System.out.println("update state taking off, the bird pos = "+theBird.posY+" and soaring height = "+theBird.getSoarHeight()+" for entity id = "+theBird.getEntityId());
-    	}
+//    	// DEBUG
+//    	if (theBird.ticksExisted%20 == 0)
+//    	{
+//    		System.out.println("update state taking off, the bird pos = "+theBird.posY+" and soaring height = "+theBird.getSoarHeight()+" for entity id = "+theBird.getEntityId());
+//    	}
     	
     	if (theBird.posY >= theBird.getSoarHeight())
         {

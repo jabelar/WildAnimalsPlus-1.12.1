@@ -16,10 +16,14 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.proxy;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import com.blogspot.jabelarminecraft.wildanimals.EventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.OreGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.TerrainGenEventHandler;
+import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
 import com.blogspot.jabelarminecraft.wildanimals.commands.CommandConjure;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLion;
@@ -38,6 +42,8 @@ import com.blogspot.jabelarminecraft.wildanimals.networking.MessageSyncEntityToC
 import com.blogspot.jabelarminecraft.wildanimals.networking.MessageToClient;
 import com.blogspot.jabelarminecraft.wildanimals.networking.MessageToServer;
 
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Biomes;
@@ -104,6 +110,9 @@ public class CommonProxy
         
         // register recipes here to allow use of items from other mods
         registerRecipes();
+
+        // register criteria triggers (such as for advancements)
+        registerCriteria();
     }
     
     /**
@@ -542,6 +551,34 @@ public class CommonProxy
         MainMod.network.registerMessage(MessageToClient.Handler.class, MessageToClient.class, packetId++, Side.CLIENT);
         MainMod.network.registerMessage(MessageSyncEntityToClient.Handler.class, MessageSyncEntityToClient.class, packetId++, Side.CLIENT);
     }
+    
+    /**
+     * Register criteria.
+     */
+    public void registerCriteria() 
+    {
+    	// DEBUG
+    	System.out.println("Registering criteria");
+    	
+    	Method method;
+		try {
+			method = CriteriaTriggers.class.getDeclaredMethod("register", ICriterionTrigger.class);
+			method.setAccessible(true);
+			method.invoke(null, Triggers.TAME_BIRD);
+		} catch (NoSuchMethodException | SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+   }
 
 	/**
 	 * Fml life cycle event.

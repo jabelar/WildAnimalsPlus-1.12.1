@@ -25,3 +25,6 @@ itemGroup.Recipe+=Recipe+
 
 container.stove=Stove
 container.pantry=Pantry
+
+advancements.tame_bird.title=Falconer
+advancements.tame_bird.description=Tame a bird of prey

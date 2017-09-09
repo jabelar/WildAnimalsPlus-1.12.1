@@ -1,0 +1,19 @@
+{
+    "display": {
+        "icon": {
+            "item": "minecraft:lead"
+        },
+        "title": {
+            "translate": "advancements.tame_bird.title"
+        },
+        "description": {
+            "translate": "advancements.tame_bird.description"
+        }
+    },
+    "parent": "minecraft:husbandry/root",
+    "criteria": {
+        "tame_bird": {
+            "trigger": "tame_bird"
+        }
+    }
+}

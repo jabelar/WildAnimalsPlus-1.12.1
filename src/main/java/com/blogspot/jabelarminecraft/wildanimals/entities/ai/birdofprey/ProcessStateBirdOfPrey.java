@@ -150,11 +150,11 @@ public class ProcessStateBirdOfPrey
         // climb to soaring height
         if (theBird.posY < theBird.getSoarHeight())
         {
-        	// DEBUG
-        	if (theBird.ticksExisted%20 == 0)
-        	{
-        		System.out.println("processTakingOff setting upwards motion because has not reached soar height for entity ID = "+theBird.getEntityId());
-        	}
+//        	// DEBUG
+//        	if (theBird.ticksExisted%20 == 0)
+//        	{
+//        		System.out.println("processTakingOff setting upwards motion because has not reached soar height for entity ID = "+theBird.getEntityId());
+//        	}
 
         	theBird.motionY = 0.1D;
         }

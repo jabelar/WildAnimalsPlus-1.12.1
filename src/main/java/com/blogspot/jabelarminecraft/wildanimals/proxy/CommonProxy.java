@@ -23,6 +23,7 @@ import com.blogspot.jabelarminecraft.wildanimals.EventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.OreGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.TerrainGenEventHandler;
+import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.CustomTrigger;
 import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
 import com.blogspot.jabelarminecraft.wildanimals.commands.CommandConjure;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
@@ -63,6 +64,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
 // TODO: Auto-generated Javadoc
@@ -559,13 +561,13 @@ public class CommonProxy
     {
     	// DEBUG
     	System.out.println("Registering criteria");
-    	
+    	    	
     	Method method;
 		try {
-			method = CriteriaTriggers.class.getDeclaredMethod("register", ICriterionTrigger.class);
+			method = ReflectionHelper.findMethod(CriteriaTriggers.class, "register", "func_192118_a", ICriterionTrigger.class);
 			method.setAccessible(true);
 			method.invoke(null, Triggers.TAME_BIRD);
-		} catch (NoSuchMethodException | SecurityException e) {
+		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
@@ -579,6 +581,11 @@ public class CommonProxy
 			e.printStackTrace();
 		}
    }
+    
+    public void registerCriterion(CustomTrigger parTrigger)
+    {
+    	
+    }
 
 	/**
 	 * Fml life cycle event.

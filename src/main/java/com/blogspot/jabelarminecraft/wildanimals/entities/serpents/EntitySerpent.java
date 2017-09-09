@@ -22,7 +22,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
@@ -50,18 +49,6 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 {
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntitySerpent.class, DataSerializers.FLOAT);
 
-	// good to have instances of AI so task list can be modified, including in sub-classes
-    protected EntityAIBase aiSwimming = new EntityAISwimming(this);
-    protected EntityAIBase aiLeapAtTarget = new EntityAILeapAtTarget(this, 0.4F);
-    protected EntityAIBase aiAttackOnCollide = new EntityAIAttackMelee(this, 1.0D, true);
-    protected EntityAIBase aiMate = new EntityAIMate(this, 1.0D);
-    protected EntityAIBase aiWander = new EntityAIWander(this, 1.0D);
-    protected EntityAIBase aiWatchClosest = new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F);
-    protected EntityAIBase aiLookIdle = new EntityAILookIdle(this);
-    protected EntityAIBase aiHurtByTarget = new EntityAIHurtByTarget(this, true);
-    protected EntityAIBase aiPanic = new EntityAIPanic(this, 2.0D);
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected final EntityAIBase aiTargetChicken = new EntityAINearestAttackableTarget(this, EntityChicken.class, true, true);
 	// use fields for sounds to allow easy changes in child classes
 	protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
 	protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
@@ -107,20 +94,21 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	/* (non-Javadoc)
 	 * @see net.minecraft.entity.EntityLiving#initEntityAI()
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void initEntityAI() 
 	{
-        clearAITasks(); // clear any tasks assigned in super classes
-        tasks.addTask(1, aiSwimming);
-        tasks.addTask(2, aiPanic);
-        tasks.addTask(3, aiLeapAtTarget);
-        tasks.addTask(4, aiAttackOnCollide);
-        tasks.addTask(5, aiMate);
-        tasks.addTask(6, aiWander);
-        tasks.addTask(7, aiWatchClosest);
-        tasks.addTask(8, aiLookIdle);
-        targetTasks.addTask(9, aiHurtByTarget);
-        targetTasks.addTask(10, aiTargetChicken);
+		clearAITasks(); // clear any tasks assigned in super classes
+        tasks.addTask(1, new EntityAISwimming(this));
+        tasks.addTask(2, new EntityAIPanic(this, 2.0D));
+        tasks.addTask(3, new EntityAILeapAtTarget(this, 0.4F));
+        tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, true));
+        tasks.addTask(5, new EntityAIMate(this, 1.0D));
+        tasks.addTask(6, new EntityAIWander(this, 1.0D));
+        tasks.addTask(7, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+        tasks.addTask(8, new EntityAILookIdle(this));
+        targetTasks.addTask(9, new EntityAIHurtByTarget(this, true));
+        targetTasks.addTask(10, new EntityAINearestAttackableTarget(this, EntityChicken.class, true, true));
 	}    
 
     /* (non-Javadoc)

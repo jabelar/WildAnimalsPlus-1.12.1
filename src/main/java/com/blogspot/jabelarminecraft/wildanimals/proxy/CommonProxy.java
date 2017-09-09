@@ -23,7 +23,6 @@ import com.blogspot.jabelarminecraft.wildanimals.EventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.OreGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.TerrainGenEventHandler;
-import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.CustomTrigger;
 import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
 import com.blogspot.jabelarminecraft.wildanimals.commands.CommandConjure;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
@@ -581,11 +580,6 @@ public class CommonProxy
 			e.printStackTrace();
 		}
    }
-    
-    public void registerCriterion(CustomTrigger parTrigger)
-    {
-    	
-    }
 
 	/**
 	 * Fml life cycle event.

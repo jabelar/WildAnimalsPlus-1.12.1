@@ -760,9 +760,27 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         {
             EntityBigCat entitybigCat = (EntityBigCat)parEntityAnimal;
             // DEBUG
-            System.out.println("Found mate = "+entitybigCat);
-            return !entitybigCat.isTamed() ? false : (entitybigCat.isSitting() ? false : isInLove() && entitybigCat.isInLove());
+            System.out.println(this.toString()+" is considering mate = "+entitybigCat);
+            return (entitybigCat.isSitting() ? false : isInLove() && entitybigCat.isInLove());
         }
+    }
+    
+    @Override
+	public void setInLove(EntityPlayer parPlayer)
+    {
+    	// DEBUG
+    	System.out.print("Setting in love");
+    	
+    	super.setInLove(parPlayer);
+    }
+    
+    @Override
+	public void resetInLove()
+    {
+    	// DEBUG
+    	System.out.println("Resetting in love");
+    	
+    	super.resetInLove();
     }
  
     /* (non-Javadoc)

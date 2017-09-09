@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.blogspot.jabelarminecraft.wildanimals.entities.birdsofprey.EntityBirdOfPrey;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -29,7 +28,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.advancements.ICriterionTrigger;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.advancements.critereon.AbstractCriterionInstance;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
@@ -103,8 +101,7 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
     @Override
 	public TameBirdTrigger.Instance deserializeInstance(JsonObject json, JsonDeserializationContext context)
     {
-        EntityPredicate entitypredicate = EntityPredicate.deserialize(json.get("entity"));
-        return new TameBirdTrigger.Instance(entitypredicate);
+        return new TameBirdTrigger.Instance();
     }
 
     /**
@@ -113,29 +110,26 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
      * @param parPlayer the player
      * @param parBird the entity
      */
-    public void trigger(EntityPlayerMP parPlayer, EntityBirdOfPrey parBird)
+    public void trigger(EntityPlayerMP parPlayer)
     {
         TameBirdTrigger.Listeners tameanimaltrigger$listeners = this.listeners.get(parPlayer.getAdvancements());
 
         if (tameanimaltrigger$listeners != null)
         {
-            tameanimaltrigger$listeners.trigger(parPlayer, parBird);
+            tameanimaltrigger$listeners.trigger(parPlayer);
         }
     }
 
     public static class Instance extends AbstractCriterionInstance
     {
-        private final EntityPredicate entity;
-
         /**
          * Instantiates a new instance.
          *
          * @param entity the entity
          */
-        public Instance(EntityPredicate entity)
+        public Instance()
         {
             super(TameBirdTrigger.ID);
-            this.entity = entity;
         }
 
         /**
@@ -145,9 +139,9 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
          * @param entity the entity
          * @return true, if successful
          */
-        public boolean test(EntityPlayerMP player, EntityBirdOfPrey entity)
+        public boolean test()
         {
-            return this.entity.test(player, entity);
+            return true;
         }
     }
 
@@ -202,13 +196,13 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
          * @param player the player
          * @param entity the entity
          */
-        public void trigger(EntityPlayerMP player, EntityBirdOfPrey entity)
+        public void trigger(EntityPlayerMP player)
         {
             List<ICriterionTrigger.Listener<TameBirdTrigger.Instance>> list = null;
 
             for (ICriterionTrigger.Listener<TameBirdTrigger.Instance> listener : this.listeners)
             {
-                if (listener.getCriterionInstance().test(player, entity))
+                if (listener.getCriterionInstance().test())
                 {
                     if (list == null)
                     {

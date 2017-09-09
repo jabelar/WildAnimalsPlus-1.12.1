@@ -863,7 +863,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
             if (parNewOwner instanceof EntityPlayerMP)
             {
-                Triggers.TAME_BIRD.trigger((EntityPlayerMP)parNewOwner, this);
+                Triggers.TAME_BIRD.trigger((EntityPlayerMP)parNewOwner);
             }
             return true;
         }

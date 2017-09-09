@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -45,9 +45,13 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+// TODO: Auto-generated Javadoc
 public class ClientProxy extends CommonProxy 
 {
 
+	/* (non-Javadoc)
+	 * @see com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy#fmlLifeCycleEvent(net.minecraftforge.fml.common.event.FMLPreInitializationEvent)
+	 */
 	@Override
 	public void fmlLifeCycleEvent(FMLPreInitializationEvent event)
 	{
@@ -60,6 +64,10 @@ public class ClientProxy extends CommonProxy
         // do client-specific stuff
         registerRenderers();
 	}
+	
+	/* (non-Javadoc)
+	 * @see com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy#fmlLifeCycleEvent(net.minecraftforge.fml.common.event.FMLInitializationEvent)
+	 */
 	@Override
 	public void fmlLifeCycleEvent(FMLInitializationEvent event)
 	{
@@ -72,6 +80,9 @@ public class ClientProxy extends CommonProxy
 		// do client-specific stuff
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy#fmlLifeCycleEvent(net.minecraftforge.fml.common.event.FMLPostInitializationEvent)
+	 */
 	@Override
 	public void fmlLifeCycleEvent(FMLPostInitializationEvent event)
 	{
@@ -84,6 +95,9 @@ public class ClientProxy extends CommonProxy
 		// do client-specific stuff
 	}
 
+	/**
+	 * Register renderers.
+	 */
 	@SuppressWarnings("unchecked")
 	public void registerRenderers() 
     {
@@ -212,6 +226,9 @@ public class ClientProxy extends CommonProxy
 	    
     }
 	
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy#sendMessageToPlayer(net.minecraft.util.text.TextComponentString)
+     */
     @Override
     public void sendMessageToPlayer(TextComponentString msg) 
     {
@@ -222,7 +239,10 @@ public class ClientProxy extends CommonProxy
 	 * Thanks to CoolAlias for this tip!
 	 */
 	/**
-	 * Returns a side-appropriate EntityPlayer for use during message handling
+	 * Returns a side-appropriate EntityPlayer for use during message handling.
+	 *
+	 * @param ctx the ctx
+	 * @return the player entity from context
 	 */
     @Override
     public EntityPlayer getPlayerEntityFromContext(MessageContext ctx) 

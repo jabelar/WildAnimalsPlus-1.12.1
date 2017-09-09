@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -49,6 +49,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 {
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntityHerdAnimal.class, DataSerializers.FLOAT);
@@ -64,6 +65,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     protected SoundEvent deathSound = new SoundEvent(new ResourceLocation("mob.cow.say"));
 
     
+    /**
+     * Instantiates a new entity herd animal.
+     *
+     * @param par1World the par 1 world
+     */
     public EntityHerdAnimal(World par1World)
     {
         super(par1World);
@@ -74,6 +80,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         setSize(0.9F, 1.3F);
      }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityAgeable#entityInit()
+     */
     @Override
 	public void entityInit()
     {
@@ -84,6 +93,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     }
  
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#initEntityAI()
+     */
     // set up AI tasks
     @Override
     public void initEntityAI()
@@ -103,6 +115,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         targetTasks.addTask(0, new EntityAIHurtByTarget(this, true));         
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#clearAITasks()
+     */
     // use clear tasks for subclasses then build up their ai task list specifically
     @Override
     public void clearAITasks()
@@ -111,6 +126,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         targetTasks.taskEntries.clear();
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#applyEntityAttributes()
+     */
     // you don't have to call this as it is called automatically during entityLiving subclass creation
     @Override
     protected void applyEntityAttributes()
@@ -128,6 +146,8 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
     /**
      * Returns the sound this mob makes while it's alive.
+     *
+     * @return the ambient sound
      */
     @Override
     protected SoundEvent getAmbientSound()
@@ -137,6 +157,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
     /**
      * Returns the sound this mob makes when it is hurt.
+     *
+     * @param parDamageSource the par damage source
+     * @return the hurt sound
      */
     @Override
     protected SoundEvent getHurtSound(DamageSource parDamageSource)
@@ -146,6 +169,8 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
     /**
      * Returns the sound this mob makes on death.
+     *
+     * @return the death sound
      */
     @Override
     protected SoundEvent getDeathSound()
@@ -160,14 +185,19 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 //    }
 
     /**
-     * Returns the volume for the sounds this mob makes.
-     */
+ * Returns the volume for the sounds this mob makes.
+ *
+ * @return the sound volume
+ */
     @Override
     protected float getSoundVolume()
     {
         return 0.4F;
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#getDropItem()
+     */
     @Override
     protected Item getDropItem()
     {
@@ -177,6 +207,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     /**
      * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
      * par2 - Level of Looting used to kill this mob.
+     *
+     * @param par1 the par 1
+     * @param par2 the par 2
      */
     @Override
     protected void dropFewItems(boolean par1, int par2)
@@ -204,6 +237,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         }
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityAnimal#onLivingUpdate()
+     */
     @Override
 	public void onLivingUpdate()
     {
@@ -229,6 +265,10 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
 
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
+     *
+     * @param player the player
+     * @param hand the hand
+     * @return true, if successful
      */
     @Override
     public boolean processInteract(EntityPlayer player, EnumHand hand)
@@ -258,6 +298,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     }
 
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityAgeable#createChild(net.minecraft.entity.EntityAgeable)
+     */
     @Override
     public EntityHerdAnimal createChild(EntityAgeable par1EntityAgeable)
     {
@@ -266,6 +309,10 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     
     /**
      * Called when the entity is attacked.
+     *
+     * @param par1DamageSource the par 1 damage source
+     * @param parDamageAmount the par damage amount
+     * @return true, if successful
      */
     @Override
     public boolean attackEntityFrom(DamageSource par1DamageSource, float parDamageAmount)
@@ -280,12 +327,22 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     	return super.attackEntityFrom(par1DamageSource, parDamageAmount);
     }
     
+    /**
+     * Can render name.
+     *
+     * @param <T> the generic type
+     * @param entity the entity
+     * @return true, if successful
+     */
     @SideOnly(Side.CLIENT)
     protected <T> boolean canRenderName(T entity)
     {
     	return false;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLivingBase#attackEntityAsMob(net.minecraft.entity.Entity)
+     */
     @Override
 	public boolean attackEntityAsMob(Entity entityIn)
     {
@@ -304,6 +361,11 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     // Don't forget to send sync packets in setters
     // *****************************************************
         
+    /**
+     * Sets the rearing.
+     *
+     * @param parSetRearing the new rearing
+     */
     public void setRearing(Boolean parSetRearing)
     {
         if (parSetRearing && getAttackTarget()==null) // don't rear if already has target
@@ -324,23 +386,39 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
            }
     }
     
+    /**
+     * Checks if is rearing.
+     *
+     * @return true, if is rearing
+     */
     public boolean isRearing()
     {
         return dataManager.get(IS_REARING);
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#setScaleFactor(float)
+     */
     @Override
     public void setScaleFactor(float parScaleFactor)
     {
         dataManager.set(SCALE_FACTOR, Math.abs(parScaleFactor));
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#getScaleFactor()
+     */
     @Override
     public float getScaleFactor()
     {
         return dataManager.get(SCALE_FACTOR);
     }
     
+    /**
+     * Sets the rearing counter.
+     *
+     * @param parTicks the new rearing counter
+     */
     public void setRearingCounter(int parTicks)
     {
     	if (parTicks < 0)
@@ -354,21 +432,37 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     	}
      }
     
+    /**
+     * Decrement rearing counter.
+     */
     public void decrementRearingCounter()
     {
         setRearingCounter(getRearingCounter()-1);
     }
     
+    /**
+     * Gets the rearing counter.
+     *
+     * @return the rearing counter
+     */
     public int getRearingCounter()
     {
         return dataManager.get(REARING_COUNTER);
     }
 
+    /**
+     * Checks if is rearing first tick.
+     *
+     * @return true, if is rearing first tick
+     */
     public boolean isRearingFirstTick()
     {
         return (getRearingCounter()==REARING_TICKS_MAX);
     }
 
+   /* (non-Javadoc)
+    * @see net.minecraft.entity.passive.EntityAnimal#writeEntityToNBT(net.minecraft.nbt.NBTTagCompound)
+    */
    @Override
    public void writeEntityToNBT(NBTTagCompound compound)
     {
@@ -378,6 +472,9 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
         compound.setBoolean("isRearing", isRearing());
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityAnimal#readEntityFromNBT(net.minecraft.nbt.NBTTagCompound)
+     */
     @Override
 	public void readEntityFromNBT(NBTTagCompound compound)
     {

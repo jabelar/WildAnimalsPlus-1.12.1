@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -24,6 +24,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 public class EntityAIBegBigCat extends EntityAIBase
 {
     private final EntityBigCat theBigCat;
@@ -32,6 +33,12 @@ public class EntityAIBegBigCat extends EntityAIBase
     private final float minPlayerDistance;
     private int timeTillDisinterested;
 
+    /**
+     * Instantiates a new entity AI beg big cat.
+     *
+     * @param par1EntityBigCat the par 1 entity big cat
+     * @param par2 the par 2
+     */
     public EntityAIBegBigCat(EntityBigCat par1EntityBigCat, float par2)
     {
         this.theBigCat = par1EntityBigCat;
@@ -42,6 +49,8 @@ public class EntityAIBegBigCat extends EntityAIBase
 
     /**
      * Returns whether the EntityAIBase should begin execution.
+     *
+     * @return true, if successful
      */
     @Override
 	public boolean shouldExecute()
@@ -51,7 +60,9 @@ public class EntityAIBegBigCat extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress EntityAIBase should continue executing.
+     *
+     * @return true, if successful
      */
     @Override
 	public boolean shouldContinueExecuting()
@@ -60,7 +71,7 @@ public class EntityAIBegBigCat extends EntityAIBase
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
 	public void startExecuting()
@@ -70,7 +81,7 @@ public class EntityAIBegBigCat extends EntityAIBase
     }
 
     /**
-     * Resets the task
+     * Resets the task.
      */
     @Override
 	public void resetTask()
@@ -80,7 +91,7 @@ public class EntityAIBegBigCat extends EntityAIBase
     }
 
     /**
-     * Updates the task
+     * Updates the task.
      */
     @Override
 	public void updateTask()

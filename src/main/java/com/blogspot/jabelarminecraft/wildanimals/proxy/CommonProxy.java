@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -59,6 +59,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.registry.EntityRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
+// TODO: Auto-generated Javadoc
 public class CommonProxy 
 {
     
@@ -67,6 +68,11 @@ public class CommonProxy
     // fluids
     public Fluid testFluid;
      
+    /**
+     * Fml life cycle event.
+     *
+     * @param event the event
+     */
     public void fmlLifeCycleEvent(FMLPreInitializationEvent event)
     { 
         // load configuration before doing anything else
@@ -86,6 +92,11 @@ public class CommonProxy
 //      VillagerRegistry.getRegisteredVillagers();
     }
     
+    /**
+     * Fml life cycle event.
+     *
+     * @param event the event
+     */
     public void fmlLifeCycleEvent(FMLInitializationEvent event)
     {
         // register custom event listeners
@@ -95,11 +106,21 @@ public class CommonProxy
         registerRecipes();
     }
     
+    /**
+     * Fml life cycle event.
+     *
+     * @param event the event
+     */
     public void fmlLifeCycleEvent(FMLPostInitializationEvent event)
     {
         // can do some inter-mod stuff here
     }
     
+    /**
+     * Inits the config.
+     *
+     * @param event the event
+     */
     protected void initConfig(FMLPreInitializationEvent event)
     {
         MainMod.configFile = event.getSuggestedConfigurationFile();
@@ -111,6 +132,9 @@ public class CommonProxy
       	syncConfig();
     }
     
+    /**
+     * Sync config.
+     */
     public static void syncConfig() 
     {
     	MainMod.configBigCatsAreManEaters = MainMod.config.getBoolean("BigCatsAreManEaters", Configuration.CATEGORY_GENERAL, MainMod.configBigCatsAreManEaters, "A Boolean!");
@@ -125,12 +149,18 @@ public class CommonProxy
         }
     }
 
+    /**
+     * Register blocks.
+     */
     // register blocks
     public void registerBlocks()
     {
         //example: GameRegistry.registerBlock(blockTomato, "tomatoes");
      }
 
+    /**
+     * Register fluids.
+     */
     // register fluids
     public void registerFluids()
     {
@@ -151,6 +181,9 @@ public class CommonProxy
         // example: GameRegistry.registerCustomItemStack(name, itemStack);
     }
     
+    /**
+     * Register tile entities.
+     */
     // register tileentities
     public void registerTileEntities()
     {
@@ -160,6 +193,9 @@ public class CommonProxy
         // example: GameRegistry.registerTileEntity(TileEntityStove.class, "stove_tile_entity");
     }
 
+    /**
+     * Register recipes.
+     */
     // register recipes
     public void registerRecipes()
     {
@@ -176,6 +212,9 @@ public class CommonProxy
     // register entities
     // lots of conflicting tutorials on this, currently following: nly register mod id http://www.minecraftforum.net/topic/1417041-mod-entity-problem/page__st__140#entry18822284
     // another tut says to only register global id like http://www.minecraftforge.net/wiki/How_to_register_a_mob_entity#Registering_an_Entity
+    /**
+     * Register mod entities.
+     */
     // another tut says to use both: http://www.minecraftforum.net/topic/2389683-172-forge-add-new-block-item-entity-ai-creative-tab-language-localization-block-textures-side-textures/
     public void registerModEntities()
     {    
@@ -224,6 +263,12 @@ public class CommonProxy
         }
     }
      
+     /**
+      * Register mod entity.
+      *
+      * @param parClass the par class
+      * @param parName the par name
+      */
      public void registerModEntity(Class parClass, String parName)
      {
          EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID+":"+parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false);
@@ -231,6 +276,12 @@ public class CommonProxy
        	 System.out.println("Registering mod entity "+parName+" with ID ="+modEntityID);
      }
      
+     /**
+      * Register mod entity long tracking.
+      *
+      * @param parClass the par class
+      * @param parName the par name
+      */
      public void registerModEntityLongTracking(Class parClass, String parName)
      {
             EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80000, 3, false);
@@ -238,6 +289,14 @@ public class CommonProxy
          System.out.println("Registering mod entity with long tracking "+parName+" with ID ="+modEntityID);
      }
 
+     /**
+      * Register mod entity with egg.
+      *
+      * @param parClass the par class
+      * @param parName the par name
+      * @param parEggColor the par egg color
+      * @param parEggSpotsColor the par egg spots color
+      */
      public void registerModEntityWithEgg(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
          EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80, 3, false, parEggColor, parEggSpotsColor);
@@ -245,6 +304,14 @@ public class CommonProxy
        	 System.out.println("Registering mod entity "+parName+" with ID ="+modEntityID);
      }
 
+     /**
+      * Register mod entity with egg long tracking.
+      *
+      * @param parClass the par class
+      * @param parName the par name
+      * @param parEggColor the par egg color
+      * @param parEggSpotsColor the par egg spots color
+      */
      public void registerModEntityWithEggLongTracking(Class parClass, String parName, int parEggColor, int parEggSpotsColor)
      {
          EntityRegistry.registerModEntity(new ResourceLocation(MainMod.MODID, parName), parClass, parName, ++modEntityID, MainMod.instance, 80000, 3, false, parEggColor, parEggSpotsColor);
@@ -253,6 +320,12 @@ public class CommonProxy
      }
 
      
+     /**
+      * Register mod entity fast tracking.
+      *
+      * @param parClass the par class
+      * @param parName the par name
+      */
      // for fast moving entities and projectiles need registration with tracking flag set true
      public void registerModEntityFastTracking(Class parClass, String parName)
      {
@@ -261,6 +334,9 @@ public class CommonProxy
           	 System.out.println("Registering fast tracking mod entity "+parName+" with ID ="+modEntityID);
      }
           
+    /**
+     * Register entity spawns.
+     */
     public void registerEntitySpawns()
     {
         // register natural spawns for entities
@@ -423,6 +499,9 @@ public class CommonProxy
         EntityRegistry.addSpawn(EntitySerpent.class, 5, 1, 1, EnumCreatureType.MONSTER, Biomes.STONE_BEACH); //change the values to vary the spawn rarity, biome, etc.              
     }
     
+    /**
+     * Register fuel handlers.
+     */
     public void registerFuelHandlers()
     {
          // DEBUG
@@ -431,6 +510,9 @@ public class CommonProxy
         // example: GameRegistry.registerFuelHandler(handler);
     }
     
+    /**
+     * Register event listeners.
+     */
     public void registerEventListeners() 
     {
          // DEBUG
@@ -445,7 +527,7 @@ public class CommonProxy
      * Thanks to diesieben07 tutorial for this code
      */
     /**
-     * Registers the simple networking channel and messages for both sides
+     * Registers the simple networking channel and messages for both sides.
      */
     protected void registerSimpleNetworking() 
     {
@@ -461,26 +543,51 @@ public class CommonProxy
         MainMod.network.registerMessage(MessageSyncEntityToClient.Handler.class, MessageSyncEntityToClient.class, packetId++, Side.CLIENT);
     }
 
+	/**
+	 * Fml life cycle event.
+	 *
+	 * @param event the event
+	 */
 	public void fmlLifeCycleEvent(FMLServerStartingEvent event) 
 	{
         event.registerServerCommand(new CommandConjure());
 	}
 
+	/**
+	 * Fml life cycle event.
+	 *
+	 * @param event the event
+	 */
 	public void fmlLifeCycleEvent(FMLServerAboutToStartEvent event) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * Fml life cycle event.
+	 *
+	 * @param event the event
+	 */
 	public void fmlLifeCycleEvent(FMLServerStartedEvent event) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * Fml life cycle event.
+	 *
+	 * @param event the event
+	 */
 	public void fmlLifeCycleEvent(FMLServerStoppingEvent event) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * Fml life cycle event.
+	 *
+	 * @param event the event
+	 */
 	public void fmlLifeCycleEvent(FMLServerStoppedEvent event) {
 		// TODO Auto-generated method stub
 		
@@ -490,7 +597,10 @@ public class CommonProxy
      * Thanks to CoolAlias for this tip!
      */
     /**
-     * Returns a side-appropriate EntityPlayer for use during message handling
+     * Returns a side-appropriate EntityPlayer for use during message handling.
+     *
+     * @param ctx the ctx
+     * @return the player entity from context
      */
     public EntityPlayer getPlayerEntityFromContext(MessageContext ctx) 
     {
@@ -498,7 +608,9 @@ public class CommonProxy
     }
 
     /**
-     * @param msg
+     * Send message to player.
+     *
+     * @param msg the msg
      */
     public void sendMessageToPlayer(TextComponentString msg)
     {

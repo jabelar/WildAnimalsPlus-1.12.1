@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -22,12 +22,20 @@ import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 public class EntityAISeePlayerBigCat extends EntityAIBase
 {
     private final EntityBigCat theBigCat;
     private EntityPlayer thePlayer;
     private final World worldObject;
     private final double minPlayerDistance;
+    
+    /**
+     * Instantiates a new entity AI see player big cat.
+     *
+     * @param par1EntityBigCat the par 1 entity big cat
+     * @param d the d
+     */
     public EntityAISeePlayerBigCat(EntityBigCat par1EntityBigCat, double d)
     {
         this.theBigCat = par1EntityBigCat;
@@ -38,6 +46,8 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
 
     /**
      * Returns whether the EntityAIBase should begin execution.
+     *
+     * @return true, if successful
      */
     @Override
 	public boolean shouldExecute()
@@ -47,7 +57,9 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress EntityAIBase should continue executing.
+     *
+     * @return true, if successful
      */
     @Override
 	public boolean shouldContinueExecuting()
@@ -56,7 +68,7 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
 	public void startExecuting()
@@ -68,7 +80,7 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
     }
 
     /**
-     * Resets the task
+     * Resets the task.
      */
     @Override
 	public void resetTask()
@@ -79,7 +91,7 @@ public class EntityAISeePlayerBigCat extends EntityAIBase
     }
 
     /**
-     * Updates the task
+     * Updates the task.
      */
     @Override
 	public void updateTask()

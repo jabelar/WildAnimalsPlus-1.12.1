@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -16,14 +16,28 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.entities;
 
+// TODO: Auto-generated Javadoc
 public interface IModEntity 
 {
-    // use clear tasks for subclasses then build up their ai task list specifically
+    
+    /**
+     * use clear tasks for subclasses then build up their ai task list specifically.
+     */
     void clearAITasks();
 
+    /**
+     * Sets the scale factor.
+     *
+     * @param parScaleFactor the new scale factor
+     */
     // common encapsulation methods
     void setScaleFactor(float parScaleFactor);
     
+    /**
+     * Gets the scale factor.
+     *
+     * @return the scale factor
+     */
     float getScaleFactor();
 
 }

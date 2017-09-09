@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -24,6 +24,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
 
 
+// TODO: Auto-generated Javadoc
 public class EventHandler 
 {
     /*
@@ -818,7 +819,12 @@ public class EventHandler
 //
 //	}
 	
-	/*
+	/**
+     * On config changed.
+     *
+     * @param event the event
+     */
+    /*
 	 * Config events
 	 */
 	 @SubscribeEvent
@@ -865,6 +871,11 @@ public class EventHandler
 //		
 //	}
 
+	/**
+	 * On event.
+	 *
+	 * @param event the event
+	 */
 	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 	public void onEvent(PlayerLoggedInEvent event)
 	{

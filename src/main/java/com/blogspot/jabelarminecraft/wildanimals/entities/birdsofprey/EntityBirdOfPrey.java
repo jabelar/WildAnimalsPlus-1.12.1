@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -57,6 +57,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 {
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntityBirdOfPrey.class, DataSerializers.FLOAT);
@@ -85,6 +86,11 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     private final double TAMED_HEALTH = 30.0D;
     
+    /**
+     * Instantiates a new entity bird of prey.
+     *
+     * @param parWorld the par world
+     */
     public EntityBirdOfPrey(World parWorld)
     {
         super(parWorld);
@@ -100,6 +106,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         setSize(1.0F, 1.0F);
     }
         
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#entityInit()
+     */
     @Override
     public void entityInit()
     {
@@ -113,7 +122,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         dataManager.register(LEG_BAND_COLOR, Integer.valueOf(EnumDyeColor.RED.getDyeDamage()));       
     }
     
-    // use clear tasks then build up their custom ai task list specifically
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#clearAITasks()
+     */
     @Override
     public void clearAITasks()
     {
@@ -121,6 +132,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         targetTasks.taskEntries.clear();
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#initEntityAI()
+     */
     @Override
     public void initEntityAI() 
     {
@@ -129,6 +143,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         aiUpdateState = new UpdateStateBirdOfPrey(this);
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#applyEntityAttributes()
+     */
     // you don't have to call this as it is called automatically during entityLiving subclass creation
     @Override
     protected void applyEntityAttributes()
@@ -142,8 +159,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
 	/**
-     * This checks whether state should change
-     */
+	 * This checks whether state should change.
+	 */
     @Override
     protected void updateAITasks()
     {
@@ -154,6 +171,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.Entity#isInRangeToRenderDist(double)
+     */
     @Override
     @SideOnly(Side.CLIENT)
     public boolean isInRangeToRenderDist(double parDistance)
@@ -164,6 +184,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     /**
      * returns if this entity triggers Block.onEntityWalking on the blocks they walk on. used for spiders and wolves to
      * prevent them from trampling crops
+     *
+     * @return true, if successful
      */
     @Override
     protected boolean canTriggerWalking()
@@ -173,6 +195,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Called when the mob is falling. Calculates and applies fall damage.
+     *
+     * @param parDistance the par distance
+     * @param parDamageMultiplier the par damage multiplier
      */
     @Override
 	public void fall(float parDistance, float parDamageMultiplier) 
@@ -183,6 +208,11 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     /**
      * Takes in the distance the entity has fallen this tick and whether its on the ground to update the fall distance
      * and deal fall damage if landing on the ground.  Args: distanceFallenThisTick, onGround
+     *
+     * @param y the y
+     * @param onGroundIn the on ground in
+     * @param state the state
+     * @param pos the pos
      */
     @Override
     protected void updateFallState(double y, boolean onGroundIn, IBlockState state, BlockPos pos)
@@ -192,6 +222,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Return whether this entity should NOT trigger a pressure plate or a tripwire.
+     *
+     * @return true, if successful
      */
     @Override
     public boolean doesEntityNotTriggerPressurePlate()
@@ -199,12 +231,18 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return true;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#canBeLeashedTo(net.minecraft.entity.player.EntityPlayer)
+     */
     @Override
     public boolean canBeLeashedTo(EntityPlayer parPlayer)
     {
         return false;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#canAttackClass(java.lang.Class)
+     */
     @SuppressWarnings("rawtypes")
 	@Override
     public boolean canAttackClass(Class parClass)
@@ -212,12 +250,18 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return true;
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#getDropItem()
+     */
     @Override
     public Item getDropItem()
     {
         return Items.FEATHER;
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#dropFewItems(boolean, int)
+     */
     @Override
     protected void dropFewItems(boolean parRecentlyHitByPlayer, int parLootLevel)
     {
@@ -225,6 +269,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return;
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#isNoDespawnRequired()
+     */
     @Override
     public boolean isNoDespawnRequired()
     {
@@ -232,7 +279,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
     
     /**
-     * Sets the active target the Task system uses for tracking
+     * Sets the active target the Task system uses for tracking.
+     *
+     * @param theTargetEntity the new attack target
      */
     @Override
     public void setAttackTarget(EntityLivingBase theTargetEntity)
@@ -245,6 +294,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Returns the sound this mob makes while it's alive.
+     *
+     * @return the ambient sound
      */
     @Override
     protected SoundEvent getAmbientSound()
@@ -262,6 +313,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Returns the sound this mob makes when it is hurt.
+     *
+     * @param parSource the par source
+     * @return the hurt sound
      */
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
@@ -271,6 +325,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Returns the sound this mob makes on death.
+     *
+     * @return the death sound
      */
     @Override
 	protected SoundEvent getDeathSound()
@@ -281,6 +337,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Returns the volume for the sounds this mob makes.
+     *
+     * @return the sound volume
      */
     @Override
     protected float getSoundVolume()
@@ -290,6 +348,10 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Called when the entity is attacked.
+     *
+     * @param source the source
+     * @param amount the amount
+     * @return true, if successful
      */
     @Override
 	public boolean attackEntityFrom(DamageSource source, float amount)
@@ -315,6 +377,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLivingBase#attackEntityAsMob(net.minecraft.entity.Entity)
+     */
     @Override
 	public boolean attackEntityAsMob(Entity entityIn)
     {
@@ -330,6 +395,10 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
+     *
+     * @param parPlayer the par player
+     * @param parHand the par hand
+     * @return true, if successful
      */
     @Override
     public boolean processInteract(EntityPlayer parPlayer, EnumHand parHand)
@@ -419,11 +488,24 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
     
 
+    /**
+     * On animal tame.
+     *
+     * @param animal the animal
+     * @param tamer the tamer
+     * @return true, if successful
+     */
     public static boolean onAnimalTame(EntityBirdOfPrey animal, EntityPlayer tamer)
     {
         return MinecraftForge.EVENT_BUS.post(new BirdTameEvent(animal, tamer));
     }
     
+    /**
+     * Checks if is taming food.
+     *
+     * @param parItemStack the par item stack
+     * @return true, if is taming food
+     */
     public boolean isTamingFood(ItemStack parItemStack)
     {
         // check for raw salmon
@@ -432,6 +514,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
 
     /**
      * Will return how many at most can spawn in a chunk at once.
+     *
+     * @return the max spawned in chunk
      */
     @Override
     public int getMaxSpawnedInChunk()
@@ -440,7 +524,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
     /**
-     * Determines if an entity can be despawned, used on idle far away entities
+     * Determines if an entity can be despawned, used on idle far away entities.
+     *
+     * @return true, if successful
      */
     @Override
     protected boolean canDespawn()
@@ -448,12 +534,22 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return false;
     }
     
+    /**
+     * Can render name.
+     *
+     * @param <T> the generic type
+     * @param entity the entity
+     * @return true, if successful
+     */
     @SideOnly(Side.CLIENT)
     protected <T> boolean canRenderName(T entity)
     {
     	return false;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.Entity#setDead()
+     */
     @Override
     public void setDead()
     {
@@ -463,6 +559,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         super.setDead();
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.Entity#getTeam()
+     */
     @Override
     public Team getTeam()
     {
@@ -479,6 +578,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return super.getTeam();
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.Entity#isOnSameTeam(net.minecraft.entity.Entity)
+     */
     @Override
     public boolean isOnSameTeam(Entity parEntity)
     {
@@ -501,7 +603,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
     
     /**
-     * Play the taming effect, will either be hearts or smoke depending on status
+     * Play the taming effect, will either be hearts or smoke depending on status.
+     *
+     * @param shouldSpawnHearts the should spawn hearts
      */
     protected void playTameEffect(boolean shouldSpawnHearts)
     {
@@ -526,6 +630,11 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         }
     }
     
+    /**
+     * Checks if is nocturnal.
+     *
+     * @return true, if is nocturnal
+     */
     /*
      * Indicates whether the bird is more active during night time.
      * Affects tendency to perch and take off from perch
@@ -535,6 +644,11 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return false;
     }
     
+    /**
+     * Checks if is owl type.
+     *
+     * @return true, if is owl type
+     */
     /*
      * Indicates proportions of the head
      */
@@ -543,6 +657,11 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         return false;
     }
     
+    /**
+     * Checks if is tamed.
+     *
+     * @return true, if is tamed
+     */
     public boolean isTamed()
     {
         return (getOwner() != null);
@@ -553,18 +672,29 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     // Don't forget to send sync packets in setters
     // *****************************************************
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#setScaleFactor(float)
+     */
     @Override
     public void setScaleFactor(float parScaleFactor)
     {
         dataManager.set(SCALE_FACTOR, Math.abs(parScaleFactor));
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#getScaleFactor()
+     */
     @Override
     public float getScaleFactor()
     {
         return dataManager.get(SCALE_FACTOR);
     }
     
+    /**
+     * Sets the owner id.
+     *
+     * @param parUUID the new owner id
+     */
     public void setOwnerId(UUID parUUID)
     {
         // DEBUG
@@ -572,11 +702,21 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         dataManager.set(OWNER_UUID, Optional.fromNullable(parUUID));
     }
     
+    /**
+     * Gets the owner id.
+     *
+     * @return the owner id
+     */
     public UUID getOwnerId()
     {
         return dataManager.get(OWNER_UUID).orNull();
     }
 
+    /**
+     * Sets the state.
+     *
+     * @param parState the new state
+     */
     public void setState(int parState)
     {
         // DEBUG
@@ -585,21 +725,41 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         dataManager.set(STATE, parState);
     }
 
+    /**
+     * Gets the state.
+     *
+     * @return the state
+     */
     public int getState() 
     {
         return dataManager.get(STATE);
     } 
 
+    /**
+     * Sets the anchor.
+     *
+     * @param parPos the new anchor
+     */
     public void setAnchor(BlockPos parPos)
     {
         dataManager.set(ANCHOR_POS, parPos);
     }
 
+    /**
+     * Gets the anchor.
+     *
+     * @return the anchor
+     */
     public BlockPos getAnchor() 
     {
         return dataManager.get(ANCHOR_POS);
     } 
 
+    /**
+     * Gets the owner.
+     *
+     * @return the owner
+     */
     public EntityPlayer getOwner()
     {
         try
@@ -613,6 +773,12 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         }
     }
     
+    /**
+     * Sets the tamed by.
+     *
+     * @param parNewOwner the par new owner
+     * @return true, if successful
+     */
     public boolean setTamedBy(EntityLivingBase parNewOwner)
     {
         if (getOwner() != null)
@@ -638,58 +804,112 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         }
     }
     
+    /**
+     * Checks if is owner.
+     *
+     * @param parEntity the par entity
+     * @return true, if is owner
+     */
     public boolean isOwner(EntityLivingBase parEntity)
     {
         return parEntity == getOwner();
     }
     
+    /**
+     * Sets the soar clockwise.
+     *
+     * @param parClockwise the new soar clockwise
+     */
     public void setSoarClockwise(boolean parClockwise)
     {
         dataManager.set(SOAR_CLOCKWISE, parClockwise);
     }
     
+    /**
+     * Gets the soar clockwise.
+     *
+     * @return the soar clockwise
+     */
     public boolean getSoarClockwise()
     {
         return dataManager.get(SOAR_CLOCKWISE);
     }
     
+    /**
+     * Sets the soar height.
+     *
+     * @param parHeight the new soar height
+     */
     public void setSoarHeight(float parHeight)
     {
         dataManager.set(SOAR_HEIGHT, parHeight);
     }
     
+    /**
+     * Gets the soar height.
+     *
+     * @return the soar height
+     */
     public float getSoarHeight()
     {
         return dataManager.get(SOAR_HEIGHT);
     }
     
+    /**
+     * Gets the rand factor.
+     *
+     * @return the rand factor
+     */
     public int getRandFactor()
     {
         return randFactor;
     }
 
+    /**
+     * Gets the prey array.
+     *
+     * @return the prey array
+     */
     @SuppressWarnings("rawtypes")
 	public Class[] getPreyArray()
     {
         return preyArray;
     }
 
+    /**
+     * Sets the prey array.
+     *
+     * @param parPreyArray the new prey array
+     */
     @SuppressWarnings("rawtypes")
 	public void setPreyArray(Class[] parPreyArray)
     {
         preyArray = parPreyArray;
     }
 
+    /**
+     * Gets the leg band color.
+     *
+     * @return the leg band color
+     */
     public EnumDyeColor getLegBandColor()
     {
         return EnumDyeColor.byMetadata(dataManager.get(LEG_BAND_COLOR));
     }
 
+    /**
+     * Sets the leg band color.
+     *
+     * @param parLegBandColor the new leg band color
+     */
     public void setLegBandColor(EnumDyeColor parLegBandColor)
     {
         dataManager.set(LEG_BAND_COLOR, parLegBandColor.getMetadata());
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#writeEntityToNBT(net.minecraft.nbt.NBTTagCompound)
+     */
     @Override
     public void writeEntityToNBT(NBTTagCompound compound)
     {
@@ -712,6 +932,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         compound.setInteger("legBandColor", getLegBandColor().getColorValue());
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#readEntityFromNBT(net.minecraft.nbt.NBTTagCompound)
+     */
     @Override
  	public void readEntityFromNBT(NBTTagCompound compound)
     {

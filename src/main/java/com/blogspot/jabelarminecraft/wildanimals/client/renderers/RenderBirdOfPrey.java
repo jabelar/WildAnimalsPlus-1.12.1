@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -26,11 +26,22 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 
+// TODO: Auto-generated Javadoc
 @SuppressWarnings("rawtypes")
 public class RenderBirdOfPrey extends RenderLiving
 {
     protected ResourceLocation birdOfPreyTexture;
 
+    /**
+     * Instantiates a new render bird of prey.
+     *
+     * @param parRenderManager the par render manager
+     * @param parModelBase1 the par model base 1
+     * @param parModelBase2 the par model base 2
+     * @param parShadowSize the par shadow size
+     * @param parNormalTexture the par normal texture
+     * @param parLegBandTexture the par leg band texture
+     */
     @SuppressWarnings("unchecked")
 	public RenderBirdOfPrey(
     		RenderManager parRenderManager,
@@ -49,6 +60,9 @@ public class RenderBirdOfPrey extends RenderLiving
  
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param par1Entity the par 1 entity
+     * @return the entity texture
      */
     @Override
     protected ResourceLocation getEntityTexture(Entity par1Entity)
@@ -58,12 +72,25 @@ public class RenderBirdOfPrey extends RenderLiving
 
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param parEntityBirdOfPrey the par entity bird of prey
+     * @return the entity texture
      */
     protected ResourceLocation getEntityTexture(EntityBirdOfPrey parEntityBirdOfPrey)
     {
         return birdOfPreyTexture;
     }  
     
+    /**
+     * Gets the render factory.
+     *
+     * @param parModelBase1 the par model base 1
+     * @param parModelBase2 the par model base 2
+     * @param parShadowSize the par shadow size
+     * @param parNormalTexture the par normal texture
+     * @param parLegBandTexture the par leg band texture
+     * @return the render factory
+     */
     public static IRenderFactory getRenderFactory(
 	        ModelBase parModelBase1, 
 	        ModelBase parModelBase2, 

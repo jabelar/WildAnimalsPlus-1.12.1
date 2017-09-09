@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2015 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -24,6 +24,12 @@ import net.minecraft.world.World;
  */
 public class EntityEagle extends EntityBirdOfPrey
 {
+    
+    /**
+     * Instantiates a new entity eagle.
+     *
+     * @param parWorld the par world
+     */
     public EntityEagle(World parWorld)
     {
         super(parWorld);

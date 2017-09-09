@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -22,8 +22,15 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 public class EntityElephant extends EntityHerdAnimal
 {	
+	
+	/**
+	 * Instantiates a new entity elephant.
+	 *
+	 * @param par1World the par 1 world
+	 */
 	public EntityElephant(World par1World) 
 	{
 		super(par1World);
@@ -40,6 +47,9 @@ public class EntityElephant extends EntityHerdAnimal
 
 	}
 
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal#applyEntityAttributes()
+     */
     @Override
 	protected void applyEntityAttributes()
     {
@@ -52,6 +62,9 @@ public class EntityElephant extends EntityHerdAnimal
         getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(8.0D);
     }
 
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal#createChild(net.minecraft.entity.EntityAgeable)
+     */
     @Override
     public EntityElephant createChild(EntityAgeable par1EntityAgeable)
     {

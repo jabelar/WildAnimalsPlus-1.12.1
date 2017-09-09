@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -23,6 +23,11 @@ import java.net.URISyntaxException;
 
 public class Browser {
 
+	/**
+	 * Browse.
+	 *
+	 * @param parUrl the par url
+	 */
 	public static void browse(String parUrl) {
 		// Create Desktop object
 	    Desktop d=Desktop.getDesktop();

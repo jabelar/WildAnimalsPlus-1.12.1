@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -27,11 +27,20 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 
+// TODO: Auto-generated Javadoc
 @SuppressWarnings("rawtypes")
 public class RenderSerpent extends RenderLiving
 {
     protected ResourceLocation serpentTexture;
 
+    /**
+     * Instantiates a new render serpent.
+     *
+     * @param parRenderManager the par render manager
+     * @param par1ModelBase the par 1 model base
+     * @param parShadowSize the par shadow size
+     * @param parNormalTexture the par normal texture
+     */
     public RenderSerpent(
     		RenderManager parRenderManager, 
     		ModelBase par1ModelBase, 
@@ -43,18 +52,33 @@ public class RenderSerpent extends RenderLiving
         serpentTexture = parNormalTexture;      
     }
 	
+    /**
+     * Pre render callback.
+     *
+     * @param entity the entity
+     * @param f the f
+     */
     @Override
 	protected void preRenderCallback(EntityLivingBase entity, float f){
     	preRenderCallbackSerpent((EntitySerpent) entity, f);
     }
 
     
+	/**
+	 * Pre render callback serpent.
+	 *
+	 * @param entity the entity
+	 * @param f the f
+	 */
 	protected void preRenderCallbackSerpent(EntitySerpent entity, float f)
 	{
     }
     
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param par1EntitySerpent the par 1 entity serpent
+     * @return the entity texture
      */
     protected ResourceLocation getEntityTexture(EntitySerpent par1EntitySerpent)
     {
@@ -63,6 +87,9 @@ public class RenderSerpent extends RenderLiving
 
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param par1Entity the par 1 entity
+     * @return the entity texture
      */
     @Override
 	protected ResourceLocation getEntityTexture(Entity par1Entity)
@@ -71,6 +98,14 @@ public class RenderSerpent extends RenderLiving
     }
     
     
+    /**
+     * Gets the render factory.
+     *
+     * @param parModelBase1 the par model base 1
+     * @param parShadowSize the par shadow size
+     * @param parNormalTexture the par normal texture
+     * @return the render factory
+     */
     public static IRenderFactory getRenderFactory(
 	        ModelBase parModelBase1, 
 	        float parShadowSize, 

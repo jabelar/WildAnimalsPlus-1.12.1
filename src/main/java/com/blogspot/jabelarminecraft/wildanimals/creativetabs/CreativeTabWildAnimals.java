@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -21,13 +21,23 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 public class CreativeTabWildAnimals extends CreativeTabs 
 {
+	
+	/**
+	 * Instantiates a new creative tab wild animals.
+	 *
+	 * @param tabLabel the tab label
+	 */
 	public CreativeTabWildAnimals(String tabLabel)
 	{
 		super(tabLabel);
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.minecraft.creativetab.CreativeTabs#getTabIconItem()
+	 */
 	@Override
 	@SideOnly(Side.CLIENT)
 	public ItemStack getTabIconItem()

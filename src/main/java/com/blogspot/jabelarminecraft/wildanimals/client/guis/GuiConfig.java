@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -35,9 +35,16 @@ import net.minecraftforge.fml.common.eventhandler.Event.Result;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 @SideOnly(Side.CLIENT)
 public class GuiConfig extends net.minecraftforge.fml.client.config.GuiConfig 
 {
+    
+    /**
+     * Instantiates a new gui config.
+     *
+     * @param parent the parent
+     */
     public GuiConfig(GuiScreen parent) 
     {
         super(parent,
@@ -49,6 +56,9 @@ public class GuiConfig extends net.minecraftforge.fml.client.config.GuiConfig
     	titleLine2 = MainMod.configFile.getAbsolutePath();
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraftforge.fml.client.config.GuiConfig#drawScreen(int, int, float)
+     */
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
@@ -56,6 +66,9 @@ public class GuiConfig extends net.minecraftforge.fml.client.config.GuiConfig
     	super.drawScreen(mouseX, mouseY, partialTicks);
     }
       
+    /* (non-Javadoc)
+     * @see net.minecraftforge.fml.client.config.GuiConfig#actionPerformed(net.minecraft.client.gui.GuiButton)
+     */
     @Override
     protected void actionPerformed(GuiButton button)
     {

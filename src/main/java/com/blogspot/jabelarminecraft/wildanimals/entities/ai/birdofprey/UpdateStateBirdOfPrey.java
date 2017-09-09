@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2015 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -33,6 +33,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 /**
  * @author jabelar
  *
@@ -51,12 +52,20 @@ public class UpdateStateBirdOfPrey
     // the percent chance per tick that when perched it will decide to take off
     public final int TAKE_OFF_CHANCE_BASE = 2400;
     
+    /**
+     * Instantiates a new update state bird of prey.
+     *
+     * @param parBirdOfPrey the par bird of prey
+     */
     public UpdateStateBirdOfPrey(EntityBirdOfPrey parBirdOfPrey)
     {
         theBird = parBirdOfPrey;
         theWorld = theBird.world;
     }
     
+    /**
+     * Update AI state.
+     */
     public void updateAIState()
     {
     	// DEBUG
@@ -336,6 +345,9 @@ public class UpdateStateBirdOfPrey
         }
     }
     
+    /**
+     * Stop moving.
+     */
     protected void stopMoving()
     {
         theBird.motionX = 0;
@@ -447,6 +459,9 @@ public class UpdateStateBirdOfPrey
         }
     }
 
+    /**
+     * Consider perching.
+     */
     public void considerPerching()
     {
         if (theBird.isTamed())
@@ -481,6 +496,11 @@ public class UpdateStateBirdOfPrey
         }
     }
     
+    /**
+     * Gets the perch chance.
+     *
+     * @return the perch chance
+     */
     public int getPerchChance()
     {
         if (theWorld.isRaining())
@@ -512,6 +532,11 @@ public class UpdateStateBirdOfPrey
         }
     }
     
+    /**
+     * Gets the take off chance.
+     *
+     * @return the take off chance
+     */
     public int getTakeOffChance()
     {
         if (theWorld.isRaining())
@@ -543,6 +568,9 @@ public class UpdateStateBirdOfPrey
         }
     }
     
+    /**
+     * Consider attacking.
+     */
     public void considerAttacking()
     {
         // DEBUG
@@ -574,6 +602,9 @@ public class UpdateStateBirdOfPrey
         }
     }
 
+    /**
+     * Process owner attack.
+     */
     // detect if owner has attacked something, if so set attack target to owner's target
     public void processOwnerAttack()
     {
@@ -610,6 +641,9 @@ public class UpdateStateBirdOfPrey
         }
     }
 
+    /**
+     * Process natural attack.
+     */
     // detect if there is an attack target in region on ground directly below eagle
     public void processNaturalAttack()
     {

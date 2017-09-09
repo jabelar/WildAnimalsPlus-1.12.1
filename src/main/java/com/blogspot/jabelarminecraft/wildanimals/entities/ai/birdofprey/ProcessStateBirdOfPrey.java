@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2015 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -22,6 +22,7 @@ import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.util.math.Vec3d;
 
+// TODO: Auto-generated Javadoc
 /**
  * @author jabelar
  *
@@ -34,11 +35,19 @@ public class ProcessStateBirdOfPrey
     public float pitchChangeRate = 1.5F;
     public float targetPitch = 0.0F;
     
+    /**
+     * Instantiates a new process state bird of prey.
+     *
+     * @param parBirdOfPrey the par bird of prey
+     */
     public ProcessStateBirdOfPrey(EntityBirdOfPrey parBirdOfPrey)
     {
         theBird = parBirdOfPrey;
     }
 
+    /**
+     * Update AI tick.
+     */
     public void updateAITick()
     {
 //        // DEBUG
@@ -110,7 +119,7 @@ public class ProcessStateBirdOfPrey
     }
 
     /**
-     * 
+     * Process landing.
      */
     protected void processLanding() 
     {
@@ -121,7 +130,7 @@ public class ProcessStateBirdOfPrey
     }
 
     /**
-     * 
+     * Process diving.
      */
     protected void processDiving() 
     {
@@ -131,6 +140,9 @@ public class ProcessStateBirdOfPrey
         theBird.motionY = -1.0D;
     }
 
+    /**
+     * Process taking off.
+     */
     protected void processTakingOff() 
     {
         updatePitch(0.0F);
@@ -161,7 +173,7 @@ public class ProcessStateBirdOfPrey
     }
 
     /**
-     * 
+     * Process perched.
      */
     protected void processPerched() 
     {
@@ -170,6 +182,9 @@ public class ProcessStateBirdOfPrey
 //        stopMoving();
     }
     
+    /**
+     * Process soaring.
+     */
     protected void processSoaring()
     {
         updatePitch(0.0F);
@@ -210,6 +225,9 @@ public class ProcessStateBirdOfPrey
         }
     }
     
+    /**
+     * Process travelling.
+     */
     protected void processTravelling()
     {
         updatePitch(0.0F);
@@ -223,6 +241,9 @@ public class ProcessStateBirdOfPrey
         moveForward(1.0D);
     }
     
+    /**
+     * Process attacking.
+     */
     protected void processAttacking()
     {
         if (theBird.getAttackTarget() != null)
@@ -239,12 +260,20 @@ public class ProcessStateBirdOfPrey
     }
     
     
+    /**
+     * Move forward.
+     *
+     * @param parSpeedFactor the par speed factor
+     */
     public void moveForward(double parSpeedFactor)
     {
         theBird.motionX = theBird.getLookVec().x * parSpeedFactor * theBird.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
         theBird.motionZ = theBird.getLookVec().z * parSpeedFactor * theBird.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue();
     }
     
+    /**
+     * Stop moving.
+     */
     protected void stopMoving()
     {
         theBird.motionX = 0;
@@ -252,6 +281,9 @@ public class ProcessStateBirdOfPrey
         theBird.motionZ = 0;
     }
  
+    /**
+     * Process friction and gravity.
+     */
     protected void processFrictionAndGravity()
     {
         theBird.motionX *= 0.93D;
@@ -259,6 +291,11 @@ public class ProcessStateBirdOfPrey
         theBird.motionY -= 0.04D;
     }
     
+    /**
+     * Update yaw.
+     *
+     * @param parYaw the par yaw
+     */
     protected void updateYaw(float parYaw)
     {
         float angleDiff = parYaw - theBird.rotationYaw;
@@ -289,6 +326,11 @@ public class ProcessStateBirdOfPrey
         }
     }
     
+    /**
+     * Update pitch.
+     *
+     * @param parPitch the par pitch
+     */
     protected void updatePitch(float parPitch)
     {
         float angleDiff = parPitch - theBird.rotationPitch;

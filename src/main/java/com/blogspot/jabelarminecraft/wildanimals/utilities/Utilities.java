@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -28,6 +28,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 /**
  * @author jabelar
  *
@@ -38,6 +39,13 @@ public class Utilities
 	 * Text Utilities
 	 */
 	
+	/**
+	 * String to rainbow.
+	 *
+	 * @param parString the par string
+	 * @param parReturnToBlack the par return to black
+	 * @return the string
+	 */
 	public static String stringToRainbow(String parString, boolean parReturnToBlack)
 	{
 		int stringLength = parString.length();
@@ -69,12 +77,26 @@ public class Utilities
 		return outputString+TextFormatting.WHITE;
 	}
 
+	/**
+	 * String to rainbow.
+	 *
+	 * @param parString the par string
+	 * @return the string
+	 */
 	// by default return to white (for chat formatting).
 	public static String stringToRainbow(String parString)
 	{
 		return stringToRainbow(parString, false);
 	}
 	
+	/**
+	 * String to golden.
+	 *
+	 * @param parString the par string
+	 * @param parShineLocation the par shine location
+	 * @param parReturnToBlack the par return to black
+	 * @return the string
+	 */
 	public static String stringToGolden(String parString, int parShineLocation, boolean parReturnToBlack)
 	{
 		int stringLength = parString.length();
@@ -110,12 +132,26 @@ public class Utilities
 		return outputString+TextFormatting.WHITE;
 	}
 
+	/**
+	 * String to golden.
+	 *
+	 * @param parString the par string
+	 * @param parShineLocation the par shine location
+	 * @return the string
+	 */
 	// by default return to white (for chat formatting).
 	public static String stringToGolden(String parString, int parShineLocation)
 	{
 		return stringToGolden(parString, parShineLocation, false);
 	}
 
+	/**
+	 * Gets the entity by ID.
+	 *
+	 * @param entityID the entity ID
+	 * @param world the world
+	 * @return the entity by ID
+	 */
 	public static Entity getEntityByID(int entityID, World world)        
 	{         
 	    for(Object o: world.getLoadedEntityList())                
@@ -211,7 +247,12 @@ public class Utilities
 	 * Networking packet utilities
 	 */
 	
-    public static void sendEntitySyncPacketToClient(IModEntity parEntity) 
+    /**
+	 * Send entity sync packet to client.
+	 *
+	 * @param parEntity the par entity
+	 */
+	public static void sendEntitySyncPacketToClient(IModEntity parEntity) 
     {
     	Entity theEntity = (Entity)parEntity;
         if (!theEntity.world.isRemote)
@@ -222,6 +263,11 @@ public class Utilities
         }
     }
 
+    /**
+     * Send entity sync packet to server.
+     *
+     * @param parEntity the par entity
+     */
     public static void sendEntitySyncPacketToServer(IModEntity parEntity) 
     {
     	Entity theEntity = (Entity)parEntity;
@@ -408,8 +454,13 @@ public class Utilities
 
     
     /**
-     * A method used to see if an entity is a suitable target through a number of checks.
-     */
+ * A method used to see if an entity is a suitable target through a number of checks.
+ *
+ * @param theAttackerEntity the the attacker entity
+ * @param parPossibleTargetEntity the par possible target entity
+ * @param parShouldCheckSight the par should check sight
+ * @return true, if is suitable target
+ */
     public static boolean isSuitableTarget(EntityLivingBase theAttackerEntity, 
             EntityLivingBase parPossibleTargetEntity,
             boolean parShouldCheckSight)
@@ -526,13 +577,25 @@ public class Utilities
 //        return returnMOP;
 //    }
 
-    public static float getYawFromVec(Vec3d parVec)
+    /**
+ * Gets the yaw from vec.
+ *
+ * @param parVec the par vec
+ * @return the yaw from vec
+ */
+public static float getYawFromVec(Vec3d parVec)
     {
         // The coordinate system for Minecraft is a bit backwards as explained 
         // at https://github.com/chraft/c-raft/wiki/Vectors,-Location,-Yaw-and-Pitch-in-C%23raft
         return (float) -Math.toDegrees(Math.atan2(parVec.x, parVec.z));
     }
     
+    /**
+     * Gets the pitch from vec.
+     *
+     * @param parVec the par vec
+     * @return the pitch from vec
+     */
     public static float getPitchFromVec(Vec3d parVec)
     {
         // The coordinate system for Minecraft is a bit backwards as explained 
@@ -541,6 +604,12 @@ public class Utilities
         return (float) Math.toDegrees(Math.asin(theVec.y));
     }
     
+    /**
+     * Copy bounding box.
+     *
+     * @param aabbIn the aabb in
+     * @return the axis aligned BB
+     */
     public static AxisAlignedBB copyBoundingBox(AxisAlignedBB aabbIn)
     {
     	return new AxisAlignedBB(aabbIn.minX, aabbIn.minY, aabbIn.minZ, aabbIn.maxX, aabbIn.maxY, aabbIn.maxZ);
@@ -548,6 +617,12 @@ public class Utilities
     
     /**
      * True if the entity has an unobstructed line of travel to the waypoint.
+     *
+     * @param parEntity the par entity
+     * @param parX the par X
+     * @param parY the par Y
+     * @param parZ the par Z
+     * @return true, if is course traversable
      */
     public static boolean isCourseTraversable(Entity parEntity, double parX, double parY, double parZ)
     {

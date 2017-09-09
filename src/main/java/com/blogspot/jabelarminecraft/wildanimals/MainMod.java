@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -37,6 +37,7 @@ import net.minecraftforge.fml.common.event.FMLServerStoppingEvent;
 import net.minecraftforge.fml.common.network.FMLEventChannel;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
+// TODO: Auto-generated Javadoc
 @Mod( modid = MainMod.MODID, 
       name = MainMod.MODNAME, 
       version = MainMod.MODVERSION,
@@ -84,6 +85,11 @@ public class MainMod
     @SidedProxy(clientSide="com.blogspot.jabelarminecraft.wildanimals.proxy.ClientProxy", serverSide="com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy")
     public static CommonProxy proxy;
             
+    /**
+     * Fml life cycle event.
+     *
+     * @param event the event
+     */
     @EventHandler
     // preInit "Run before anything else. Read your config, create blocks, items, etc, and register them with the GameRegistry."
     public void fmlLifeCycleEvent(FMLPreInitializationEvent event) 
@@ -101,6 +107,11 @@ public class MainMod
         proxy.fmlLifeCycleEvent(event);
     }
 
+    /**
+     * Fml life cycle event.
+     *
+     * @param event the event
+     */
     @EventHandler
     // Do your mod setup. Build whatever data structures you care about. Register recipes."
     // Register network handlers
@@ -113,6 +124,11 @@ public class MainMod
         proxy.fmlLifeCycleEvent(event);
     }
 
+	/**
+	 * Fml life cycle.
+	 *
+	 * @param event the event
+	 */
 	@EventHandler
     // postInit "Handle interaction with other mods, complete your setup based on this."
     public void fmlLifeCycle(FMLPostInitializationEvent event) 
@@ -123,6 +139,11 @@ public class MainMod
         proxy.fmlLifeCycleEvent(event);
     }
 
+	/**
+	 * Fml life cycle.
+	 *
+	 * @param event the event
+	 */
 	@EventHandler
 	public void fmlLifeCycle(FMLServerAboutToStartEvent event)
 	{
@@ -132,6 +153,11 @@ public class MainMod
 		proxy.fmlLifeCycleEvent(event);
 	}
 
+	/**
+	 * Fml life cycle.
+	 *
+	 * @param event the event
+	 */
 	@EventHandler
 	// register server commands
 	// refer to tutorial at http://www.minecraftforge.net/wiki/Server_Command#Mod_Implementation
@@ -143,6 +169,11 @@ public class MainMod
 		proxy.fmlLifeCycleEvent(event);
 	}
 
+	/**
+	 * Fml life cycle.
+	 *
+	 * @param event the event
+	 */
 	@EventHandler
 	public void fmlLifeCycle(FMLServerStartedEvent event)
 	{
@@ -152,6 +183,11 @@ public class MainMod
 		proxy.fmlLifeCycleEvent(event);
 	}
 
+	/**
+	 * Fml life cycle.
+	 *
+	 * @param event the event
+	 */
 	@EventHandler
 	public void fmlLifeCycle(FMLServerStoppingEvent event)
 	{
@@ -161,6 +197,11 @@ public class MainMod
 		proxy.fmlLifeCycleEvent(event);
 	}
 
+	/**
+	 * Fml life cycle.
+	 *
+	 * @param event the event
+	 */
 	@EventHandler
 	public void fmlLifeCycle(FMLServerStoppedEvent event)
 	{

@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -21,9 +21,15 @@ import java.util.UUID;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 public class EntityJaguar extends EntityBigCat
 {
 
+	/**
+	 * Instantiates a new entity jaguar.
+	 *
+	 * @param par1World the par 1 world
+	 */
 	public EntityJaguar(World par1World) 
 	{
 		super(par1World);
@@ -33,6 +39,9 @@ public class EntityJaguar extends EntityBigCat
         
 	}
 
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat#createChild(net.minecraft.entity.EntityAgeable)
+     */
     @Override
 	public EntityJaguar createChild(EntityAgeable par1EntityAgeable)
     {

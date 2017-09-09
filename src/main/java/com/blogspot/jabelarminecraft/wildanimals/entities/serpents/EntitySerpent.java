@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -45,6 +45,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 public class EntitySerpent extends EntityAnimal implements IModEntity
 {
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntitySerpent.class, DataSerializers.FLOAT);
@@ -66,6 +67,11 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
 	protected SoundEvent soundCall = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.hiss"));
 
+	/**
+	 * Instantiates a new entity serpent.
+	 *
+	 * @param par1World the par 1 world
+	 */
 	public EntitySerpent(World par1World)
 	{
 		super(par1World);
@@ -77,6 +83,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         setSize(1.0F, 0.25F);
  	}
 	
+	/* (non-Javadoc)
+	 * @see net.minecraft.entity.EntityAgeable#entityInit()
+	 */
 	@Override
 	public void entityInit()
 	{
@@ -84,6 +93,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 		dataManager.register(SCALE_FACTOR, 1.0F);
 	}
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#clearAITasks()
+     */
     // use clear tasks for subclasses then build up their ai task list specifically
     @Override
 	public void clearAITasks()
@@ -92,6 +104,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         targetTasks.taskEntries.clear();
     }
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.entity.EntityLiving#initEntityAI()
+	 */
 	@Override
 	public void initEntityAI() 
 	{
@@ -108,6 +123,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         targetTasks.addTask(10, aiTargetChicken);
 	}    
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#applyEntityAttributes()
+     */
     // you don't have to call this as it is called automatically during entityLiving subclass creation
     @Override
 	protected void applyEntityAttributes()
@@ -119,6 +137,8 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 
     /**
      * Returns the sound this mob makes while it's alive.
+     *
+     * @return the ambient sound
      */
     @Override
 	protected SoundEvent getAmbientSound()
@@ -128,6 +148,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 
     /**
      * Returns the sound this mob makes when it is hurt.
+     *
+     * @param parSource the par source
+     * @return the hurt sound
      */
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
@@ -137,6 +160,8 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 
     /**
      * Returns the sound this mob makes on death.
+     *
+     * @return the death sound
      */
     @Override
 	protected SoundEvent getDeathSound()
@@ -146,6 +171,8 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 
     /**
      * Returns the volume for the sounds this mob makes.
+     *
+     * @return the sound volume
      */
     @Override
 	protected float getSoundVolume()
@@ -153,6 +180,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         return 0.3F;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#getDropItem()
+     */
     @Override
 	protected Item getDropItem()
     {
@@ -169,6 +199,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         super.onLivingUpdate();
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLivingBase#attackEntityAsMob(net.minecraft.entity.Entity)
+     */
     @Override
 	public boolean attackEntityAsMob(Entity par1Entity)
     {
@@ -176,6 +209,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         return false; // serpents don't currently attack par1Entity.attackEntityFrom(DamageSource.causeMobDamage(this), (float) getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getBaseValue());
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityAgeable#createChild(net.minecraft.entity.EntityAgeable)
+     */
     @Override
 	public EntitySerpent createChild(EntityAgeable par1EntityAgeable)
     {
@@ -190,6 +226,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
         return entitySerpent;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityAnimal#writeEntityToNBT(net.minecraft.nbt.NBTTagCompound)
+     */
     @Override
     public void writeEntityToNBT(NBTTagCompound compound)
 	{
@@ -197,6 +236,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
 	    compound.setFloat("scaleFactor", getScaleFactor());
  }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityAnimal#readEntityFromNBT(net.minecraft.nbt.NBTTagCompound)
+     */
     @Override
  	public void readEntityFromNBT(NBTTagCompound compound)
     {
@@ -209,12 +251,18 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     // Don't forget to send sync packets in setters
     // *****************************************************
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#setScaleFactor(float)
+     */
     @Override
 	public void setScaleFactor(float parScaleFactor)
     {
     	dataManager.set(SCALE_FACTOR, Math.abs(parScaleFactor));
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#getScaleFactor()
+     */
     @Override
 	public float getScaleFactor()
     {

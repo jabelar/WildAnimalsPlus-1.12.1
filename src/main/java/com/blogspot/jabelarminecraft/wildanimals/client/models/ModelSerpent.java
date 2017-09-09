@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -25,6 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 @SideOnly(Side.CLIENT)
 public class ModelSerpent extends ModelWildAnimals
 {
@@ -60,6 +61,9 @@ public class ModelSerpent extends ModelWildAnimals
         { 45F, -90F, 0F, 45F, 45F, 0F, -45F, -45F },
     };
     
+    /**
+     * Instantiates a new model serpent.
+     */
     public ModelSerpent()
     {   
         
@@ -131,6 +135,14 @@ public class ModelSerpent extends ModelWildAnimals
 
     /**
      * Sets the models various rotation angles then renders the model.
+     *
+     * @param parEntity the par entity
+     * @param parTime the par time
+     * @param parSwingSuppress the par swing suppress
+     * @param par4 the par 4
+     * @param parHeadAngleY the par head angle Y
+     * @param parHeadAngleX the par head angle X
+     * @param par7 the par 7
      */
     @Override
     public void render(Entity parEntity, float parTime, float parSwingSuppress, 
@@ -141,6 +153,17 @@ public class ModelSerpent extends ModelWildAnimals
               parHeadAngleY, parHeadAngleX, par7);
     }
     
+    /**
+     * Render serpent.
+     *
+     * @param parEntity the par entity
+     * @param parTime the par time
+     * @param parSwingAmount the par swing amount
+     * @param par4 the par 4
+     * @param parHeadAngleY the par head angle Y
+     * @param parHeadAngleX the par head angle X
+     * @param par7 the par 7
+     */
     public void renderSerpent(EntitySerpent parEntity, float parTime, float parSwingAmount, 
           float par4, float parHeadAngleY, float parHeadAngleX, float par7)
     {
@@ -178,6 +201,9 @@ public class ModelSerpent extends ModelWildAnimals
         GL11.glPopMatrix();
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.client.model.ModelBase#setRotationAngles(float, float, float, float, float, float, net.minecraft.entity.Entity)
+     */
     @Override
     public void setRotationAngles(float parTime, float parSwingSuppress, float par3, 
           float parHeadAngleY, float parHeadAngleX, float par6, Entity parEntity)

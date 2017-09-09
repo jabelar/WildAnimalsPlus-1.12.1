@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -26,6 +26,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 @SideOnly(Side.CLIENT)
 public class ModelElephant extends ModelWildAnimals
 {
@@ -124,6 +125,9 @@ public class ModelElephant extends ModelWildAnimals
     protected float field_78151_h = 4.0F;
     // private static final String __OBFID = "CL_00000851";
 
+    /**
+     * Instantiates a new model elephant.
+     */
     public ModelElephant()
     {
     	int par1 = 12;
@@ -233,6 +237,14 @@ public class ModelElephant extends ModelWildAnimals
 
     /**
      * Sets the models various rotation angles then renders the model.
+     *
+     * @param parEntity the par entity
+     * @param parTime the par time
+     * @param parSwingSuppress the par swing suppress
+     * @param par4 the par 4
+     * @param parHeadAngleY the par head angle Y
+     * @param parHeadAngleX the par head angle X
+     * @param par7 the par 7
      */
     @Override
 	public void render(Entity parEntity, float parTime, float parSwingSuppress, float par4, float parHeadAngleY, float parHeadAngleX, float par7)
@@ -240,6 +252,17 @@ public class ModelElephant extends ModelWildAnimals
     	renderElephant((EntityElephant) parEntity, parTime, parSwingSuppress, par4, parHeadAngleY, parHeadAngleX, par7);
     }
     
+	/**
+	 * Render elephant.
+	 *
+	 * @param parEntity the par entity
+	 * @param parTime the par time
+	 * @param parSwingSuppress the par swing suppress
+	 * @param par4 the par 4
+	 * @param parHeadAngleY the par head angle Y
+	 * @param parHeadAngleX the par head angle X
+	 * @param par7 the par 7
+	 */
 	public void renderElephant(EntityElephant parEntity, float parTime, float parSwingSuppress, float par4, float parHeadAngleY, float parHeadAngleX, float par7)
     {
         setRotationAngles(parTime, parSwingSuppress, par4, parHeadAngleY, parHeadAngleX, par7, parEntity);
@@ -292,6 +315,14 @@ public class ModelElephant extends ModelWildAnimals
      * Sets the model's various rotation angles. For bipeds, par1 and par2 are used for animating the movement of arms
      * and legs, where par1 represents the time(so that arms and legs swing back and forth) and par2 represents how
      * "far" arms and legs can swing at most.
+     *
+     * @param parTime the par time
+     * @param parSwingSuppress the par swing suppress
+     * @param par3 the par 3
+     * @param parHeadAngleY the par head angle Y
+     * @param parHeadAngleX the par head angle X
+     * @param par6 the par 6
+     * @param parEntity the par entity
      */
     public void setRotationAngles(float parTime, float parSwingSuppress, float par3, float parHeadAngleY, float parHeadAngleX, float par6, EntityElephant parEntity)
     {

@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -20,6 +20,12 @@ import net.minecraft.world.World;
 
 public class EntityManEatingTiger extends EntityManEatingBigCat
 {
+    
+    /**
+     * Instantiates a new entity man eating tiger.
+     *
+     * @param par1World the par 1 world
+     */
     public EntityManEatingTiger(World par1World)
     {
         super(par1World);

@@ -1,3 +1,18 @@
+/**
+    Copyright (C) 2017 by jabelar
+
+    This file is part of jabelar's Minecraft Forge modding examples; as such,
+    you can redistribute it and/or modify it under the terms of the GNU
+    General Public License as published by the Free Software Foundation,
+    either version 3 of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    For a copy of the GNU General Public License see <http://www.gnu.org/licenses/>.
+*/
 package com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
@@ -5,10 +20,16 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAIBase;
 
+// TODO: Auto-generated Javadoc
 public class EntityAISitBigCat extends EntityAIBase
 {
     private final EntityBigCat entityBigCat;
-    /** If the EntityTameable is sitting. */
+    
+    /**
+     *  If the EntityTameable is sitting.
+     *
+     * @param entityIn the entity in
+     */
 
     public EntityAISitBigCat(EntityBigCat entityIn)
     {
@@ -18,6 +39,8 @@ public class EntityAISitBigCat extends EntityAIBase
 
     /**
      * Returns whether the EntityAIBase should begin execution.
+     *
+     * @return true, if successful
      */
     @Override
 	public boolean shouldExecute()
@@ -50,7 +73,7 @@ public class EntityAISitBigCat extends EntityAIBase
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
 	public void startExecuting()

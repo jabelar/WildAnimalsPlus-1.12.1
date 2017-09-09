@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -30,6 +30,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 public class CommandConjure extends CommandBase
 {
 	private final List<String> aliases;
@@ -37,6 +38,9 @@ public class CommandConjure extends CommandBase
 	protected ResourceLocation fullEntityName;
 	protected Entity conjuredEntity;
 	
+	/**
+	 * Instantiates a new command conjure.
+	 */
 	public CommandConjure()
 	{
 		    aliases = new ArrayList<String>();
@@ -44,18 +48,27 @@ public class CommandConjure extends CommandBase
 		    aliases.add("conj");
 	}
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.command.ICommand#getName()
+	 */
 	@Override
 	public String getName() 
 	{
 		return "conjure";
 	}
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.command.ICommand#getUsage(net.minecraft.command.ICommandSender)
+	 */
 	@Override
 	public String getUsage(ICommandSender var1) 
 	{
 		return "conjure <text>";
 	}
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.command.CommandBase#getAliases()
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public List getAliases() 
@@ -63,6 +76,9 @@ public class CommandConjure extends CommandBase
 		return this.aliases;
 	}
 
+	/* (non-Javadoc)
+	 * @see net.minecraft.command.ICommand#execute(net.minecraft.server.MinecraftServer, net.minecraft.command.ICommandSender, java.lang.String[])
+	 */
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] argString) 
 	{

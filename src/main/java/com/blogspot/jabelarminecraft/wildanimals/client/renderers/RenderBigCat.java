@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -29,6 +29,7 @@ import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 @SuppressWarnings("rawtypes")
 @SideOnly(Side.CLIENT)
 public class RenderBigCat extends RenderLiving
@@ -37,6 +38,18 @@ public class RenderBigCat extends RenderLiving
     protected ResourceLocation tamedTexture ;
     protected ResourceLocation angryTexture ;
 
+	/**
+	 * Instantiates a new render big cat.
+	 *
+	 * @param parRenderManager the par render manager
+	 * @param parModelBase1 the par model base 1
+	 * @param parModelBase2 the par model base 2
+	 * @param parShadowSize the par shadow size
+	 * @param parNormalTexture the par normal texture
+	 * @param parTamedTexture the par tamed texture
+	 * @param parAngryTexture the par angry texture
+	 * @param parCollarTexture the par collar texture
+	 */
 	@SuppressWarnings("unchecked")
 	public RenderBigCat(
     		RenderManager parRenderManager,
@@ -56,7 +69,11 @@ public class RenderBigCat extends RenderLiving
     }
 
     /**
-     * Defines what float the third param in setRotationAngles of ModelBase is
+     * Defines what float the third param in setRotationAngles of ModelBase is.
+     *
+     * @param parEntityBigCat the par entity big cat
+     * @param par2 the par 2
+     * @return the float
      */
     protected float handleRotationFloat(EntityBigCat parEntityBigCat, float par2)
     {
@@ -64,7 +81,11 @@ public class RenderBigCat extends RenderLiving
     }
 
     /**
-     * Defines what float the third param in setRotationAngles of ModelBase is
+     * Defines what float the third param in setRotationAngles of ModelBase is.
+     *
+     * @param par1EntityLivingBase the par 1 entity living base
+     * @param par2 the par 2
+     * @return the float
      */
     @Override
 	protected float handleRotationFloat(EntityLivingBase par1EntityLivingBase, float par2)
@@ -74,6 +95,9 @@ public class RenderBigCat extends RenderLiving
 
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param par1Entity the par 1 entity
+     * @return the entity texture
      */
     @Override
     protected ResourceLocation getEntityTexture(Entity par1Entity)
@@ -83,12 +107,27 @@ public class RenderBigCat extends RenderLiving
 
     /**
      * Returns the location of an entity's texture. Doesn't seem to be called unless you call Render.bindEntityTexture.
+     *
+     * @param parEntityBigCat the par entity big cat
+     * @return the entity texture
      */
     protected ResourceLocation getEntityTexture(EntityBigCat parEntityBigCat)
     {
         return parEntityBigCat.isTamed() ? tamedTexture : (parEntityBigCat.isAngry() ? angryTexture : normalTexture);
     }
     
+    /**
+     * Gets the render factory.
+     *
+     * @param parModelBase1 the par model base 1
+     * @param parModelBase2 the par model base 2
+     * @param parShadowSize the par shadow size
+     * @param parNormalTexture the par normal texture
+     * @param parTamedTexture the par tamed texture
+     * @param parAngryTexture the par angry texture
+     * @param parCollarTexture the par collar texture
+     * @return the render factory
+     */
     public static IRenderFactory getRenderFactory(
 	        ModelBase parModelBase1, 
 	        ModelBase parModelBase2, 

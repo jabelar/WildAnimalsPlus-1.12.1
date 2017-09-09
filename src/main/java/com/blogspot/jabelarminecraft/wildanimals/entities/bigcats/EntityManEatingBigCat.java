@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -26,12 +26,18 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 public class EntityManEatingBigCat extends EntityBigCat
 {
 	protected final EntityAIBase aiSeePlayer = new EntityAISeePlayerBigCat(this, 32.0D);
 	protected final EntityAIBase aiTargetPlayers = new EntityAITargetNonTamed<EntityPlayer>(this, EntityPlayer.class, false, (Predicate<? super EntityPlayer>)null);
 	protected final EntityAIBase aiTargetVillagers = new EntityAITargetNonTamed<EntityVillager>(this, EntityVillager.class, false, (Predicate<? super EntityVillager>)null);
 	
+    /**
+     * Instantiates a new entity man eating big cat.
+     *
+     * @param par1World the par 1 world
+     */
     public EntityManEatingBigCat(World par1World)
     {
         super(par1World);
@@ -42,6 +48,9 @@ public class EntityManEatingBigCat extends EntityBigCat
         setAngry(true);
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat#initEntityAI()
+     */
     @Override
 	public void initEntityAI()
     {        
@@ -49,12 +58,18 @@ public class EntityManEatingBigCat extends EntityBigCat
 		targetTasks.addTask(3, aiTargetVillagers); 	
     }
  
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat#setTamed(boolean)
+     */
     @Override
 	public void setTamed(boolean par1)
     {
     	// man-eating jaguar can't be tamed
     }
 
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityBigCat#isAngry()
+     */
     @Override
 	public boolean isAngry()
     {
@@ -63,7 +78,10 @@ public class EntityManEatingBigCat extends EntityBigCat
  
     /**
      * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
-     * the animal type)
+     * the animal type).
+     *
+     * @param par1ItemStack the par 1 item stack
+     * @return true, if is breeding item
      */
     @Override
 	public boolean isBreedingItem(ItemStack par1ItemStack)
@@ -73,6 +91,8 @@ public class EntityManEatingBigCat extends EntityBigCat
 
     /**
      * Will return how many at most can spawn in a chunk at once.
+     *
+     * @return the max spawned in chunk
      */
     @Override
 	public int getMaxSpawnedInChunk()

@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -68,6 +68,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 public class EntityBigCat extends EntityTameable implements IModEntity
 {
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntityBigCat.class, DataSerializers.FLOAT);
@@ -104,6 +105,11 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected float prevTimeBigCatIsShaking;
  
 	
+    /**
+     * Instantiates a new entity big cat.
+     *
+     * @param parWorld the par world
+     */
     public EntityBigCat(World parWorld)
     {
         super(parWorld);
@@ -114,6 +120,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         setSize(1.0F, 1.33F);
  	}
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityTameable#entityInit()
+     */
     @Override
 	public void entityInit()
     {
@@ -128,6 +137,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	dataManager.register(COLLAR_COLOR, Integer.valueOf(EnumDyeColor.RED.getDyeDamage()));
 	}
 	
+	/* (non-Javadoc)
+	 * @see net.minecraft.entity.EntityLiving#initEntityAI()
+	 */
 	@Override
 	public void initEntityAI() 
 	{
@@ -159,6 +171,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         System.out.println("Finished EntityBigCat initEntityAI");
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#clearAITasks()
+     */
     // use clear tasks for subclasses then build up their ai task list specifically
     @Override
 	public void clearAITasks()
@@ -167,6 +182,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         targetTasks.taskEntries.clear();
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#applyEntityAttributes()
+     */
     // you don't have to call this as it is called automatically during entityLiving subclass creation
     @Override
 	protected void applyEntityAttributes()
@@ -184,7 +202,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     }
  
     /**
-     * Sets the active target the Task system uses for tracking
+     * Sets the active target the Task system uses for tracking.
+     *
+     * @param parEntityLivingBase the new attack target
      */
     @Override
 	public void setAttackTarget(EntityLivingBase parEntityLivingBase)
@@ -203,6 +223,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Returns the sound this mob makes while it's alive.
+     *
+     * @return the ambient sound
      */
     @Override
 	protected SoundEvent getAmbientSound()
@@ -212,6 +234,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Returns the sound this mob makes when it is hurt.
+     *
+     * @param parSource the par source
+     * @return the hurt sound
      */
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
@@ -221,6 +246,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Returns the sound this mob makes on death.
+     *
+     * @return the death sound
      */
     @Override
 	protected SoundEvent getDeathSound()
@@ -230,6 +257,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Returns the volume for the sounds this mob makes.
+     *
+     * @return the sound volume
      */
     @Override
 	protected float getSoundVolume()
@@ -237,6 +266,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return 0.4F;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#getDropItem()
+     */
     @Override
 	protected Item getDropItem()
     {
@@ -319,6 +351,11 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
 
+    /**
+     * Gets the big cat shaking.
+     *
+     * @return the big cat shaking
+     */
     @SideOnly(Side.CLIENT)
     public boolean getBigCatShaking()
     {
@@ -327,6 +364,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Used when calculating the amount of shading to apply while the bigCat is shaking.
+     *
+     * @param parShakeRate the par shake rate
+     * @return the shading while shaking
      */
     @SideOnly(Side.CLIENT)
     public float getShadingWhileShaking(float parShakeRate)
@@ -334,6 +374,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return 0.75F + (prevTimeBigCatIsShaking + (timeBigCatIsShaking - prevTimeBigCatIsShaking) * parShakeRate) / 2.0F * 0.25F;
     }
 
+    /**
+     * Gets the shake angle.
+     *
+     * @param parShakeRate the par shake rate
+     * @param par2 the par 2
+     * @return the shake angle
+     */
     @SideOnly(Side.CLIENT)
     public float getShakeAngle(float parShakeRate, float par2)
     {
@@ -351,12 +398,21 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return MathHelper.sin(f2 * (float)Math.PI) * MathHelper.sin(f2 * (float)Math.PI * 11.0F) * 0.15F * (float)Math.PI;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.Entity#getEyeHeight()
+     */
     @Override
 	public float getEyeHeight()
     {
         return height * 0.8F;
     }
 
+    /**
+     * Gets the interested angle.
+     *
+     * @param parRateOfAngleChange the par rate of angle change
+     * @return the interested angle
+     */
     @SideOnly(Side.CLIENT)
     public float getInterestedAngle(float parRateOfAngleChange)
     {
@@ -366,6 +422,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     /**
      * The speed it takes to move the entityliving's rotationPitch through the faceEntity method. This is only currently
      * use in wolves.
+     *
+     * @return the vertical face speed
      */
     @Override
 	public int getVerticalFaceSpeed()
@@ -375,6 +433,10 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Called when the entity is attacked.
+     *
+     * @param source the source
+     * @param amount the amount
+     * @return true, if successful
      */
     @Override
 	public boolean attackEntityFrom(DamageSource source, float amount)
@@ -399,6 +461,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     }
 
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLivingBase#attackEntityAsMob(net.minecraft.entity.Entity)
+     */
     @Override
 	public boolean attackEntityAsMob(Entity entityIn)
     {
@@ -414,6 +479,10 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Called when a player interacts with a mob. e.g. gets milk from a cow, gets into the saddle on a pig.
+     *
+     * @param parPlayer the par player
+     * @param parHand the par hand
+     * @return true, if successful
      */
     @Override
 	public boolean processInteract(EntityPlayer parPlayer, EnumHand parHand)
@@ -608,7 +677,12 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 //        }
 //    }
 
-    @SideOnly(Side.CLIENT)
+    /**
+	 * Gets the tail rotation.
+	 *
+	 * @return the tail rotation
+	 */
+	@SideOnly(Side.CLIENT)
     public float getTailRotation()
     {
         return isAngry() ? 1.5393804F : (isTamed() ? (0.55F - (TAMED_HEALTH - getHealth()) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F));
@@ -616,7 +690,10 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
-     * the animal type)
+     * the animal type).
+     *
+     * @param par1ItemStack the par 1 item stack
+     * @return true, if is breeding item
      */
     @Override
 	public boolean isBreedingItem(ItemStack par1ItemStack)
@@ -626,6 +703,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Will return how many at most can spawn in a chunk at once.
+     *
+     * @return the max spawned in chunk
      */
     @Override
 	public int getMaxSpawnedInChunk()
@@ -633,6 +712,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return 8;
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityAgeable#createChild(net.minecraft.entity.EntityAgeable)
+     */
     @Override
 	public EntityBigCat createChild(EntityAgeable par1EntityAgeable)
     {
@@ -658,6 +740,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     
     /**
      * Returns true if the mob is currently able to mate with the specified mob.
+     *
+     * @param parEntityAnimal the par entity animal
+     * @return true, if successful
      */
     @Override
 	public boolean canMateWith(EntityAnimal parEntityAnimal)
@@ -683,6 +768,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
  
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityTameable#writeEntityToNBT(net.minecraft.nbt.NBTTagCompound)
+     */
     @Override
     public void writeEntityToNBT(NBTTagCompound compound)
     {
@@ -694,6 +782,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         compound.setInteger("collarColor", getCollarColor().getColorValue());
     }
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityTameable#readEntityFromNBT(net.minecraft.nbt.NBTTagCompound)
+     */
     @Override
  	public void readEntityFromNBT(NBTTagCompound compound)
     {
@@ -711,12 +802,18 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     // Don't forget to send sync packets in setters
     // *****************************************************
         
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#setScaleFactor(float)
+     */
     @Override
 	public void setScaleFactor(float parScaleFactor)
     {
     	dataManager.set(SCALE_FACTOR, Math.abs(parScaleFactor));
     }
     
+    /* (non-Javadoc)
+     * @see com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity#getScaleFactor()
+     */
     @Override
 	public float getScaleFactor()
     {
@@ -725,6 +822,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Determines whether this bigCat is angry or not.
+     *
+     * @return true, if is angry
      */
     public boolean isAngry()
     {
@@ -733,6 +832,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Sets whether this bigCat is angry or not.
+     *
+     * @param parIsAngry the new angry
      */
     public void setAngry(boolean parIsAngry)
     {
@@ -741,6 +842,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Return this bigCat's collar color.
+     *
+     * @return the collar color
      */
     public EnumDyeColor getCollarColor()
     {
@@ -749,23 +852,38 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
     /**
      * Set this bigCat's collar color.
+     *
+     * @param parCollarColor the new collar color
      */
     public void setCollarColor(EnumDyeColor parCollarColor)
     {
         dataManager.set(COLLAR_COLOR, parCollarColor.getMetadata());
     }
 
+    /**
+     * Sets the interested.
+     *
+     * @param parIsInterested the new interested
+     */
     public void setInterested(boolean parIsInterested)
     {
         dataManager.set(IS_INTERESTED, parIsInterested);
     }
 
+    /**
+     * Checks if is interested.
+     *
+     * @return true, if is interested
+     */
     public boolean isInterested()
     {
         return dataManager.get(IS_INTERESTED);
     }
     
 
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityTameable#setTamed(boolean)
+     */
     @Override
     public void setTamed(boolean parTamed)
     {

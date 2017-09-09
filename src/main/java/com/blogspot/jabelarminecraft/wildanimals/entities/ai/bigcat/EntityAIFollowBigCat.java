@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2015 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -31,6 +31,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
+// TODO: Auto-generated Javadoc
 /**
  * @author jabelar
  *
@@ -48,6 +49,14 @@ public class EntityAIFollowBigCat extends EntityAIBase
     public float minDist;
     public float avoidsWaterWhenNotFollowing;
 
+    /**
+     * Instantiates a new entity AI follow big cat.
+     *
+     * @param parPet the par pet
+     * @param parFollowSpeedFactor the par follow speed factor
+     * @param parMinDist the par min dist
+     * @param parMaxDist the par max dist
+     */
     public EntityAIFollowBigCat(EntityBigCat parPet, double parFollowSpeedFactor, float parMinDist, float parMaxDist)
     {
         thePet = parPet;
@@ -61,6 +70,8 @@ public class EntityAIFollowBigCat extends EntityAIBase
 
     /**
      * Returns whether the EntityAIBase should begin execution.
+     *
+     * @return true, if successful
      */
     @Override
     public boolean shouldExecute()
@@ -99,7 +110,9 @@ public class EntityAIFollowBigCat extends EntityAIBase
     }
 
     /**
-     * Returns whether an in-progress EntityAIBase should continue executing
+     * Returns whether an in-progress EntityAIBase should continue executing.
+     *
+     * @return true, if successful
      */
     @Override
     public boolean shouldContinueExecuting()
@@ -114,7 +127,7 @@ public class EntityAIFollowBigCat extends EntityAIBase
     }
 
     /**
-     * Execute a one shot task or start executing a continuous task
+     * Execute a one shot task or start executing a continuous task.
      */
     @Override
     public void startExecuting()
@@ -125,7 +138,7 @@ public class EntityAIFollowBigCat extends EntityAIBase
     }
 
     /**
-     * Resets the task
+     * Resets the task.
      */
     @Override
     public void resetTask()
@@ -136,7 +149,7 @@ public class EntityAIFollowBigCat extends EntityAIBase
     }
 
     /**
-     * Updates the task
+     * Updates the task.
      */
     @Override
     public void updateTask()
@@ -178,6 +191,16 @@ public class EntityAIFollowBigCat extends EntityAIBase
         }
     }
     
+    /**
+     * Checks if is teleport friendly block.
+     *
+     * @param x the x
+     * @param p_192381_2_ the p 192381 2
+     * @param y the y
+     * @param p_192381_4_ the p 192381 4
+     * @param p_192381_5_ the p 192381 5
+     * @return true, if is teleport friendly block
+     */
     protected boolean isTeleportFriendlyBlock(int x, int p_192381_2_, int y, int p_192381_4_, int p_192381_5_)
     {
         BlockPos blockpos = new BlockPos(x + p_192381_4_, y - 1, p_192381_2_ + p_192381_5_);

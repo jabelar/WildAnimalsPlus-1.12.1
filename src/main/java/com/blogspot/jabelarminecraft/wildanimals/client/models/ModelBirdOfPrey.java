@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -26,6 +26,7 @@ import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 @SideOnly(Side.CLIENT)
 public class ModelBirdOfPrey extends ModelWildAnimals
 {
@@ -132,6 +133,9 @@ public class ModelBirdOfPrey extends ModelWildAnimals
         { -6F, 6F, 70F, -10F, 0F, 0F, 25F, -20F }
     };
   
+	/**
+	 * Instantiates a new model bird of prey.
+	 */
 	public ModelBirdOfPrey()
 	{
 	    textureWidth = 128;
@@ -240,6 +244,9 @@ public class ModelBirdOfPrey extends ModelWildAnimals
         bodyWingless.addChild(tail);
 	}
   
+	/* (non-Javadoc)
+	 * @see net.minecraft.client.model.ModelBase#render(net.minecraft.entity.Entity, float, float, float, float, float, float)
+	 */
 	@Override
 	public void render(Entity parEntity, float f, float f1, float f2, float f3, float f4, float f5)
 	{
@@ -247,6 +254,12 @@ public class ModelBirdOfPrey extends ModelWildAnimals
   		renderBirdOfPrey((EntityBirdOfPrey) parEntity, f5);
 	}
 	  
+	/**
+	 * Render bird of prey.
+	 *
+	 * @param parBird the par bird
+	 * @param parRenderFloat the par render float
+	 */
 	public void renderBirdOfPrey(EntityBirdOfPrey parBird, float parRenderFloat)
 	{
 		setRotationAngles(parBird);
@@ -279,6 +292,11 @@ public class ModelBirdOfPrey extends ModelWildAnimals
 	}
   
  
+	/**
+	 * Sets the rotation angles.
+	 *
+	 * @param parEntity the new rotation angles
+	 */
 	public void setRotationAngles(EntityBirdOfPrey parEntity)
 	{
 		// DEBUG
@@ -326,6 +344,12 @@ public class ModelBirdOfPrey extends ModelWildAnimals
 
 	}
 	
+	/**
+	 * Do animate.
+	 *
+	 * @param parEntity the par entity
+	 * @param parCycleArray the par cycle array
+	 */
 	public void doAnimate(EntityBirdOfPrey parEntity, float[][] parCycleArray)
 	{
 		cycleIndex = (int)Math.floor((parEntity.ticksExisted+parEntity.getRandFactor()*2)%parCycleArray.length)/2;

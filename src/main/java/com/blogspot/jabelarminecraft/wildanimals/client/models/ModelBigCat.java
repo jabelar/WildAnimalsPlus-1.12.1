@@ -1,5 +1,5 @@
 /**
-    Copyright (C) 2014 by jabelar
+    Copyright (C) 2017 by jabelar
 
     This file is part of jabelar's Minecraft Forge modding examples; as such,
     you can redistribute it and/or modify it under the terms of the GNU
@@ -27,6 +27,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+// TODO: Auto-generated Javadoc
 @SideOnly(Side.CLIENT)
 public class ModelBigCat extends ModelWildAnimals
 {
@@ -39,6 +40,9 @@ public class ModelBigCat extends ModelWildAnimals
     ModelRenderer leg4;
     ModelRenderer tail;
   
+  /**
+   * Instantiates a new model big cat.
+   */
   public ModelBigCat()
   {
     textureWidth = 64;
@@ -84,6 +88,9 @@ public class ModelBigCat extends ModelWildAnimals
 
   }
   
+/* (non-Javadoc)
+ * @see net.minecraft.client.model.ModelBase#render(net.minecraft.entity.Entity, float, float, float, float, float, float)
+ */
 @Override
 public void render(Entity parEntity, float parTime, float parSwingSuppress, float par4, float parHeadAngleY, float parHeadAngleX, float par7)
 {
@@ -91,6 +98,17 @@ public void render(Entity parEntity, float parTime, float parSwingSuppress, floa
 	renderBigCat((EntityBigCat) parEntity, parTime, parSwingSuppress, par4, parHeadAngleY, parHeadAngleX, par7);
 }
 
+/**
+ * Render big cat.
+ *
+ * @param entity the entity
+ * @param f the f
+ * @param f1 the f 1
+ * @param f2 the f 2
+ * @param f3 the f 3
+ * @param f4 the f 4
+ * @param f5 the f 5
+ */
 public void renderBigCat(EntityBigCat entity, float f, float f1, float f2, float f3, float f4, float f5)
   {
     super.render(entity, f, f1, f2, f3, f4, f5);
@@ -138,6 +156,11 @@ public void renderBigCat(EntityBigCat entity, float f, float f1, float f2, float
   /**
    * Used for easily adding entity-dependent animations. The second and third float params here are the same second
    * and third as in the setRotationAngles method.
+   *
+   * @param parEntityLivingBase the par entity living base
+   * @param parLimbSwingAngle the par limb swing angle
+   * @param parMaxLimbSwingDistance the par max limb swing distance
+   * @param parHeadAngleChangeRate the par head angle change rate
    */
     @Override
     public void setLivingAnimations(EntityLivingBase parEntityLivingBase, float parLimbSwingAngle, float parMaxLimbSwingDistance, float parHeadAngleChangeRate)
@@ -198,6 +221,14 @@ public void renderBigCat(EntityBigCat entity, float f, float f1, float f2, float
    * Sets the model's various rotation angles. For bipeds, par1 and par2 are used for animating the movement of arms
    * and legs, where par1 represents the time(so that arms and legs swing back and forth) and par2 represents how
    * "far" arms and legs can swing at most.
+   *
+   * @param par1 the par 1
+   * @param par2 the par 2
+   * @param par3 the par 3
+   * @param par4 the par 4
+   * @param par5 the par 5
+   * @param par6 the par 6
+   * @param par7Entity the par 7 entity
    */
   @Override
   public void setRotationAngles(float par1, float par2, float par3, float par4, float par5, float par6, Entity par7Entity)

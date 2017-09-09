@@ -32,11 +32,23 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
 // TODO: Auto-generated Javadoc
-public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instance>
+public class CustomTrigger implements ICriterionTrigger<CustomTrigger.Instance>
 {
-    private static final ResourceLocation ID = new ResourceLocation("tame_bird");
-    private final Map<PlayerAdvancements, TameBirdTrigger.Listeners> listeners = Maps.<PlayerAdvancements, TameBirdTrigger.Listeners>newHashMap();
+    private final ResourceLocation ID;
+    private final Map<PlayerAdvancements, CustomTrigger.Listeners> listeners = Maps.<PlayerAdvancements, CustomTrigger.Listeners>newHashMap();
 
+    public CustomTrigger(String parString)
+    {
+		super();
+		ID = new ResourceLocation(parString);
+    }
+    
+    public CustomTrigger(ResourceLocation parRL)
+    {
+    	super();
+    	ID = parRL;
+    }
+    
     /* (non-Javadoc)
      * @see net.minecraft.advancements.ICriterionTrigger#getId()
      */
@@ -50,13 +62,13 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
      * @see net.minecraft.advancements.ICriterionTrigger#addListener(net.minecraft.advancements.PlayerAdvancements, net.minecraft.advancements.ICriterionTrigger.Listener)
      */
     @Override
-	public void addListener(PlayerAdvancements playerAdvancementsIn, ICriterionTrigger.Listener<TameBirdTrigger.Instance> listener)
+	public void addListener(PlayerAdvancements playerAdvancementsIn, ICriterionTrigger.Listener<CustomTrigger.Instance> listener)
     {
-        TameBirdTrigger.Listeners tameanimaltrigger$listeners = this.listeners.get(playerAdvancementsIn);
+        CustomTrigger.Listeners tameanimaltrigger$listeners = this.listeners.get(playerAdvancementsIn);
 
         if (tameanimaltrigger$listeners == null)
         {
-            tameanimaltrigger$listeners = new TameBirdTrigger.Listeners(playerAdvancementsIn);
+            tameanimaltrigger$listeners = new CustomTrigger.Listeners(playerAdvancementsIn);
             this.listeners.put(playerAdvancementsIn, tameanimaltrigger$listeners);
         }
 
@@ -67,9 +79,9 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
      * @see net.minecraft.advancements.ICriterionTrigger#removeListener(net.minecraft.advancements.PlayerAdvancements, net.minecraft.advancements.ICriterionTrigger.Listener)
      */
     @Override
-	public void removeListener(PlayerAdvancements playerAdvancementsIn, ICriterionTrigger.Listener<TameBirdTrigger.Instance> listener)
+	public void removeListener(PlayerAdvancements playerAdvancementsIn, ICriterionTrigger.Listener<CustomTrigger.Instance> listener)
     {
-        TameBirdTrigger.Listeners tameanimaltrigger$listeners = this.listeners.get(playerAdvancementsIn);
+        CustomTrigger.Listeners tameanimaltrigger$listeners = this.listeners.get(playerAdvancementsIn);
 
         if (tameanimaltrigger$listeners != null)
         {
@@ -99,20 +111,19 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
      * @return the tame bird trigger. instance
      */
     @Override
-	public TameBirdTrigger.Instance deserializeInstance(JsonObject json, JsonDeserializationContext context)
+	public CustomTrigger.Instance deserializeInstance(JsonObject json, JsonDeserializationContext context)
     {
-        return new TameBirdTrigger.Instance();
+        return new CustomTrigger.Instance(this.getId());
     }
 
     /**
      * Trigger.
      *
      * @param parPlayer the player
-     * @param parBird the entity
      */
     public void trigger(EntityPlayerMP parPlayer)
     {
-        TameBirdTrigger.Listeners tameanimaltrigger$listeners = this.listeners.get(parPlayer.getAdvancements());
+        CustomTrigger.Listeners tameanimaltrigger$listeners = this.listeners.get(parPlayer.getAdvancements());
 
         if (tameanimaltrigger$listeners != null)
         {
@@ -122,21 +133,18 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
 
     public static class Instance extends AbstractCriterionInstance
     {
+        
         /**
          * Instantiates a new instance.
-         *
-         * @param entity the entity
          */
-        public Instance()
+        public Instance(ResourceLocation parID)
         {
-            super(TameBirdTrigger.ID);
+            super(parID);
         }
 
         /**
          * Test.
          *
-         * @param player the player
-         * @param entity the entity
          * @return true, if successful
          */
         public boolean test()
@@ -148,7 +156,7 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
     static class Listeners
     {
         private final PlayerAdvancements playerAdvancements;
-        private final Set<ICriterionTrigger.Listener<TameBirdTrigger.Instance>> listeners = Sets.<ICriterionTrigger.Listener<TameBirdTrigger.Instance>>newHashSet();
+        private final Set<ICriterionTrigger.Listener<CustomTrigger.Instance>> listeners = Sets.<ICriterionTrigger.Listener<CustomTrigger.Instance>>newHashSet();
 
         /**
          * Instantiates a new listeners.
@@ -175,7 +183,7 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
          *
          * @param listener the listener
          */
-        public void add(ICriterionTrigger.Listener<TameBirdTrigger.Instance> listener)
+        public void add(ICriterionTrigger.Listener<CustomTrigger.Instance> listener)
         {
             this.listeners.add(listener);
         }
@@ -185,7 +193,7 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
          *
          * @param listener the listener
          */
-        public void remove(ICriterionTrigger.Listener<TameBirdTrigger.Instance> listener)
+        public void remove(ICriterionTrigger.Listener<CustomTrigger.Instance> listener)
         {
             this.listeners.remove(listener);
         }
@@ -194,19 +202,18 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
          * Trigger.
          *
          * @param player the player
-         * @param entity the entity
          */
         public void trigger(EntityPlayerMP player)
         {
-            List<ICriterionTrigger.Listener<TameBirdTrigger.Instance>> list = null;
+            List<ICriterionTrigger.Listener<CustomTrigger.Instance>> list = null;
 
-            for (ICriterionTrigger.Listener<TameBirdTrigger.Instance> listener : this.listeners)
+            for (ICriterionTrigger.Listener<CustomTrigger.Instance> listener : this.listeners)
             {
                 if (listener.getCriterionInstance().test())
                 {
                     if (list == null)
                     {
-                        list = Lists.<ICriterionTrigger.Listener<TameBirdTrigger.Instance>>newArrayList();
+                        list = Lists.<ICriterionTrigger.Listener<CustomTrigger.Instance>>newArrayList();
                     }
 
                     list.add(listener);
@@ -215,7 +222,7 @@ public class TameBirdTrigger implements ICriterionTrigger<TameBirdTrigger.Instan
 
             if (list != null)
             {
-                for (ICriterionTrigger.Listener<TameBirdTrigger.Instance> listener1 : list)
+                for (ICriterionTrigger.Listener<CustomTrigger.Instance> listener1 : list)
                 {
                     listener1.grantCriterion(this.playerAdvancements);
                 }

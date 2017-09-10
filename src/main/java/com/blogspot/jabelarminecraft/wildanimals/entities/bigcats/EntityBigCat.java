@@ -40,6 +40,7 @@ import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAITargetNonTamed;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
@@ -96,7 +97,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected boolean isShaking;
     protected boolean startedShaking;
     
-    protected final float TAMED_HEALTH = 20.0F;
+    protected final AttributeModifier TAMED_MODIFIER = new AttributeModifier("Tamed health and attack boost", 2.0D, 0);
     
     /**
      * This time increases while bigCat is shaking and emitting water particles.
@@ -515,7 +516,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
                     ItemFood itemfood = (ItemFood)itemStackInHand.getItem();
 
-                    if (itemfood.isWolfsFavoriteMeat() && getHealth() < TAMED_HEALTH)
+                    if (itemfood.isWolfsFavoriteMeat() && getHealth() < getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue())
                     {
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
@@ -625,7 +626,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	                    navigator.clearPathEntity();
 	                    setAttackTarget((EntityLivingBase)null);
 	                    setSitting(true);
-	                    getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
 	                    playTameEffect(true);
 	                    world.setEntityState(this, (byte)7);
 	                    
@@ -641,6 +641,24 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	        }
         }      
         return super.processInteract(parPlayer, parHand);
+    }
+    
+    public void setTamed(Boolean parTamed)
+    {
+    	super.setTamed(parTamed);
+    	
+    	if (parTamed)
+    	{
+    		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(TAMED_MODIFIER);
+    		getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(TAMED_MODIFIER);	
+    	}
+    	else
+    	{
+    		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(TAMED_MODIFIER);
+    		getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(TAMED_MODIFIER);	
+    	}
+    	
+		setHealth((float) getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());
     }
     
     /**
@@ -682,7 +700,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	@SideOnly(Side.CLIENT)
     public float getTailRotation()
     {
-        return isAngry() ? 1.5393804F : (isTamed() ? (0.55F - (TAMED_HEALTH - getHealth()) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F));
+        return (float) (isAngry() ? 1.5393804F : (isTamed() ? (0.55F - (getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue() - getHealth()) * 0.02F) * (float)Math.PI : ((float)Math.PI / 5F)));
     }
 
     /**
@@ -893,24 +911,5 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     public boolean isInterested()
     {
         return dataManager.get(IS_INTERESTED);
-    }
-    
-
-    /* (non-Javadoc)
-     * @see net.minecraft.entity.passive.EntityTameable#setTamed(boolean)
-     */
-    @Override
-    public void setTamed(boolean parTamed)
-    {
-        super.setTamed(parTamed);
-
-        if (parTamed)
-        {
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
-        }
-        else
-        {
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
-        }      
     }
 }

@@ -565,7 +565,10 @@ public class CommonProxy
 		try {
 			method = ReflectionHelper.findMethod(CriteriaTriggers.class, "register", "func_192118_a", ICriterionTrigger.class);
 			method.setAccessible(true);
-			method.invoke(null, Triggers.TAME_BIRD);
+			for (int i=0; i < Triggers.TRIGGER_ARRAY.length; i++)
+			{
+				method.invoke(null, Triggers.TRIGGER_ARRAY[i]);
+			}
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

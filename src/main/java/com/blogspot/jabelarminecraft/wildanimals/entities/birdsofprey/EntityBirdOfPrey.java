@@ -32,6 +32,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityParrot;
@@ -70,6 +71,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     protected static final DataParameter<BlockPos> ANCHOR_POS = EntityDataManager.<BlockPos>createKey(EntityBirdOfPrey.class, DataSerializers.BLOCK_POS);
     protected static final DataParameter<Optional<UUID>> OWNER_UUID = EntityDataManager.<Optional<UUID>>createKey(EntityBirdOfPrey.class, DataSerializers.OPTIONAL_UNIQUE_ID);
     protected static final DataParameter<Integer> LEG_BAND_COLOR = EntityDataManager.<Integer>createKey(EntityBirdOfPrey.class, DataSerializers.VARINT);
+
+    protected final AttributeModifier TAMED_MODIFIER = new AttributeModifier("Tamed health and attack boost", 2.0D, 0);
 
     public ProcessStateBirdOfPrey aiProcessState;
     public UpdateStateBirdOfPrey aiUpdateState;
@@ -846,6 +849,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             // DEBUG
             System.out.println("There is already an owner");
             
+    		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(TAMED_MODIFIER);
+    		getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(TAMED_MODIFIER);	
+ 			setHealth(Math.min(getHealth(), (float) getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue()));
             return false;
         }
         else if (parNewOwner == null)
@@ -853,12 +859,17 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
             // DEBUG
             System.out.println("Setting owner to null");
             setOwnerId(null);
+    		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).removeModifier(TAMED_MODIFIER);
+    		getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).removeModifier(TAMED_MODIFIER);	
+ 			setHealth(Math.min(getHealth(), (float) getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue()));
             return false;
         }
         else
         {
             setAttackTarget(null);
-            getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(TAMED_HEALTH);
+    		getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).applyModifier(TAMED_MODIFIER);
+    		getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).applyModifier(TAMED_MODIFIER);	
+ 			setHealth((float) getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());
             setOwnerId(parNewOwner.getUniqueID());
 
             if (parNewOwner instanceof EntityPlayerMP)

@@ -18,8 +18,10 @@ package com.blogspot.jabelarminecraft.wildanimals.advancements.criteria;
 public class Triggers
 {
     public static final CustomTrigger TAME_BIRD = new CustomTrigger("tame_bird");
+    public static final CustomTrigger TAME_BIG_CAT = new CustomTrigger("tame_big_cat");
     
     public static final CustomTrigger[] TRIGGER_ARRAY = new CustomTrigger[] {
-    	TAME_BIRD
+    	TAME_BIRD,
+    	TAME_BIG_CAT
     };
 }

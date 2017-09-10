@@ -18,6 +18,7 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.bigcats;
 
 import java.util.UUID;
 
+import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAISitBigCat;
@@ -49,6 +50,7 @@ import net.minecraft.entity.passive.EntityRabbit;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -490,12 +492,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     {
         // DEBUG
         System.out.println("EntityBigCat interact() for hand = "+parHand);
-        
-        if (parHand == EnumHand.OFF_HAND)
-        {
-        	return super.processInteract(parPlayer, parHand);
-        }
- 
+         
         ItemStack itemStackInHand = parPlayer.getHeldItem(parHand);
 
         // heal tamed with food
@@ -512,12 +509,15 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                 if (itemStackInHand.getItem() instanceof ItemFood)
                 {                	
                 	// DEBUG
-                	System.out.println("Interacting with food");         	
+                	System.out.println("Interacting with food, entity health = "+getHealth()+" max health = "+getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());         	
 
                     ItemFood itemfood = (ItemFood)itemStackInHand.getItem();
 
                     if (itemfood.isWolfsFavoriteMeat() && getHealth() < getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue())
                     {
+                    	// DEBUG
+                    	System.out.println("Healing");
+                    	
                         if (!parPlayer.capabilities.isCreativeMode)
                         {
         	            	decrementStackInHand(parPlayer, itemStackInHand);
@@ -525,6 +525,11 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 
                         heal(itemfood.getHealAmount(itemStackInHand));
                         return true;
+                    }
+                    else
+                    {
+                    	// DEBUG
+                    	System.out.println("Not healing");
                     }
                 }
                     
@@ -551,8 +556,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                         return true;
                     }
                 }
-                    
-                    
+                                        
                 // grow with meat
                 if (itemStackInHand.getItem() == Items.BEEF && !isAngry())
                 {
@@ -581,8 +585,23 @@ public class EntityBigCat extends EntityTameable implements IModEntity
                     return true;
                 }
             }
-            else // nothing in hand
+            else // nothing in passed hand
             {
+            	// but nothing really requires nothing in both hands so need
+            	// to handle carefully
+            	
+            	// only proceed if BOTH hands are empty
+            	if (!(parPlayer.getHeldItemMainhand().isEmpty() && parPlayer.getHeldItemOffhand().isEmpty()))
+    			{
+            		return super.processInteract(parPlayer, parHand);
+    			}
+            	
+            	// avoid firing twice so prevent further processing on off hand
+            	if (parHand == EnumHand.OFF_HAND)
+            	{
+            		return super.processInteract(parPlayer, parHand);
+            	}
+            	
             	// DEBUG
             	System.out.println("Interacting with nothing in hand");
                	System.out.println("Owner is player "+isOwner(parPlayer));
@@ -642,7 +661,24 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }      
         return super.processInteract(parPlayer, parHand);
     }
+
+    @Override
+	public void setTamedBy(EntityPlayer player)
+    {
+        this.setTamed(true);
+        this.setOwnerId(player.getUniqueID());
+
+        if (player instanceof EntityPlayerMP)
+        {
+            Triggers.TAME_BIG_CAT.trigger((EntityPlayerMP)player);
+        }
+    }
     
+    /**
+     * Sets the tamed.
+     *
+     * @param parTamed the new tamed
+     */
     public void setTamed(Boolean parTamed)
     {
     	super.setTamed(parTamed);
@@ -707,13 +743,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
      * the animal type).
      *
-     * @param par1ItemStack the par 1 item stack
+     * @param parStack the par stack
      * @return true, if is breeding item
      */
     @Override
-	public boolean isBreedingItem(ItemStack par1ItemStack)
+	public boolean isBreedingItem(ItemStack parStack)
     {
-        return par1ItemStack.getItem() == Items.CHICKEN;
+        return parStack.getItem() == Items.CHICKEN;
     }
 
     /**
@@ -783,6 +819,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityAnimal#setInLove(net.minecraft.entity.player.EntityPlayer)
+     */
     @Override
 	public void setInLove(EntityPlayer parPlayer)
     {
@@ -792,6 +831,9 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	super.setInLove(parPlayer);
     }
     
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityAnimal#resetInLove()
+     */
     @Override
 	public void resetInLove()
     {

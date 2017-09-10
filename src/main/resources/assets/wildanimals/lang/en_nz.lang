@@ -12,19 +12,9 @@ entity.eagle.name=Eagle
 entity.hawk.name=Hawk
 entity.owl.name=Owl
 
-tile.tomatoes.name=Tomatoes
-tile.blueberries.name=Blueberries
-tile.stove.name=Stove
-tile.stove_lit.name=Stove
-tile.pantry.name=Pantry
-
-item.tomato.name=Tomato
-item.blueberry.name=Blueberry
-
-itemGroup.Recipe+=Recipe+
-
-container.stove=Stove
-container.pantry=Pantry
-
 advancements.tame_bird.title=Falconer
 advancements.tame_bird.description=Tame a bird of prey
+advancements.tame_big_cat.title=Lion Tamer
+advancements.tame_big_cat.description=Time to start a circus
+advancements.husbandry.tame_an_animal.title=Dog Whisperer
+advancements.husbandry.tame_an_animal.description=Tame an animal

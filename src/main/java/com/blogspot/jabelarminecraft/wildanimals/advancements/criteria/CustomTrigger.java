@@ -37,12 +37,22 @@ public class CustomTrigger implements ICriterionTrigger<CustomTrigger.Instance>
     private final ResourceLocation ID;
     private final Map<PlayerAdvancements, CustomTrigger.Listeners> listeners = Maps.<PlayerAdvancements, CustomTrigger.Listeners>newHashMap();
 
+    /**
+     * Instantiates a new custom trigger.
+     *
+     * @param parString the par string
+     */
     public CustomTrigger(String parString)
     {
 		super();
 		ID = new ResourceLocation(parString);
     }
     
+    /**
+     * Instantiates a new custom trigger.
+     *
+     * @param parRL the par RL
+     */
     public CustomTrigger(ResourceLocation parRL)
     {
     	super();
@@ -136,6 +146,8 @@ public class CustomTrigger implements ICriterionTrigger<CustomTrigger.Instance>
         
         /**
          * Instantiates a new instance.
+         *
+         * @param parID the par ID
          */
         public Instance(ResourceLocation parID)
         {

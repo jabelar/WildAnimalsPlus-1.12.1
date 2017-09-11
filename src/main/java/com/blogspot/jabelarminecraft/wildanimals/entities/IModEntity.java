@@ -39,5 +39,4 @@ public interface IModEntity
      * @return the scale factor
      */
     float getScaleFactor();
-
 }

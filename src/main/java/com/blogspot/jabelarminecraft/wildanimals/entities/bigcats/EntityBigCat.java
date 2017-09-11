@@ -107,6 +107,11 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected float timeBigCatIsShaking;
     protected float prevTimeBigCatIsShaking;
  
+    /**
+     * Need a toggle field to control sitting toggling because otherwise
+     * both hands may be processed on a right-click
+     */
+    protected boolean preventSitToggling = false;
 	
     /**
      * Instantiates a new entity big cat.
@@ -286,6 +291,8 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	public void onLivingUpdate()
     {
         super.onLivingUpdate();
+        
+        preventSitToggling = false;
  
         if (!world.isRemote && isShaking && !startedShaking && !hasPath() && onGround)
         {
@@ -493,175 +500,235 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         // DEBUG
         System.out.println("EntityBigCat interact() for hand = "+parHand);
          
-        ItemStack itemStackInHand = parPlayer.getHeldItem(parHand);
-
-        // heal tamed with food
-        if (isTamed())
+    	boolean foundUsefulItem = false;
+        ItemStack theStack = parPlayer.getHeldItem(parHand);
+        
+        foundUsefulItem = isTamed() ? proceesInteractTamed(parPlayer, theStack) : processInteractUntamed(parPlayer, theStack);
+        
+        if (foundUsefulItem)
         {
         	// DEBUG
-        	System.out.println("Interacting with tamed big cat for hand = "+parHand);
+        	System.out.println("Found useful item");
         	
-            if (!itemStackInHand.isEmpty())
-            {
+        	consumeItemFromStack(parPlayer, theStack);
+        	return true;
+        }
+        else
+        {
+        	// May want to do something even if nothing "useful" found
+        	// such as toggling sitting on tamed animal
+        	
+        	// consider not useful item only if not holding items known useful in super methods
+        	if (!(theStack.getItem() == Items.SPAWN_EGG) && !(isBreedingItem(theStack)))
+        	{
             	// DEBUG
-            	System.out.println("Interacting with something in hand = "+itemStackInHand+" item = "+itemStackInHand.getItem());
+            	System.out.println("Did not find useful item so continuing with super method");
             	
-                if (itemStackInHand.getItem() instanceof ItemFood)
-                {                	
-                	// DEBUG
-                	System.out.println("Interacting with food, entity health = "+getHealth()+" max health = "+getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());         	
-
-                    ItemFood itemfood = (ItemFood)itemStackInHand.getItem();
-
-                    if (itemfood.isWolfsFavoriteMeat() && getHealth() < getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue())
-                    {
-                    	// DEBUG
-                    	System.out.println("Healing");
-                    	
-                        if (!parPlayer.capabilities.isCreativeMode)
-                        {
-        	            	decrementStackInHand(parPlayer, itemStackInHand);
-                        }
-
-                        heal(itemfood.getHealAmount(itemStackInHand));
-                        return true;
-                    }
-                    else
-                    {
-                    	// DEBUG
-                    	System.out.println("Not healing");
-                    }
-                }
-                    
-
-            	if (itemStackInHand.getItem() == Items.DYE)
-                {
-            		// DEBUG
-            		System.out.println("Interacting with dye");
-            		
-                    EnumDyeColor dyeColor = EnumDyeColor.byDyeDamage(itemStackInHand.getMetadata());
-
-                    if (dyeColor != getCollarColor())
-                    {
-                        setCollarColor(dyeColor);
-                        
-                        if (!parPlayer.capabilities.isCreativeMode)
-                        {
-        	            	decrementStackInHand(parPlayer, itemStackInHand);
-                        }
-                        
-                        // DEBUG
-                        System.out.println("EntityBigCat collar color now "+getCollarColor());
-                        
-                        return true;
-                    }
-                }
-                                        
-                // grow with meat
-                if (itemStackInHand.getItem() == Items.BEEF && !isAngry())
-                {
-                	// DEBUG
-                	System.out.println("Interacting with beef in hand, should grow");
-                	
-                    if (!parPlayer.capabilities.isCreativeMode)
-                    {
-    	            	decrementStackInHand(parPlayer, itemStackInHand);
-                    }
-
-                    if (!world.isRemote)
-                    {
-                        if (rand.nextInt(3) == 0)
-                        {
-                            setGrowingAge(getGrowingAge()+500);
-                            world.setEntityState(this, (byte)7);
-                        }
-                        else
-                        {
-                            playTameEffect(false);
-                            world.setEntityState(this, (byte)6);
-                        }
-                    }
-
-                    return true;
-                }
-            }
-            else // nothing in passed hand
-            {
-            	// but nothing really requires nothing in both hands so need
-            	// to handle carefully
-            	
-            	// only proceed if BOTH hands are empty
-            	if (!(parPlayer.getHeldItemMainhand().isEmpty() && parPlayer.getHeldItemOffhand().isEmpty()))
-    			{
-            		return super.processInteract(parPlayer, parHand);
-    			}
-            	
-            	// avoid firing twice so prevent further processing on off hand
-            	if (parHand == EnumHand.OFF_HAND)
-            	{
-            		return super.processInteract(parPlayer, parHand);
-            	}
+            	return isTamed() ? processTamedNoUsefulItemFound(parPlayer) : processUntamedNoUsefulItemFound(parPlayer);
+        	}
+        	else
+        	{
             	
             	// DEBUG
-            	System.out.println("Interacting with nothing in hand");
-               	System.out.println("Owner is player "+isOwner(parPlayer));
-               	
-	            // toggle sitting
-	            if (isOwner(parPlayer) && !world.isRemote && !isBreedingItem(itemStackInHand))
-	            {
-	            	// DEBUG
-	            	System.out.println("EntityBigCat toggle sitting");
-	            	
-	                setSitting(!isSitting());
-	                isJumping = false;
-	                navigator.clearPathEntity();
-	                setAttackTarget((EntityLivingBase)null);
-	            }
-	            else
-	            {
-	            	// breeding items are handled in the super method
-	            }
-            }
+            	System.out.println("Item is useful in super method");
+            	
+                preventSitToggling = true;
+        		return super.processInteract(parPlayer, parHand);
+        	}
+        }
+    }
+    
+    protected boolean proceesInteractTamed(EntityPlayer parPlayer, ItemStack parStack)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with tamed big cat");
+
+    	return parStack.isEmpty() ? processInteractTamedHandEmpty(parPlayer) : processInteractTamedHandFull(parPlayer, parStack);
+    }
+    
+    protected boolean processInteractTamedHandFull(EntityPlayer parPlayer, ItemStack parStack)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with something in hand = "+parStack+" item = "+parStack.getItem());
+    	
+        if (parStack.getItem() instanceof ItemFood)
+        {      
+        	return processInteractFood(parPlayer, parStack);
+        }
+            
+
+    	if (parStack.getItem() == Items.DYE)
+        {
+    		return processInteractDye(parPlayer, parStack);
+        }
+        
+        return false;
+    }
+    
+    protected boolean processInteractFood(EntityPlayer parPlayer, ItemStack parStack)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with food, entity health = "+getHealth()+" max health = "+getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());         	
+
+        ItemFood itemFood = (ItemFood)parStack.getItem();
+
+        if (isHealingFood(itemFood) && getHealth() < getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue())
+        {
+        	return processInteractHealItem(parPlayer, parStack);
         }
         else
         {
         	// DEBUG
-        	System.out.println("Interacting with untamed big cat");
+        	System.out.println("Not healing");
+        	
+        	return false;
+        }
+    }
+    
+    protected boolean processInteractDye(EntityPlayer parPlayer, ItemStack parStack)
+    {
+		// DEBUG
+		System.out.println("Interacting with dye");
+		
+        preventSitToggling = true;
+        EnumDyeColor dyeColor = EnumDyeColor.byDyeDamage(parStack.getMetadata());
 
-	        // tame with bone
-	        if (!itemStackInHand.isEmpty() && itemStackInHand.getItem() == Items.BONE && !isAngry())
-	        {
-	            if (!parPlayer.capabilities.isCreativeMode)
-	            {
-	            	decrementStackInHand(parPlayer, itemStackInHand);
-	            }	
-	
-	            // Try taming
-	            if (!world.isRemote)
-	            {
-	                if (rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, parPlayer))
-	                {
-	                    setTamedBy(parPlayer);
-	                    navigator.clearPathEntity();
-	                    setAttackTarget((EntityLivingBase)null);
-	                    setSitting(true);
-	                    playTameEffect(true);
-	                    world.setEntityState(this, (byte)7);
-	                    
-	                    // DEBUG
-	                    System.out.println("Taming successful for owner = "+parPlayer.getCommandSenderEntity());
-	                }
-	                else
-	                {
-	                    playTameEffect(false);
-	                    world.setEntityState(this, (byte)6);
-	                }
-	            }
-	        }
-        }      
-        return super.processInteract(parPlayer, parHand);
+        return (dyeColor != getCollarColor()) ? setCollarColor(dyeColor) : false;
+    }
+    
+    protected boolean processInteractHealItem(EntityPlayer parPlayer, ItemStack parStack)
+    {
+    	// DEBUG
+    	System.out.println("Healing");
+
+        preventSitToggling = true;
+        heal(((ItemFood)(parStack.getItem())).getHealAmount(parStack));
+        
+        return true;
+    }
+        
+    protected boolean processInteractTamedHandEmpty(EntityPlayer parPlayer)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with nothing in hand");
+       	System.out.println("Owner is player "+isOwner(parPlayer));
+       	
+       	return false;
+    }
+    
+    protected boolean processTamedNoUsefulItemFound(EntityPlayer parPlayer)
+    {    	
+    	// DEBUG
+    	System.out.println("Interacting with tamed without useful object, sitAlreadyToggledThisTick ="+preventSitToggling);
+    	
+        // toggle sitting
+        if (!preventSitToggling && isOwner(parPlayer) && !world.isRemote)
+        {
+        	// DEBUG
+        	System.out.println("EntityBigCat toggle sitting");
+        	
+            setSitting(!isSitting());
+            isJumping = false;
+            navigator.clearPathEntity();
+            setAttackTarget((EntityLivingBase)null);
+            preventSitToggling = true;
+            return true;
+        }
+        else
+        {
+        	// DEBUG
+        	System.out.println("EntityBigCat toggle sitting didn't work, either on client or wrong owner");
+        	return false;
+        }
+    }
+    
+    protected boolean processUntamedNoUsefulItemFound(EntityPlayer parPlayer)
+    {
+    	return false;
+    }
+    
+    protected boolean processInteractUntamed(EntityPlayer parPlayer, ItemStack parStack)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with untamed big cat");
+    	
+    	return parStack.isEmpty() ? processInteractUntamedHandEmpty(parPlayer) : processInteractUntamedHandFull(parPlayer, parStack);
+    }
+    
+    protected boolean processInteractUntamedHandFull(EntityPlayer parPlayer, ItemStack parStack)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with untamed big cat with something in hand");
+
+        return (isTamingItem(parStack.getItem()) && !isAngry()) ? processInteractTamingItem(parPlayer) : false;
+    }
+    
+    protected boolean processInteractTamingItem(EntityPlayer parPlayer)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with taming item");
+    	
+        preventSitToggling = true;
+    	if (!world.isRemote)
+        {
+            if (rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, parPlayer))
+            {
+                setTamedBy(parPlayer);
+                navigator.clearPathEntity();
+                setAttackTarget((EntityLivingBase)null);
+                setSitting(true);
+                playTameEffect(true);
+                world.setEntityState(this, (byte)7);
+                
+                // DEBUG
+                System.out.println("Taming successful for owner = "+parPlayer.getCommandSenderEntity());
+            }
+            else
+            {
+            	// DEBUG
+            	System.out.println("Taming failed");
+            	
+                playTameEffect(false);
+                world.setEntityState(this, (byte)6);
+            }
+        }
+        return true; // return value indicates item used, not success
+    }
+    
+    protected boolean processInteractUntamedHandEmpty(EntityPlayer parPlayer)
+    {
+    	// DEBUG
+    	System.out.println("Interacting with untamed and empty hand");
+    	
+    	return false;
+    }
+    
+    protected boolean isHealingFood(ItemFood parFood)
+    {
+    	return parFood == Items.BEEF;
+    }
+    
+    protected boolean isTamingItem(Item parItem)
+    {
+    	return parItem == Items.BONE;
     }
 
+    /**
+     * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
+     * the animal type).
+     *
+     * @param parStack the par stack
+     * @return true, if is breeding item
+     */
+    @Override
+	public boolean isBreedingItem(ItemStack parStack)
+    {
+        return parStack.getItem() == Items.CHICKEN;
+    }
+
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.passive.EntityTameable#setTamedBy(net.minecraft.entity.player.EntityPlayer)
+     */
     @Override
 	public void setTamedBy(EntityPlayer player)
     {
@@ -740,19 +807,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     }
 
     /**
-     * Checks if the parameter is an item which this animal can be fed to breed it (wheat, carrots or seeds depending on
-     * the animal type).
-     *
-     * @param parStack the par stack
-     * @return true, if is breeding item
-     */
-    @Override
-	public boolean isBreedingItem(ItemStack parStack)
-    {
-        return parStack.getItem() == Items.CHICKEN;
-    }
-
-    /**
      * Will return how many at most can spawn in a chunk at once.
      *
      * @return the max spawned in chunk
@@ -826,7 +880,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
 	public void setInLove(EntityPlayer parPlayer)
     {
     	// DEBUG
-    	System.out.print("Setting in love");
+    	System.out.println("Setting in love with growing age = "+getGrowingAge()+" and already in love = "+isInLove());
     	
     	super.setInLove(parPlayer);
     }
@@ -930,9 +984,10 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      *
      * @param parCollarColor the new collar color
      */
-    public void setCollarColor(EnumDyeColor parCollarColor)
+    public boolean setCollarColor(EnumDyeColor parCollarColor)
     {
         dataManager.set(COLLAR_COLOR, parCollarColor.getMetadata());
+        return true;
     }
 
     /**

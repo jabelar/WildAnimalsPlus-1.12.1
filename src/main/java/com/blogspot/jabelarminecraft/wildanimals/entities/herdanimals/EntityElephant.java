@@ -18,8 +18,6 @@ package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
 // TODO: Auto-generated Javadoc
@@ -40,10 +38,10 @@ public class EntityElephant extends EntityHerdAnimal
 
     	setScaleFactor(2.0F); // elephants are big
         setSize(width*getScaleFactor(), height*getScaleFactor());
-
-        ambientSound = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.say"));
-        hurtSound = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.hurt"));
-        deathSound = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.hurt"));
+//
+//        soundAmbientElephant = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.say"));
+//        soundHurtElephant = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.hurt"));
+//        soundDeathElephant = new SoundEvent(new ResourceLocation("wildanimals:mob.elephant.hurt"));
 
 	}
 

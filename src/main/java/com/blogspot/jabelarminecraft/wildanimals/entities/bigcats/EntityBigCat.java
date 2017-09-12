@@ -23,6 +23,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAISitBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
+import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
 import com.google.common.base.Predicate;
 
 import net.minecraft.entity.Entity;
@@ -64,7 +65,6 @@ import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -79,13 +79,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     protected static final DataParameter<Boolean>  IS_ANGRY = EntityDataManager.<Boolean>createKey(EntityBigCat.class, DataSerializers.BOOLEAN);
     protected static final DataParameter<Integer> COLLAR_COLOR = EntityDataManager.<Integer>createKey(EntityBigCat.class, DataSerializers.VARINT);
     
-    protected SoundEvent soundAmbientGrowl = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.growl"));
-    protected SoundEvent soundAmbientWhine = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.whine"));
-    protected SoundEvent soundAmbientPanting = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.panting"));
-    protected SoundEvent soundAmbientBark = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.bark"));
-    protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.hurt"));
-    protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.death"));
-    protected SoundEvent soundShake = new SoundEvent(new ResourceLocation( "wildanimals:mob.bigCat.shake"));
+//    protected static SoundEvent soundBigCatAmbientGrowl = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.growl"));
+//    protected static SoundEvent soundBigCatAmbientWhine = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.whine"));
+//    protected static SoundEvent soundBigCatAmbientPanting = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.panting"));
+//    protected static SoundEvent soundBigCatAmbientBark = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.bark"));
+//    protected static SoundEvent soundBigCatHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.hurt"));
+//    protected static SoundEvent soundBigCatDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.bigCat.death"));
+//    protected static SoundEvent soundBigCatShake = new SoundEvent(new ResourceLocation( "wildanimals:mob.bigCat.shake"));
 
     /**
      * fields for controlling head tilt, like when interested or shaking
@@ -237,7 +237,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	protected SoundEvent getAmbientSound()
     {
-        return isAngry() ? soundAmbientGrowl : (rand.nextInt(3) == 0 ? (isTamed() && getHealth() < 10.0F ? soundAmbientWhine : soundAmbientPanting) : soundAmbientBark);
+        return isAngry() ? Sounds.soundAmbientGrowlBigCat : (rand.nextInt(3) == 0 ? (isTamed() && getHealth() < 10.0F ? Sounds.soundAmbientWhineBigCat : Sounds.soundAmbientPantingBigCat) : Sounds.soundAmbientBarkBigCat);
     }
 
     /**
@@ -249,7 +249,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return soundHurt; // It uses sounds.json file to randomize and adds 1, 2 or 3 and .ogg
+        return Sounds.soundHurtBigCat; // It uses sounds.json file to randomize and adds 1, 2 or 3 and .ogg
     }
 
     /**
@@ -260,7 +260,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	protected SoundEvent getDeathSound()
     {
-        return soundDeath;
+        return Sounds.soundDeathBigCat;
     }
 
     /**
@@ -332,7 +332,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         {
             if (timeBigCatIsShaking == 0.0F)
             {
-                playSound(soundShake, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                playSound(Sounds.soundShakeBigCat, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
             }
 
             prevTimeBigCatIsShaking = timeBigCatIsShaking;
@@ -975,8 +975,17 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      * @return the collar color
      */
     public EnumDyeColor getCollarColor()
-    {
-        return EnumDyeColor.byMetadata(dataManager.get(COLLAR_COLOR));
+    {	
+    	if (dataManager.get(COLLAR_COLOR) == null)
+    	{
+    		// DEBUG
+    		System.out.println("getCollorColor got null from dataManager");
+    		return EnumDyeColor.RED;
+    	}
+    	else
+    	{
+    		return EnumDyeColor.byMetadata(dataManager.get(COLLAR_COLOR));
+    	}
     }
 
     /**

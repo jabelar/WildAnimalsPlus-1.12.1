@@ -17,6 +17,7 @@
 package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -43,7 +44,6 @@ import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -60,11 +60,10 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     
     protected boolean isHitWithoutResistance = false ;
 
-    protected SoundEvent ambientSound = new SoundEvent(new ResourceLocation("mob.cow.say"));
-    protected SoundEvent hurtSound = new SoundEvent(new ResourceLocation("mob.cow.say"));
-    protected SoundEvent deathSound = new SoundEvent(new ResourceLocation("mob.cow.say"));
-
-    
+//    protected SoundEvent soundAmbientElephant = new SoundEvent(new ResourceLocation("mob.cow.say"));
+//    protected SoundEvent soundHurtElephant = new SoundEvent(new ResourceLocation("mob.cow.say"));
+//    protected SoundEvent soundDeathElephant = new SoundEvent(new ResourceLocation("mob.cow.say"));
+  
     /**
      * Instantiates a new entity herd animal.
      *
@@ -152,7 +151,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected SoundEvent getAmbientSound()
     {
-        return ambientSound;
+        return Sounds.soundAmbientElephant;
     }
 
     /**
@@ -164,7 +163,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected SoundEvent getHurtSound(DamageSource parDamageSource)
     {
-        return hurtSound;
+        return Sounds.soundHurtElephant;
     }
 
     /**
@@ -175,7 +174,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected SoundEvent getDeathSound()
     {
-        return deathSound;
+        return Sounds.soundDeathElephant;
     }
 
 //    @Override

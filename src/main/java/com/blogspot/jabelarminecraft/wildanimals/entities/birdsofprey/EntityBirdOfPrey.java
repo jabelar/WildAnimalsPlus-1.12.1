@@ -25,6 +25,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessS
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.UpdateStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
 import com.blogspot.jabelarminecraft.wildanimals.events.BirdTameEvent;
+import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
 import com.google.common.base.Optional;
 
 import net.minecraft.block.state.IBlockState;
@@ -53,7 +54,6 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -78,10 +78,10 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     public UpdateStateBirdOfPrey aiUpdateState;
     
     // use fields for sounds to allow easy changes in child classes
-    protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.death"));
-    protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.death"));
-    protected SoundEvent soundCall = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.cry"));
-    protected SoundEvent soundFlapping = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.flapping"));
+//    protected SoundEvent soundHurtBird = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.death"));
+//    protected SoundEvent soundDeathBird = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.death"));
+//    protected SoundEvent soundCallBird = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.cry"));
+//    protected SoundEvent soundFlappingBird = new SoundEvent(new ResourceLocation("wildanimals:mob.birdsofprey.flapping"));
     
     // to ensure that multiple entities don't get synced
     // create a random factor per entity
@@ -308,11 +308,11 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     {
         if (getState() == AIStates.STATE_TAKING_OFF || getState() == AIStates.STATE_TRAVELLING)
         {
-            return soundFlapping;
+            return Sounds.soundFlappingBird;
         }
         else
         {
-            return soundCall;
+            return Sounds.soundCallBird;
         }
     }
 
@@ -326,7 +326,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return soundHurt; 
+        return Sounds.soundHurtBird; 
     }
 
     /**
@@ -337,7 +337,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
 	protected SoundEvent getDeathSound()
     {
-        return soundDeath;
+        return Sounds.soundDeathBird;
     }
 
 

@@ -17,6 +17,7 @@
 package com.blogspot.jabelarminecraft.wildanimals.entities.serpents;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
+import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -40,7 +41,6 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 
@@ -50,9 +50,9 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     protected static final DataParameter<Float> SCALE_FACTOR = EntityDataManager.<Float>createKey(EntitySerpent.class, DataSerializers.FLOAT);
 
 	// use fields for sounds to allow easy changes in child classes
-	protected SoundEvent soundHurt = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
-	protected SoundEvent soundDeath = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
-	protected SoundEvent soundCall = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.hiss"));
+//	protected SoundEvent soundHurtSnake = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
+//	protected SoundEvent soundDeathSnake = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.death"));
+//	protected SoundEvent soundCallSnake = new SoundEvent(new ResourceLocation("wildanimals:mob.serpent.hiss"));
 
 	/**
 	 * Instantiates a new entity serpent.
@@ -131,7 +131,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getAmbientSound()
     {
-        return soundCall;
+        return Sounds.soundCallSnake;
     }
 
     /**
@@ -143,7 +143,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return soundHurt; 
+        return Sounds.soundHurtSnake; 
     }
 
     /**
@@ -154,7 +154,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getDeathSound()
     {
-        return soundDeath;
+        return Sounds.soundDeathSnake;
     }
 
     /**

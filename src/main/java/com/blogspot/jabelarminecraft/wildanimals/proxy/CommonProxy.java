@@ -113,7 +113,7 @@ public class CommonProxy
         registerRecipes();
 
         // register criteria triggers (such as for advancements)
-        registerCriteria();
+        registerTriggers();
     }
     
     /**
@@ -556,7 +556,7 @@ public class CommonProxy
     /**
      * Register criteria.
      */
-    public void registerCriteria() 
+    public void registerTriggers() 
     {
     	// DEBUG
     	System.out.println("Registering criteria");

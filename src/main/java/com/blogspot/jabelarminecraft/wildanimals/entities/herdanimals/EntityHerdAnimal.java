@@ -174,7 +174,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected SoundEvent getDeathSound()
     {
-        return Sounds.soundDeathElephant;
+        return Sounds.soundHurtElephant;
     }
 
 //    @Override

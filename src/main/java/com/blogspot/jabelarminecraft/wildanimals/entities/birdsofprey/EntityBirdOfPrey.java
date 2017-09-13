@@ -326,7 +326,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return Sounds.soundHurtBird; 
+        return Sounds.soundDeathBigCat; 
     }
 
     /**

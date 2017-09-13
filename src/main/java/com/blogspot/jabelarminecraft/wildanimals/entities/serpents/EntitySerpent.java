@@ -131,7 +131,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getAmbientSound()
     {
-        return Sounds.soundCallSnake;
+        return Sounds.soundCallSerpent;
     }
 
     /**
@@ -143,7 +143,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return Sounds.soundHurtSnake; 
+        return Sounds.soundDeathSerpent; 
     }
 
     /**
@@ -154,7 +154,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getDeathSound()
     {
-        return Sounds.soundDeathSnake;
+        return Sounds.soundDeathSerpent;
     }
 
     /**

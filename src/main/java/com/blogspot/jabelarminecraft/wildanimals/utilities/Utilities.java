@@ -18,11 +18,15 @@ package com.blogspot.jabelarminecraft.wildanimals.utilities;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 
+import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
@@ -35,6 +39,16 @@ import net.minecraft.world.World;
  */
 public class Utilities 
 {
+	/*
+	 * Block and BlockPos Utilities
+	 */
+    public static boolean isTeleportFriendlyBlock(Entity parEntity, int x, int p_192381_2_, int y, int p_192381_4_, int p_192381_5_)
+    {
+        BlockPos blockpos = new BlockPos(x + p_192381_4_, y - 1, p_192381_2_ + p_192381_5_);
+        IBlockState iblockstate = parEntity.world.getBlockState(blockpos);
+        return iblockstate.getBlockFaceShape(parEntity.world, blockpos, EnumFacing.DOWN) == BlockFaceShape.SOLID && iblockstate.canEntitySpawn(parEntity) && parEntity.world.isAirBlock(blockpos.up()) && parEntity.world.isAirBlock(blockpos.up(2));
+    }
+    
 	/*
 	 * Text Utilities
 	 */

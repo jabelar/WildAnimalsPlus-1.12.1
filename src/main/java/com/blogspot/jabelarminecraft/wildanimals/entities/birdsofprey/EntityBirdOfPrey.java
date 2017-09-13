@@ -1005,7 +1005,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         {
             compound.setString("OwnerUUID", this.getOwnerId().toString());
         }
-        compound.setInteger("legBandColor", getLegBandColor().getColorValue());
+        compound.setInteger("legBandColor", getLegBandColor().getDyeDamage());
     }
 
     /* (non-Javadoc)
@@ -1040,6 +1040,6 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
         {
         	setOwnerId(null);
         }
-        setLegBandColor(EnumDyeColor.byMetadata(compound.getInteger("legBandColor")));
+        setLegBandColor(EnumDyeColor.byDyeDamage(compound.getInteger("legBandColor")));
     }
 }

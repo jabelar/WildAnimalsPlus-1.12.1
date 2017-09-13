@@ -908,7 +908,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         compound.setBoolean("isInterested", isInterested());
         compound.setBoolean("isAngry", isAngry());
         compound.setBoolean("isSitting", isSitting());
-        compound.setInteger("collarColor", getCollarColor().getColorValue());
+        compound.setInteger("collarColor", getCollarColor().getDyeDamage());
     }
 
     /* (non-Javadoc)
@@ -922,7 +922,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         setInterested(compound.getBoolean("isInterested"));
         setAngry(compound.getBoolean("isAngry"));
         setSitting(compound.getBoolean("isSitting"));
-        setCollarColor(EnumDyeColor.byMetadata(compound.getInteger("collarColor")));
+        setCollarColor(EnumDyeColor.byDyeDamage(compound.getInteger("collarColor")));
     }
 
 

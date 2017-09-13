@@ -16,12 +16,23 @@
 
 package com.blogspot.jabelarminecraft.wildanimals;
 
-import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
+import java.util.List;
+import java.util.UUID;
 
+import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
+import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedInEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerRespawnEvent;
 
 
 // TODO: Auto-generated Javadoc
@@ -224,19 +235,96 @@ public class EventHandler
 //    {
 //        
 //    }
-//    
-//    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-//    public void onEvent(Clone event)
-//    {
-//        
-//    }
-//    
-//    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-//    public void onEvent(HarvestCheck event)
-//    {
-//        
-//    }
+	
+	protected List<Entity> entitiesNearPlayerAtDeath = null;
+	protected UUID originalUUID = null;
+	
+	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+	public void onEvent(Clone event)
+	{
+		// DEBUG
+		System.out.println("PlayerEvent.Clone event");
+		
+		EntityPlayer originalPlayer = event.getOriginal();
+		originalUUID = originalPlayer.getUniqueID();
+		
+		entitiesNearPlayerAtDeath = event.getOriginal().world
+				.getEntitiesWithinAABB(
+						Entity.class, 
+						new AxisAlignedBB(
+								originalPlayer.posX - 160,
+								originalPlayer.posY - 200,
+								originalPlayer.posZ - 160,
+								originalPlayer.posX + 160,
+								originalPlayer.posY + 200,
+								originalPlayer.posZ + 160)
+						);	
+		
+		// DEBUG
+		System.out.println("Entities near player at death = "+entitiesNearPlayerAtDeath);
+	}
     
+	  @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+	  public void onEvent(PlayerRespawnEvent event)
+	  {
+		  // DEBUG
+		  System.out.println("PlayerEvent.PlayerRespawnEvent");
+		  
+		  if (originalUUID == null)
+		  {
+			  // DEBUG
+			  System.out.println("Respawn but original UUID is null");
+			  return;
+		  }
+		  
+		  for (Entity entity : entitiesNearPlayerAtDeath)
+		  {
+			  if (entity instanceof EntityTameable)
+			  {
+				  // DEBUG
+				  System.out.println("Found a tameable");
+				  
+				  EntityTameable tameable = (EntityTameable)entity;
+				  if (tameable.getOwnerId().equals(originalUUID))
+				  {
+					  // DEBUG
+					  System.out.println("Tameable was owned by cloned player");
+					  
+					  // Copy owner ID
+					  tameable.setOwnerId(originalUUID);
+					  
+					  // Look for suitable teleport location
+					  EntityPlayer owner = event.player;
+                      int i = MathHelper.floor(owner.posX) - 2;
+                      int j = MathHelper.floor(owner.posZ) - 2;
+                      int k = MathHelper.floor(owner.getEntityBoundingBox().minY);
+
+                      for (int l = 0; l <= 4; ++l)
+                      {
+                          for (int i1 = 0; i1 <= 4; ++i1)
+                          {
+                              if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && Utilities.isTeleportFriendlyBlock(tameable, i, j, k, l, i1))
+                              {
+                            	  // DEBUG
+                            	  System.out.println("Found a suitable teleport location for "+tameable);
+                            	  
+                                  tameable.setLocationAndAngles(i + l + 0.5F, k, j + i1 + 0.5F, tameable.rotationYaw, tameable.rotationPitch);
+                                  tameable.getNavigator().clearPathEntity();
+                                  return;
+                              }
+                          }
+                      }
+
+				  }
+			  }
+		  }
+	  }	
+//	
+//  @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+//  public void onEvent(HarvestCheck event)
+//  {
+//      
+//  }
 //    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //    public void onEvent(NameFormat event)
 //    {

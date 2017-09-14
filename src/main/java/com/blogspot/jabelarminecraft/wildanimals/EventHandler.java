@@ -16,6 +16,7 @@
 
 package com.blogspot.jabelarminecraft.wildanimals;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,6 @@ import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -248,17 +248,17 @@ public class EventHandler
 		EntityPlayer originalPlayer = event.getOriginal();
 		originalUUID = originalPlayer.getUniqueID();
 		
-		entitiesNearPlayerAtDeath = event.getOriginal().world
-				.getEntitiesWithinAABB(
-						Entity.class, 
-						new AxisAlignedBB(
-								originalPlayer.posX - 160,
-								originalPlayer.posY - 200,
-								originalPlayer.posZ - 160,
-								originalPlayer.posX + 160,
-								originalPlayer.posY + 200,
-								originalPlayer.posZ + 160)
-						);	
+//		entitiesNearPlayerAtDeath = event.getOriginal().world
+//				.getEntitiesWithinAABB(
+//						Entity.class, 
+//						new AxisAlignedBB(
+//								originalPlayer.posX - 160,
+//								originalPlayer.posY - 200,
+//								originalPlayer.posZ - 160,
+//								originalPlayer.posX + 160,
+//								originalPlayer.posY + 200,
+//								originalPlayer.posZ + 160)
+//						);	
 		
 		// DEBUG
 		System.out.println("Entities near player at death = "+entitiesNearPlayerAtDeath);
@@ -277,8 +277,10 @@ public class EventHandler
 			  return;
 		  }
 		  
-		  for (Entity entity : entitiesNearPlayerAtDeath)
+		  Iterator<Entity> iterator = event.player.world.loadedEntityList.iterator();
+		  while (iterator.hasNext())
 		  {
+			  Entity entity = iterator.next();
 			  if (entity instanceof EntityTameable)
 			  {
 				  // DEBUG
@@ -310,7 +312,6 @@ public class EventHandler
                             	  
                                   tameable.setLocationAndAngles(i + l + 0.5F, k, j + i1 + 0.5F, tameable.rotationYaw, tameable.rotationPitch);
                                   tameable.getNavigator().clearPathEntity();
-                                  return;
                               }
                           }
                       }
@@ -318,6 +319,8 @@ public class EventHandler
 				  }
 			  }
 		  }
+		  
+//		  entitiesNearPlayerAtDeath.clear();
 	  }	
 //	
 //  @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)

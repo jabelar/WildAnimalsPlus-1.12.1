@@ -892,9 +892,9 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
     
     /**
-     * Sets the soar clockwise.
+     * Sets whether the soaring circling direction is clockwise (anti-clockwise if false)
      *
-     * @param parClockwise the new soar clockwise
+     * @param parClockwise whether the bird should soar clockwise
      */
     public void setSoarClockwise(boolean parClockwise)
     {
@@ -904,7 +904,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     /**
      * Gets the soar clockwise.
      *
-     * @return the soar clockwise
+     * @return the soaring circling direction is clockwise (anti-clockwise if false)
      */
     public boolean getSoarClockwise()
     {
@@ -912,7 +912,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
     
     /**
-     * Sets the soar height.
+     * Sets the soar height where the bird stops flapping and starts gliding.
+     * Recommended to be set with some amount of randomness.
      *
      * @param parHeight the new soar height
      */
@@ -922,7 +923,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
     
     /**
-     * Gets the soar height.
+     * Gets the soar height where the bird stops flapping and starts gliding.
      *
      * @return the soar height
      */
@@ -953,7 +954,8 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     }
 
     /**
-     * Sets the prey array.
+     * Sets the prey array. This is used by the AI system to automatically attack
+     * nearby matching entity types.
      *
      * @param parPreyArray the new prey array
      */

@@ -24,6 +24,9 @@ import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.OreGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.TerrainGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.CapabilityFactoryPetList;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.CapabilityPetListStorage;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.ICapabilityPetList;
 import com.blogspot.jabelarminecraft.wildanimals.commands.CommandConjure;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLion;
@@ -50,6 +53,7 @@ import net.minecraft.init.Biomes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -94,6 +98,7 @@ public class CommonProxy
         registerEntitySpawns();
         registerFuelHandlers();
         registerSimpleNetworking();
+        registerCapabilities();
 //      VillagerRegistry.instance().registerVillagerId(10);
 //      VillagerRegistry.instance().registerVillageTradeHandler(10, new VillageTradeHandlerMagicBeans());
 //      VillagerRegistry.getRegisteredVillagers();
@@ -583,6 +588,11 @@ public class CommonProxy
 			e.printStackTrace();
 		}
    }
+    
+    public void registerCapabilities()
+    {
+    	CapabilityManager.INSTANCE.register(ICapabilityPetList.class, new CapabilityPetListStorage(), CapabilityFactoryPetList.class);
+    }
 
 	/**
 	 * Fml life cycle event.

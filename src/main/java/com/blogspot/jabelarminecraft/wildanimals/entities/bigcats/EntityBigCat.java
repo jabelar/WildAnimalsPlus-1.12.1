@@ -538,6 +538,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
     
+    /**
+     * Procees interact tamed.
+     *
+     * @param parPlayer the par player
+     * @param parStack the par stack
+     * @return true, if successful
+     */
     protected boolean proceesInteractTamed(EntityPlayer parPlayer, ItemStack parStack)
     {
     	// DEBUG
@@ -546,6 +553,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	return parStack.isEmpty() ? processInteractTamedHandEmpty(parPlayer) : processInteractTamedHandFull(parPlayer, parStack);
     }
     
+    /**
+     * Process interact tamed hand full.
+     *
+     * @param parPlayer the par player
+     * @param parStack the par stack
+     * @return true, if successful
+     */
     protected boolean processInteractTamedHandFull(EntityPlayer parPlayer, ItemStack parStack)
     {
     	// DEBUG
@@ -565,6 +579,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return false;
     }
     
+    /**
+     * Process interact food.
+     *
+     * @param parPlayer the par player
+     * @param parStack the par stack
+     * @return true, if successful
+     */
     protected boolean processInteractFood(EntityPlayer parPlayer, ItemStack parStack)
     {
     	// DEBUG
@@ -585,6 +606,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
     
+    /**
+     * Process interact dye.
+     *
+     * @param parPlayer the par player
+     * @param parStack the par stack
+     * @return true, if successful
+     */
     protected boolean processInteractDye(EntityPlayer parPlayer, ItemStack parStack)
     {
 		// DEBUG
@@ -596,6 +624,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return (dyeColor != getCollarColor()) ? setCollarColor(dyeColor) : false;
     }
     
+    /**
+     * Process interact heal item.
+     *
+     * @param parPlayer the par player
+     * @param parStack the par stack
+     * @return true, if successful
+     */
     protected boolean processInteractHealItem(EntityPlayer parPlayer, ItemStack parStack)
     {
     	// DEBUG
@@ -607,6 +642,12 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return true;
     }
         
+    /**
+     * Process interact tamed hand empty.
+     *
+     * @param parPlayer the par player
+     * @return true, if successful
+     */
     protected boolean processInteractTamedHandEmpty(EntityPlayer parPlayer)
     {
     	// DEBUG
@@ -616,6 +657,12 @@ public class EntityBigCat extends EntityTameable implements IModEntity
        	return false;
     }
     
+    /**
+     * Process tamed no useful item found.
+     *
+     * @param parPlayer the par player
+     * @return true, if successful
+     */
     protected boolean processTamedNoUsefulItemFound(EntityPlayer parPlayer)
     {    	
     	// DEBUG
@@ -642,11 +689,24 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         }
     }
     
+    /**
+     * Process untamed no useful item found.
+     *
+     * @param parPlayer the par player
+     * @return true, if successful
+     */
     protected boolean processUntamedNoUsefulItemFound(EntityPlayer parPlayer)
     {
     	return false;
     }
     
+    /**
+     * Process interact untamed.
+     *
+     * @param parPlayer the par player
+     * @param parStack the par stack
+     * @return true, if successful
+     */
     protected boolean processInteractUntamed(EntityPlayer parPlayer, ItemStack parStack)
     {
     	// DEBUG
@@ -655,6 +715,13 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	return parStack.isEmpty() ? processInteractUntamedHandEmpty(parPlayer) : processInteractUntamedHandFull(parPlayer, parStack);
     }
     
+    /**
+     * Process interact untamed hand full.
+     *
+     * @param parPlayer the par player
+     * @param parStack the par stack
+     * @return true, if successful
+     */
     protected boolean processInteractUntamedHandFull(EntityPlayer parPlayer, ItemStack parStack)
     {
     	// DEBUG
@@ -663,6 +730,12 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return (isTamingItem(parStack.getItem()) && !isAngry()) ? processInteractTamingItem(parPlayer) : false;
     }
     
+    /**
+     * Process interact taming item.
+     *
+     * @param parPlayer the par player
+     * @return true, if successful
+     */
     protected boolean processInteractTamingItem(EntityPlayer parPlayer)
     {
     	// DEBUG
@@ -695,6 +768,12 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         return true; // return value indicates item used, not success
     }
     
+    /**
+     * Process interact untamed hand empty.
+     *
+     * @param parPlayer the par player
+     * @return true, if successful
+     */
     protected boolean processInteractUntamedHandEmpty(EntityPlayer parPlayer)
     {
     	// DEBUG
@@ -703,11 +782,23 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	return false;
     }
     
+    /**
+     * Checks if is healing food.
+     *
+     * @param parFood the par food
+     * @return true, if is healing food
+     */
     protected boolean isHealingFood(ItemFood parFood)
     {
     	return parFood == Items.BEEF;
     }
     
+    /**
+     * Checks if is taming item.
+     *
+     * @param parItem the par item
+     * @return true, if is taming item
+     */
     protected boolean isTamingItem(Item parItem)
     {
     	return parItem == Items.BONE;
@@ -992,6 +1083,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
      * Set this bigCat's collar color.
      *
      * @param parCollarColor the new collar color
+     * @return true, if successful
      */
     public boolean setCollarColor(EnumDyeColor parCollarColor)
     {

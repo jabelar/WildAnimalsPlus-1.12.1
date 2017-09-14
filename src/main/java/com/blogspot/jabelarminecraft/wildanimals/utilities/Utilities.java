@@ -39,6 +39,18 @@ import net.minecraft.world.World;
  */
 public class Utilities 
 {
+	
+	/**
+	 * Checks if is teleport friendly block.
+	 *
+	 * @param parEntity the par entity
+	 * @param x the x
+	 * @param p_192381_2_ the p 192381 2
+	 * @param y the y
+	 * @param p_192381_4_ the p 192381 4
+	 * @param p_192381_5_ the p 192381 5
+	 * @return true, if is teleport friendly block
+	 */
 	/*
 	 * Block and BlockPos Utilities
 	 */

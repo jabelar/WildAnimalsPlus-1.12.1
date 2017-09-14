@@ -26,7 +26,9 @@ import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -239,32 +241,29 @@ public class EventHandler
 	protected List<Entity> entitiesNearPlayerAtDeath = null;
 	protected UUID originalUUID = null;
 	
+	/**
+	 * On event.
+	 *
+	 * @param event the event
+	 */
 	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 	public void onEvent(Clone event)
 	{
 		// DEBUG
 		System.out.println("PlayerEvent.Clone event");
 		
-		EntityPlayer originalPlayer = event.getOriginal();
-		originalUUID = originalPlayer.getUniqueID();
-		
-//		entitiesNearPlayerAtDeath = event.getOriginal().world
-//				.getEntitiesWithinAABB(
-//						Entity.class, 
-//						new AxisAlignedBB(
-//								originalPlayer.posX - 160,
-//								originalPlayer.posY - 200,
-//								originalPlayer.posZ - 160,
-//								originalPlayer.posX + 160,
-//								originalPlayer.posY + 200,
-//								originalPlayer.posZ + 160)
-//						);	
-		
-		// DEBUG
-		System.out.println("Entities near player at death = "+entitiesNearPlayerAtDeath);
+		// save ID so you can access it in the respawn event and perform further action
+		// because the respawn event fires a bit later after cloning when things like
+		// player position have been set.
+		originalUUID = event.getOriginal().getUniqueID();
 	}
     
-	  @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+	  /**
+  	 * On event.
+  	 *
+  	 * @param event the event
+  	 */
+  	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 	  public void onEvent(PlayerRespawnEvent event)
 	  {
 		  // DEBUG
@@ -277,6 +276,7 @@ public class EventHandler
 			  return;
 		  }
 		  
+		  // Telepport all owned EntityTameable along with player during respawn
 		  Iterator<Entity> iterator = event.player.world.loadedEntityList.iterator();
 		  while (iterator.hasNext())
 		  {
@@ -319,9 +319,17 @@ public class EventHandler
 				  }
 			  }
 		  }
-		  
-//		  entitiesNearPlayerAtDeath.clear();
 	  }	
+  	
+  	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+  	public void onEvent(AttachCapabilitiesEvent<Entity> event)
+  	{
+  		if (event.getObject() instanceof EntityPlayer)
+  		{
+  			event.addCapability(new ResourceLocation("Pet List"), MainMod.capabilityPetList);
+  		}
+  	}
+
 //	
 //  @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //  public void onEvent(HarvestCheck event)

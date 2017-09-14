@@ -18,9 +18,12 @@ package com.blogspot.jabelarminecraft.wildanimals;
 
 import java.io.File;
 
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.CapabilityPetList;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.ICapabilityPetList;
 import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
 
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -58,6 +61,10 @@ public class MainMod
 	public static FMLEventChannel channel;
 	// networking
 	public static SimpleNetworkWrapper network;
+	
+	// create capability instances
+	@CapabilityInject(ICapabilityPetList.class)
+	public static final CapabilityPetList capabilityPetList = new CapabilityPetList();
 
     // set up configuration properties (will be read from config file in preInit)
     public static File configFile;

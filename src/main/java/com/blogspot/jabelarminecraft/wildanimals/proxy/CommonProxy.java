@@ -24,9 +24,9 @@ import com.blogspot.jabelarminecraft.wildanimals.MainMod;
 import com.blogspot.jabelarminecraft.wildanimals.OreGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.TerrainGenEventHandler;
 import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
-import com.blogspot.jabelarminecraft.wildanimals.capabilities.CapabilityFactoryPetList;
-import com.blogspot.jabelarminecraft.wildanimals.capabilities.CapabilityPetListStorage;
-import com.blogspot.jabelarminecraft.wildanimals.capabilities.ICapabilityPetList;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.IPetList;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.PetList;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.PetListStorage;
 import com.blogspot.jabelarminecraft.wildanimals.commands.CommandConjure;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityJaguar;
 import com.blogspot.jabelarminecraft.wildanimals.entities.bigcats.EntityLion;
@@ -591,7 +591,7 @@ public class CommonProxy
     
     public void registerCapabilities()
     {
-    	CapabilityManager.INSTANCE.register(ICapabilityPetList.class, new CapabilityPetListStorage(), CapabilityFactoryPetList.class);
+    	CapabilityManager.INSTANCE.register(IPetList.class, new PetListStorage(), PetList.class);
     }
 
 	/**

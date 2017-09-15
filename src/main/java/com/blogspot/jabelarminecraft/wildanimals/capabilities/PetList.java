@@ -1,11 +1,12 @@
 package com.blogspot.jabelarminecraft.wildanimals.capabilities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CapabilityPetList implements ICapabilityPetList
+public class PetList implements IPetList
 {
-	private List<UUID> petList = null;
+	private List<UUID> petList = new ArrayList<UUID>();
 
 	@Override
 	public void setPetList(List<UUID> parPetList) 
@@ -14,9 +15,9 @@ public class CapabilityPetList implements ICapabilityPetList
 	}
 
 	@Override
-	public List<UUID> getPetList() 
+	public ArrayList<UUID> getPetList() 
 	{
-		return petList;
+		return (ArrayList<UUID>) petList;
 	}
 
 }

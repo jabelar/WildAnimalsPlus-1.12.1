@@ -9,14 +9,14 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.Capability.IStorage;
 
-public class CapabilityPetListStorage implements IStorage<ICapabilityPetList>
+public class PetListStorage implements IStorage<IPetList>
 {
 	private String keyBase = "petUUID";
 	
 	@Override
-	public NBTBase writeNBT(
-			Capability<ICapabilityPetList> capability, 
-			ICapabilityPetList instance, 
+	public NBTTagCompound writeNBT(
+			Capability<IPetList> capability, 
+			IPetList instance, 
 			EnumFacing side) 
 	{
 		List<UUID> petList = instance.getPetList();
@@ -31,8 +31,8 @@ public class CapabilityPetListStorage implements IStorage<ICapabilityPetList>
 
 	@Override
 	public void readNBT(
-			Capability<ICapabilityPetList> capability, 
-			ICapabilityPetList instance, 
+			Capability<IPetList> capability, 
+			IPetList instance, 
 			EnumFacing side,
 			NBTBase nbt) 
 	{

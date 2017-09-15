@@ -1,10 +1,11 @@
 package com.blogspot.jabelarminecraft.wildanimals.capabilities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public interface ICapabilityPetList
+public interface IPetList
 {
 	void setPetList(List<UUID> parCapability);
-	List<UUID> getPetList();
+	ArrayList<UUID> getPetList();
 }

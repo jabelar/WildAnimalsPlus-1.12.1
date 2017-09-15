@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.IPetList;
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.PetListProvider;
 import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
@@ -29,6 +31,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.living.AnimalTameEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -256,6 +260,12 @@ public class EventHandler
 		// because the respawn event fires a bit later after cloning when things like
 		// player position have been set.
 		originalUUID = event.getOriginal().getUniqueID();
+
+		// clone capabilities
+		EntityPlayer player = event.getEntityPlayer();
+		IPetList petList = player.getCapability(PetListProvider.PET_LIST, null);
+		IPetList oldPetList = event.getOriginal().getCapability(PetListProvider.PET_LIST, null);
+		petList.setPetList(oldPetList.getPetList());
 	}
     
 	  /**
@@ -315,7 +325,6 @@ public class EventHandler
                               }
                           }
                       }
-
 				  }
 			  }
 		  }
@@ -326,10 +335,52 @@ public class EventHandler
   	{
   		if (event.getObject() instanceof EntityPlayer)
   		{
-  			event.addCapability(new ResourceLocation("Pet List"), MainMod.capabilityPetList);
+  			// DEBUG
+  			System.out.println("Attaching capability to player");
+  			
+  			event.addCapability(new ResourceLocation(MainMod.MODID, "Pet List"), new PetListProvider());
+  		}
+  	}
+  	
+  	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+  	public void onEvent(AnimalTameEvent event)
+  	{
+  		// DEBUG
+  		System.out.println("Adding entity "+event.getAnimal()+" is tamed and being added to player "+event.getTamer().getName());
+  		
+  		event.getTamer().getCapability(PetListProvider.PET_LIST, null).getPetList().add(event.getAnimal().getUniqueID());
+  	}
+  	
+  	
+  	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+  	public void onEvent(LivingDeathEvent event)
+  	{
+  		if (event.getEntityLiving() instanceof EntityTameable)
+  		{
+  			// DEBUG
+  			System.out.println("LivingDeathEvent a tameable entity died");
+  			
+  			EntityTameable theTameable = (EntityTameable)(event.getEntityLiving());
+  			UUID theOwnerID = theTameable.getOwnerId();
+			EntityPlayer thePlayer = lookupOwner(theTameable, theOwnerID);
+			if (thePlayer != null)
+			{
+				// DEBUG
+				System.out.println("Player "+thePlayer.getDisplayNameString()+"'s pet died, removing from pet list");
+				thePlayer.getCapability(PetListProvider.PET_LIST, null).getPetList().remove(theTameable.getUniqueID());
+			}
   		}
   	}
 
+  	private EntityPlayer lookupOwner(Entity parPet, UUID parOwnerID) 
+  	{
+  	    if (parOwnerID == null || parOwnerID.equals(new UUID(0, 0))) 
+  	    {
+  	        return null;
+  	    }
+  	    
+  	    return parPet.world.getPlayerEntityByUUID(parOwnerID);
+   	}
 //	
 //  @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //  public void onEvent(HarvestCheck event)

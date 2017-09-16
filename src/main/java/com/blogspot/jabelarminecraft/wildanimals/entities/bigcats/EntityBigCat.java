@@ -21,6 +21,7 @@ import java.util.UUID;
 import com.blogspot.jabelarminecraft.wildanimals.advancements.criteria.Triggers;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegBigCat;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIGuardOwner;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAISitBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
 import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
@@ -165,6 +166,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         tasks.addTask(8, new EntityAIBegBigCat(this, 8.0F)); 
         tasks.addTask(9, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         tasks.addTask(10, new EntityAILookIdle(this));
+        targetTasks.addTask(1, new EntityAIGuardOwner(this));
         targetTasks.addTask(1, new EntityAIOwnerHurtByTarget(this));
         targetTasks.addTask(2, new EntityAIOwnerHurtTarget(this));
         targetTasks.addTask(3, new EntityAIHurtByTarget(this, true));

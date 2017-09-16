@@ -574,19 +574,10 @@ public class CommonProxy
 			{
 				method.invoke(null, Triggers.TRIGGER_ARRAY[i]);
 			}
-		} catch (SecurityException e) {
+		} catch (SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		} 
    }
     
     public void registerCapabilities()

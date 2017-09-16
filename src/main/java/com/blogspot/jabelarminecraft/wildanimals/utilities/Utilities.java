@@ -16,6 +16,10 @@
 
 package com.blogspot.jabelarminecraft.wildanimals.utilities;
 
+import java.util.Iterator;
+import java.util.UUID;
+
+import com.blogspot.jabelarminecraft.wildanimals.capabilities.PetListProvider;
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
 
 import net.minecraft.block.state.BlockFaceShape;
@@ -24,6 +28,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -39,6 +45,61 @@ import net.minecraft.world.World;
  */
 public class Utilities 
 {
+	public static void teleportAllPetsToOwnerIfSuitable(EntityPlayer parPlayer)
+	{
+		Iterator<UUID> iterator = parPlayer.getCapability(PetListProvider.PET_LIST, null).getPetList().iterator();
+		while (iterator.hasNext())
+		{
+			Entity entity = parPlayer.world.getMinecraftServer().getEntityFromUuid(iterator.next());
+			if (entity instanceof EntityTameable)
+			{
+				EntityTameable tameable = (EntityTameable)entity;
+				teleportPetToOwnerIfSuitable(tameable, parPlayer);
+			}
+		}
+	}
+	
+  	public static void teleportPetToOwnerIfSuitable(EntityTameable tameable, EntityPlayer owner)
+  	{
+  		if (tameable.isSitting())
+  		{
+  			return;
+  		}
+        
+        if (tameable.getLeashed() || tameable.isRiding())
+        {
+        	return;
+        	
+        }
+   		
+  		// only teleport if not in following distance
+  		if (owner.getDistanceSqToEntity(tameable) > 144.0D)
+  		{
+  			// DEBUG
+  			System.out.println("Pet "+tameable+" is too far from owner, teleporting closer");
+  			
+	  		int i = MathHelper.floor(owner.posX) - 2;
+	  		int j = MathHelper.floor(owner.posZ) - 2;
+	  		int k = MathHelper.floor(owner.getEntityBoundingBox().minY);
+	
+	  		for (int l = 0; l <= 4; ++l)
+	  		{	
+	  			for (int i1 = 0; i1 <= 4; ++i1)
+	  			{	
+	  				if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && isTeleportFriendlyBlock(tameable, i, j, k, l, i1))
+	  				{
+	  					// DEBUG
+	  					System.out.println("Found a suitable teleport location for "+tameable);
+	            	  
+	  					tameable.setLocationAndAngles(i + l + 0.5F, k, j + i1 + 0.5F, tameable.rotationYaw, tameable.rotationPitch);
+	  					tameable.getNavigator().clearPathEntity();
+	  					return;
+	  				}
+	  			}
+	  		}
+  		}
+  	}
+
 	
 	/**
 	 * Checks if is teleport friendly block.

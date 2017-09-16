@@ -16,7 +16,6 @@
 
 package com.blogspot.jabelarminecraft.wildanimals;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,7 +28,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -274,61 +272,13 @@ public class EventHandler
   	 * @param event the event
   	 */
   	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-	  public void onEvent(PlayerRespawnEvent event)
-	  {
-		  // DEBUG
-		  System.out.println("PlayerEvent.PlayerRespawnEvent");
+  	public void onEvent(PlayerRespawnEvent event)
+	{
+		// DEBUG
+  		System.out.println("PlayerEvent.PlayerRespawnEvent");
 		  
-		  if (originalUUID == null)
-		  {
-			  // DEBUG
-			  System.out.println("Respawn but original UUID is null");
-			  return;
-		  }
-		  
-		  // Telepport all owned EntityTameable along with player during respawn
-		  Iterator<Entity> iterator = event.player.world.loadedEntityList.iterator();
-		  while (iterator.hasNext())
-		  {
-			  Entity entity = iterator.next();
-			  if (entity instanceof EntityTameable)
-			  {
-				  // DEBUG
-				  System.out.println("Found a tameable");
-				  
-				  EntityTameable tameable = (EntityTameable)entity;
-				  if (tameable.getOwnerId().equals(originalUUID))
-				  {
-					  // DEBUG
-					  System.out.println("Tameable was owned by cloned player");
-					  
-					  // Copy owner ID
-					  tameable.setOwnerId(originalUUID);
-					  
-					  // Look for suitable teleport location
-					  EntityPlayer owner = event.player;
-                      int i = MathHelper.floor(owner.posX) - 2;
-                      int j = MathHelper.floor(owner.posZ) - 2;
-                      int k = MathHelper.floor(owner.getEntityBoundingBox().minY);
-
-                      for (int l = 0; l <= 4; ++l)
-                      {
-                          for (int i1 = 0; i1 <= 4; ++i1)
-                          {
-                              if ((l < 1 || i1 < 1 || l > 3 || i1 > 3) && Utilities.isTeleportFriendlyBlock(tameable, i, j, k, l, i1))
-                              {
-                            	  // DEBUG
-                            	  System.out.println("Found a suitable teleport location for "+tameable);
-                            	  
-                                  tameable.setLocationAndAngles(i + l + 0.5F, k, j + i1 + 0.5F, tameable.rotationYaw, tameable.rotationPitch);
-                                  tameable.getNavigator().clearPathEntity();
-                              }
-                          }
-                      }
-				  }
-			  }
-		  }
-	  }	
+		Utilities.teleportAllPetsToOwnerIfSuitable(event.player);
+	}	
   	
   	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
   	public void onEvent(AttachCapabilitiesEvent<Entity> event)
@@ -356,7 +306,7 @@ public class EventHandler
   	public void onEvent(LivingDeathEvent event)
   	{
   		if (event.getEntityLiving() instanceof EntityTameable)
-  		{
+  		{ 
   			// DEBUG
   			System.out.println("LivingDeathEvent a tameable entity died");
   			
@@ -381,8 +331,8 @@ public class EventHandler
   	    
   	    return parPet.world.getPlayerEntityByUUID(parOwnerID);
    	}
-//	
-//  @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+  	
+//  	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //  public void onEvent(HarvestCheck event)
 //  {
 //      
@@ -1058,13 +1008,22 @@ public class EventHandler
 //	{
 //		
 //	}
-//
+
 //	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //	public void onEvent(PlayerTickEvent event)
-//	{
+//	{ 
+//		if (event.player.world.isRemote)
+//		{
+//			return;
+//		}
+//		
+//		if (event.player.ticksExisted % 20 == 0)
+//		{
+//			Utilities.teleportAllPetsToOwnerIfSuitable(event.player);
+//		}
 // 
 //	}
-//
+////
 //	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //	public void onEvent(RenderTickEvent event)
 //	{

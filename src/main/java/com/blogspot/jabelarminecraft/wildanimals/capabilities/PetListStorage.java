@@ -19,6 +19,9 @@ public class PetListStorage implements IStorage<IPetList>
 			IPetList instance, 
 			EnumFacing side) 
 	{
+		// DEBUG
+		System.out.println("PetListStorage writeNBT");
+		
 		List<UUID> petList = instance.getPetList();
 		NBTTagCompound compound = new NBTTagCompound();
 		for (int i = 0; i < petList.size(); i++)
@@ -36,6 +39,9 @@ public class PetListStorage implements IStorage<IPetList>
 			EnumFacing side,
 			NBTBase nbt) 
 	{
+		// DEBUG
+		System.out.println("PetListStorage readNBT");
+		
 		NBTTagCompound compound = (NBTTagCompound)nbt;
 		instance.getPetList().clear();
 	

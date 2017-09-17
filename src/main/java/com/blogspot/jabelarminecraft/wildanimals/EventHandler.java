@@ -21,14 +21,17 @@ import java.util.UUID;
 
 import com.blogspot.jabelarminecraft.wildanimals.capabilities.IPetList;
 import com.blogspot.jabelarminecraft.wildanimals.capabilities.PetListProvider;
+import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIGuardOwner;
 import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityTameable;
+import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.AnimalTameEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent.Clone;
@@ -102,15 +105,18 @@ public class EventHandler
 //        // Register extended entity properties
 //    }
     
-//    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-//    public void onEvent(EntityJoinWorldEvent event)
-//    {
-//        // DEBUG
-//        if (EntityList.getEntityString(event.getEntity()) != null)
-//        {
-//            System.out.println("Entity joined world = "+EntityList.getStringFromID(event.entity.getEntityId()));
-//        }
-//    }
+    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
+    public void onEvent(EntityJoinWorldEvent event)
+    {
+        if (event.getEntity() instanceof EntityWolf)
+        {
+        	// DEBUG
+        	System.out.println("Wolf joining world, adding guard owner AI");
+        	
+        	EntityWolf theWolf = (EntityWolf) event.getEntity();
+        	theWolf.targetTasks.addTask(1, new EntityAIGuardOwner(theWolf));
+        }
+    }
     
 //    @SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
 //    public void onEvent(EntityStruckByLightningEvent event)

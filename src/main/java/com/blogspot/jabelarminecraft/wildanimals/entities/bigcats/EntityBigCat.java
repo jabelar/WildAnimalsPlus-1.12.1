@@ -145,6 +145,25 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     	dataManager.register(IS_ANGRY, false);
     	dataManager.register(COLLAR_COLOR, Integer.valueOf(EnumDyeColor.RED.getDyeDamage()));
 	}
+
+    /* (non-Javadoc)
+     * @see net.minecraft.entity.EntityLiving#applyEntityAttributes()
+     */
+    // you don't have to call this as it is called automatically during entityLiving subclass creation
+    @Override
+	protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes(); // registers the common attributes
+        
+        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.60D);
+        getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
+        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(16.0D);
+
+        // need to register any additional attributes
+        getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
+    }
 	
 	/* (non-Javadoc)
 	 * @see net.minecraft.entity.EntityLiving#initEntityAI()
@@ -160,7 +179,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         tasks.addTask(2, new EntityAISitBigCat(this));
         tasks.addTask(3, new EntityAILeapAtTarget(this, 0.4F));
         tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, true));
-        tasks.addTask(5, new EntityAIFollowOwner(this, 1.0D, 10.0F, 2.0F));
+        tasks.addTask(5, new EntityAIFollowOwner(this, this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(), 10.0F, 2.0F));
         tasks.addTask(6, new EntityAIMate(this, 1.0D));
         tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
         tasks.addTask(8, new EntityAIBegBigCat(this, 8.0F)); 
@@ -190,25 +209,6 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     {
         tasks.taskEntries.clear();
         targetTasks.taskEntries.clear();
-    }
-
-    /* (non-Javadoc)
-     * @see net.minecraft.entity.EntityLiving#applyEntityAttributes()
-     */
-    // you don't have to call this as it is called automatically during entityLiving subclass creation
-    @Override
-	protected void applyEntityAttributes()
-    {
-        super.applyEntityAttributes(); // registers the common attributes
-        
-        getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.30D);
-        getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
-        getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(16.0D);
-
-        // need to register any additional attributes
-        getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
-        getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);
     }
  
     /**

@@ -16,6 +16,7 @@
 
 package com.blogspot.jabelarminecraft.wildanimals;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,6 +27,8 @@ import com.blogspot.jabelarminecraft.wildanimals.proxy.CommonProxy;
 import com.blogspot.jabelarminecraft.wildanimals.utilities.Utilities;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.ai.EntityAIFollowOwner;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -110,10 +113,20 @@ public class EventHandler
     {
         if (event.getEntity() instanceof EntityWolf)
         {
-        	// DEBUG
-        	System.out.println("Wolf joining world, adding guard owner AI");
+//        	// DEBUG
+//        	System.out.println("Wolf joining world, adding guard owner AI");
         	
         	EntityWolf theWolf = (EntityWolf) event.getEntity();
+        	Iterator<EntityAITaskEntry> iterator = theWolf.tasks.taskEntries.iterator();
+        	while (iterator.hasNext())
+        	{
+        		EntityAITaskEntry entry = iterator.next();
+        		if (entry.priority == 5) // the follow AI
+        		{
+        			iterator.remove();
+        		}
+        	}
+            theWolf.tasks.addTask(5, new EntityAIFollowOwner(theWolf, 1.0D, 6.0F, 3.0F));
         	theWolf.targetTasks.addTask(1, new EntityAIGuardOwner(theWolf));
         }
     }

@@ -24,7 +24,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIBegB
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAIGuardOwner;
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.bigcat.EntityAISitBigCat;
 import com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals.EntityHerdAnimal;
-import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
+import com.blogspot.jabelarminecraft.wildanimals.registries.ModSounds;
 import com.google.common.base.Predicate;
 
 import net.minecraft.entity.Entity;
@@ -156,7 +156,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         super.applyEntityAttributes(); // registers the common attributes
         
         getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(8.0D);
-        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.60D);
+        getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.35D);
         getEntityAttribute(SharedMonsterAttributes.KNOCKBACK_RESISTANCE).setBaseValue(0.0D);
         getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(16.0D);
 
@@ -179,7 +179,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         tasks.addTask(2, new EntityAISitBigCat(this));
         tasks.addTask(3, new EntityAILeapAtTarget(this, 0.4F));
         tasks.addTask(4, new EntityAIAttackMelee(this, 1.0D, true));
-        tasks.addTask(5, new EntityAIFollowOwner(this, this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(), 10.0F, 2.0F));
+        tasks.addTask(5, new EntityAIFollowOwner(this, this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue(), 6.0F, 3.0F));
         tasks.addTask(6, new EntityAIMate(this, 1.0D));
         tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
         tasks.addTask(8, new EntityAIBegBigCat(this, 8.0F)); 
@@ -239,7 +239,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	protected SoundEvent getAmbientSound()
     {
-        return isAngry() ? Sounds.soundAmbientGrowlBigCat : (rand.nextInt(3) == 0 ? (isTamed() && getHealth() < 10.0F ? Sounds.soundAmbientWhineBigCat : Sounds.soundAmbientPantingBigCat) : Sounds.soundAmbientBarkBigCat);
+        return isAngry() ? ModSounds.soundAmbientGrowlBigCat : (rand.nextInt(3) == 0 ? (isTamed() && getHealth() < 10.0F ? ModSounds.soundAmbientWhineBigCat : ModSounds.soundAmbientPantingBigCat) : ModSounds.soundAmbientBarkBigCat);
     }
 
     /**
@@ -251,7 +251,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return Sounds.soundHurtBigCat; // It uses sounds.json file to randomize and adds 1, 2 or 3 and .ogg
+        return ModSounds.soundHurtBigCat; // It uses sounds.json file to randomize and adds 1, 2 or 3 and .ogg
     }
 
     /**
@@ -262,7 +262,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
     @Override
 	protected SoundEvent getDeathSound()
     {
-        return Sounds.soundDeathBigCat;
+        return ModSounds.soundDeathBigCat;
     }
 
     /**
@@ -334,7 +334,7 @@ public class EntityBigCat extends EntityTameable implements IModEntity
         {
             if (timeBigCatIsShaking == 0.0F)
             {
-                playSound(Sounds.soundShakeBigCat, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
+                playSound(ModSounds.soundShakeBigCat, getSoundVolume(), (rand.nextFloat() - rand.nextFloat()) * 0.2F + 1.0F);
             }
 
             prevTimeBigCatIsShaking = timeBigCatIsShaking;

@@ -17,7 +17,7 @@
 package com.blogspot.jabelarminecraft.wildanimals.entities.herdanimals;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
+import com.blogspot.jabelarminecraft.wildanimals.registries.ModSounds;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -151,7 +151,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected SoundEvent getAmbientSound()
     {
-        return Sounds.soundAmbientElephant;
+        return ModSounds.soundAmbientElephant;
     }
 
     /**
@@ -163,7 +163,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected SoundEvent getHurtSound(DamageSource parDamageSource)
     {
-        return Sounds.soundHurtElephant;
+        return ModSounds.soundHurtElephant;
     }
 
     /**
@@ -174,7 +174,7 @@ public class EntityHerdAnimal extends EntityAnimal implements IModEntity
     @Override
     protected SoundEvent getDeathSound()
     {
-        return Sounds.soundHurtElephant;
+        return ModSounds.soundHurtElephant;
     }
 
 //    @Override

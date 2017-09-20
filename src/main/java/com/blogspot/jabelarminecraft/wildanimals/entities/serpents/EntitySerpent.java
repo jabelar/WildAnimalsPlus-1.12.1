@@ -17,7 +17,7 @@
 package com.blogspot.jabelarminecraft.wildanimals.entities.serpents;
 
 import com.blogspot.jabelarminecraft.wildanimals.entities.IModEntity;
-import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
+import com.blogspot.jabelarminecraft.wildanimals.registries.ModSounds;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAgeable;
@@ -131,7 +131,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getAmbientSound()
     {
-        return Sounds.soundCallSerpent;
+        return ModSounds.soundCallSerpent;
     }
 
     /**
@@ -143,7 +143,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return Sounds.soundDeathSerpent; 
+        return ModSounds.soundDeathSerpent; 
     }
 
     /**
@@ -154,7 +154,7 @@ public class EntitySerpent extends EntityAnimal implements IModEntity
     @Override
 	protected SoundEvent getDeathSound()
     {
-        return Sounds.soundDeathSerpent;
+        return ModSounds.soundDeathSerpent;
     }
 
     /**

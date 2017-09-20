@@ -25,7 +25,7 @@ import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.ProcessS
 import com.blogspot.jabelarminecraft.wildanimals.entities.ai.birdofprey.UpdateStateBirdOfPrey;
 import com.blogspot.jabelarminecraft.wildanimals.entities.serpents.EntitySerpent;
 import com.blogspot.jabelarminecraft.wildanimals.events.BirdTameEvent;
-import com.blogspot.jabelarminecraft.wildanimals.registries.Sounds;
+import com.blogspot.jabelarminecraft.wildanimals.registries.ModSounds;
 import com.google.common.base.Optional;
 
 import net.minecraft.block.state.IBlockState;
@@ -308,11 +308,11 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     {
         if (getState() == AIStates.STATE_TAKING_OFF || getState() == AIStates.STATE_TRAVELLING)
         {
-            return Sounds.soundFlappingBird;
+            return ModSounds.soundFlappingBird;
         }
         else
         {
-            return Sounds.soundCallBird;
+            return ModSounds.soundCallBird;
         }
     }
 
@@ -326,7 +326,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
 	protected SoundEvent getHurtSound(DamageSource parSource)
     {
-        return Sounds.soundDeathBigCat; 
+        return ModSounds.soundDeathBigCat; 
     }
 
     /**
@@ -337,7 +337,7 @@ public class EntityBirdOfPrey extends EntityFlying implements IModEntity
     @Override
 	protected SoundEvent getDeathSound()
     {
-        return Sounds.soundDeathBird;
+        return ModSounds.soundDeathBird;
     }
 
 

@@ -27,7 +27,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry.ObjectHolder;
 import net.minecraftforge.registries.IForgeRegistry;
 
 @ObjectHolder(MainMod.MODID)
-public class Sounds 
+public class ModSounds 
 {
     // instantiate SoundEvents
 	

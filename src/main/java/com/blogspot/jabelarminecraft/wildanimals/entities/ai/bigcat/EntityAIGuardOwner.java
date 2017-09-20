@@ -42,6 +42,9 @@ public class EntityAIGuardOwner extends EntityAITarget
             }
             else
             {
+//            	// DEBUG
+//            	System.out.println("Entity "+tameable+" with owner "+owner+" looking for attackers");
+           
             	List<Entity> entitiesNearby = owner.world.getEntitiesInAABBexcluding(owner, new AxisAlignedBB(owner.posX-10, owner.posY-10, owner.posZ-10, owner.posX+10, owner.posY+10, owner.posZ+10), null);
                 Iterator<Entity> iterator = entitiesNearby.iterator();
                 while (iterator.hasNext())
